@@ -1,0 +1,10 @@
+name: StickmanItems
+version: 3.0.0
+main: com.stickmanitems.StickmanItems
+api-version: '1.21'
+author: StickmanSMP
+description: Native Paper special items. Operator-only commands.
+commands:
+  stickmanitems:
+    description: Manage Stickman special items (operators only)
+    usage: /stickmanitems help
