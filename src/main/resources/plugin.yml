@@ -1,1 +1,13 @@
-
+name: StickmanItems
+version: 3.0.0
+main: com.stickmanitems.StickmanItems
+api-version: '1.21'
+author: StickmanSMP
+description: Native Paper special items and gems. Operator-only commands.
+commands:
+  stickmanitems:
+    description: Manage Stickman items (operators only)
+    usage: /stickmanitems help
+  stickman:
+    description: Manage Stickman gems, trust and gem cooldowns (operators only)
+    usage: /stickman help
