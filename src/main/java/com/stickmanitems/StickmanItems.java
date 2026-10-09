@@ -216,7 +216,7 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
             ItemDef d = items.get(id);
             if (d == null) d = gems.get(id);
             if (d == null) continue;
-            String title = ChatColor.of(d.hex()) + d.name();
+            String title = hexColor(d.hex()) + d.name();
             String text;
             if (noCooldown.contains(p.getUniqueId())) {
                 text = title + ChatColor.AQUA + " - NO COOLDOWN";
@@ -237,6 +237,10 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
 
     // ---------- Helpers ----------
 
+    private String hexColor(String hex) {
+        return net.md_5.bungee.api.ChatColor.of(hex).toString();
+    }
+
     private String idOf(ItemStack it) {
         if (it == null || !it.hasItemMeta()) return null;
         PersistentDataContainer c = it.getItemMeta().getPersistentDataContainer();
@@ -246,7 +250,7 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
     private ItemStack make(ItemDef d) {
         ItemStack it = new ItemStack(d.mat());
         ItemMeta m = it.getItemMeta();
-        m.setDisplayName(ChatColor.of(d.hex()) + d.name());
+        m.setDisplayName(hexColor(d.hex()) + d.name());
         m.setLore(List.of(ChatColor.GRAY + d.lore()));
         m.getPersistentDataContainer().set(itemKey, PersistentDataType.STRING, d.id());
         it.setItemMeta(m);
@@ -713,8 +717,8 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
                         return;
                     }
                     for (int i = 0; i < 3; i++) {
-                        double a = t[0] * 0.15 + i * 2 * Math.PI / 3;
-                        Location orb = p.getLocation().add(Math.cos(a) * 1.6, 1.2 + Math.sin(t[0] * 0.1 + i) * 0.3, Math.sin(a) * 1.6);
+                        double ang = t[0] * 0.15 + i * 2 * Math.PI / 3;
+                        Location orb = p.getLocation().add(Math.cos(ang) * 1.6, 1.2 + Math.sin(t[0] * 0.1 + i) * 0.3, Math.sin(ang) * 1.6);
                         p.getWorld().spawnParticle(Particle.SOUL, orb, 1, 0, 0, 0, 0);
                     }
                     if (t[0] % 20 == 0) {
@@ -1078,7 +1082,7 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
                 "Right-click: Night Terror. Shift+right-click: Nightmare Punishment (5s). F: Abyssal Sight. Shift+F: Giant Creaking (ultimate). Passives: tame bats and creakings with Echo Shards, Echo Location.");
         gemDef("thunder", "Thunder Master Gem", Material.COPPER_BLOCK, "#FFEB3B",
                 "Right-click: Thunder Bolt (3 uses, each stuns and strikes). Shift+right-click: Storm Burst. F: Surge (next 3 hits hit harder). Shift+F: Zeus (ultimate). Passives: 20% lightning on hit, immune to lightning, slowness, weakness and hunger.");
-        gemDef("wind", "Wind Master Gem", Material.PRISMARINE_CRYSTAL, "#B2EBF2",
+        gemDef("wind", "Wind Master Gem", Material.PRISMARINE_SHARD, "#B2EBF2",
                 "Right-click: Tornado (spins enemies within 30 blocks for 5s). Shift+right-click: Windy Launch. F: Jump Pad. Shift+F: Wind Burst. Sprint+F: Berserk Breeze (ultimate). Passives: no fall damage, stronger bow, 5% chance to launch players on hit.");
         gemDef("inferno", "Inferno Gem", Material.MAGMA_CREAM, "#FF6D00",
                 "Right-click: Meteor Shower. Shift+right-click: Cozy Campfire. F: Chargeable Fireball (press F to start, F again to release). Shift+F: Evaporation (toggle). Sprint+F: Blaze (ultimate). Passives: fire immunity, fire damage on swords.");
@@ -1439,7 +1443,7 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
         setOwner(creak, p.getUniqueId());
         creak.getPersistentDataContainer().set(ultKey, PersistentDataType.STRING, "nmult");
         if (creak instanceof LivingEntity le) {
-            AttributeInstance sc = le.getAttribute(Attribute.SCALE);
+            AttributeInstance sc = le.getAttribute(Attribute.GENERIC_SCALE);
             if (sc != null) sc.setBaseValue(2.5);
         }
         final int[] runs = {0};
@@ -1548,9 +1552,9 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
         big.getPersistentDataContainer().set(ultKey, PersistentDataType.STRING, "undeadult");
         big.setCustomName(ChatColor.DARK_GREEN + "Hollow Colossus");
         big.setCustomNameVisible(true);
-        AttributeInstance sc = big.getAttribute(Attribute.SCALE);
+        AttributeInstance sc = big.getAttribute(Attribute.GENERIC_SCALE);
         if (sc != null) sc.setBaseValue(2.5);
-        AttributeInstance mh = big.getAttribute(Attribute.MAX_HEALTH);
+        AttributeInstance mh = big.getAttribute(Attribute.GENERIC_MAX_HEALTH);
         if (mh != null) {
             mh.setBaseValue(200);
             big.setHealth(200);
@@ -2401,7 +2405,7 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
         setOwner(ax, p.getUniqueId());
         ax.getPersistentDataContainer().set(ultKey, PersistentDataType.STRING, "giantaxo");
         ax.setPersistent(true);
-        AttributeInstance sc = ax.getAttribute(Attribute.SCALE);
+        AttributeInstance sc = ax.getAttribute(Attribute.GENERIC_SCALE);
         if (sc != null) sc.setBaseValue(4.0);
         ax.setCustomName(ChatColor.AQUA + "Axolotl Giant");
         ax.setCustomNameVisible(true);
@@ -2605,7 +2609,7 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
                 if (args.length < 2) { usage(sender, "/stickmanitems info <item>"); return true; }
                 ItemDef d = items.get(args[1].toLowerCase(Locale.ROOT));
                 if (d == null) { sender.sendMessage(ChatColor.RED + "Unknown item. Use /stickmanitems list"); return true; }
-                sender.sendMessage(ChatColor.of(d.hex()) + d.name() + ChatColor.GRAY + " (" + d.id() + ", " + d.mat() + ")");
+                sender.sendMessage(hexColor(d.hex()) + d.name() + ChatColor.GRAY + " (" + d.id() + ", " + d.mat() + ")");
                 sender.sendMessage(ChatColor.GRAY + d.lore());
             }
             case "nocd" -> {
