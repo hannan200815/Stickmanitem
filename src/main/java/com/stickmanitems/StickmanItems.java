@@ -233,7 +233,7 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
         def("infernowand", "Inferno Wand", Material.BLAZE_ROD, "#FF9100", "Right-click to launch a fireball. Fireballs do not break blocks.");
         def("groundbreaker", "Groundbreaker", Material.MACE, "#FFB300", "Right-click for a shockwave that damages and knocks back nearby enemies. Breaks no blocks.");
         def("phoenixblade", "Phoenix Blade", Material.MACE, "#FF2D75", "Right-click to leap into the air, then dive and smash. Harder falls hit harder.");
-        def("gauntlet", "Control Orb", Material.PRISMARINE_CRYSTAL, "#7C4DFF", "Right-click a mob or player to take control of it. Right-click again to hurl it forward.");
+        def("gauntlet", "Control Orb", Material.PRISMARINE_SHARD, "#7C4DFF", "Right-click a mob or player to take control of it. Right-click again to hurl it forward.");
         def("jetpack", "Jetpack", Material.NETHERITE_CHESTPLATE, "#00BCD4", "Right-click to toggle thrust. 10 minutes of fuel. No cooldown.");
         def("grenade", "Grenade", Material.EGG, "#76FF03", "Right-click to throw. Explodes on impact without breaking blocks or hurting you.");
         def("magnetrod", "Magnet Rod", Material.IRON_NUGGET, "#D500F9", "Right-click to pull nearby mobs toward you, hard.");
