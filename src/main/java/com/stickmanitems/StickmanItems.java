@@ -688,7 +688,7 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
 
     @EventHandler
     public void onInteract(PlayerInteractEvent e) {
-        if ((e.getAction() == Action.RIGHT_CLICK_AIR || e.getAction() == Action.RIGHT_CLICK_BLOCK)
+        if (e.getAction() == Action.RIGHT_CLICK_AIR
                 && "cursedcrown".equals(idOf(e.getPlayer().getInventory().getHelmet()))
                 && (e.getClickedBlock() == null || !shrines.containsKey(keyOf(e.getClickedBlock().getLocation())))
                 && (e.getHand() == null || e.getHand() == EquipmentSlot.HAND)) {
@@ -703,6 +703,10 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
                 && shrines.containsKey(keyOf(e.getClickedBlock().getLocation()))) {
             e.setCancelled(true);
             e.getPlayer().openInventory(shrines.get(keyOf(e.getClickedBlock().getLocation())).inv);
+            return;
+        }
+        if (e.getAction() == Action.RIGHT_CLICK_BLOCK) {
+            if (idOf(e.getItem()) != null) e.setUseItemInHand(Event.Result.DENY);
             return;
         }
         Action a = e.getAction();
@@ -1736,6 +1740,11 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
         return vp.getUniqueId().equals(owner) || isTrusted(owner, vp.getUniqueId());
     }
 
+    private boolean handHasItem(PlayerInteractEntityEvent e) {
+        ItemStack hand = e.getPlayer().getInventory().getItem(e.getHand());
+        return hand != null && !hand.getType().isAir();
+    }
+
     private boolean isMount(Entity en) {
         String t = en.getPersistentDataContainer().get(ultKey, PersistentDataType.STRING);
         return "giantmob".equals(t) || "giantparrot".equals(t) || "giantaxo".equals(t);
@@ -2170,7 +2179,7 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
     private void witherLegion(Player p) {
         if (!ready(p, "g_legion", 60000)) return;
         World w = p.getWorld();
-        int n = 4 + rnd.nextInt(5);
+        int n = 3 + rnd.nextInt(5);
         for (int i = 0; i < n; i++) {
             Location loc = p.getLocation().add(rand(-3, 3), 0, rand(-3, 3));
             WitherSkeleton ws = w.spawn(loc, WitherSkeleton.class);
@@ -3347,7 +3356,7 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
             return;
         }
         if (!ready(p, "g_soldiers", 60000)) return;
-        int n = Math.min(4, 8 - have);
+        int n = Math.min(3 + rnd.nextInt(5), 8 - have);
         for (int i = 0; i < n; i++) {
             EntityType t = SOLDIER_TYPES.get(rnd.nextInt(SOLDIER_TYPES.size()));
             spawnSoldier(p, t, p.getLocation().add(rand(-3, 3), 0, rand(-3, 3)), 2400L);
@@ -3385,7 +3394,8 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
 
     private void darkLegion(Player p) {
         if (!ready(p, "g_darklegion", 300000)) return;
-        for (int i = 0; i < 8; i++) {
+        int legion = 3 + rnd.nextInt(5);
+        for (int i = 0; i < legion; i++) {
             spawnSoldier(p, EntityType.WITHER_SKELETON, p.getLocation().add(rand(-4, 4), 0, rand(-4, 4)), 3600L);
         }
         p.addPotionEffect(new PotionEffect(PotionEffectType.RESISTANCE, 3600, 1));
@@ -3693,6 +3703,7 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
         if (!(e.getRightClicked() instanceof LivingEntity mount)) return;
         if (!"giantmob".equals(mount.getPersistentDataContainer().get(ultKey, PersistentDataType.STRING))) return;
         Player p = e.getPlayer();
+        if (handHasItem(e)) return;
         e.setCancelled(true);
         if (!mount.getPassengers().isEmpty()) return;
         mount.addPassenger(p);
@@ -3754,6 +3765,7 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
         if (!(e.getRightClicked() instanceof Parrot par)) return;
         if (!"giantparrot".equals(par.getPersistentDataContainer().get(ultKey, PersistentDataType.STRING))) return;
         Player p = e.getPlayer();
+        if (handHasItem(e)) return;
         e.setCancelled(true);
         if (!par.getPassengers().isEmpty()) return;
         par.addPassenger(p);
@@ -3800,6 +3812,7 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
         if (!(e.getRightClicked() instanceof Axolotl ax)) return;
         if (!"giantaxo".equals(ax.getPersistentDataContainer().get(ultKey, PersistentDataType.STRING))) return;
         Player p = e.getPlayer();
+        if (handHasItem(e)) return;
         e.setCancelled(true);
         if (!ax.getPassengers().isEmpty()) return;
         ax.addPassenger(p);
