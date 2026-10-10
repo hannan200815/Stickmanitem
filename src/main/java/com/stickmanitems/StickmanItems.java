@@ -169,7 +169,7 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
     private static final Set<EntityType> NO_SUMMON = EnumSet.of(
             EntityType.WARDEN, EntityType.WITHER, EntityType.ENDER_DRAGON,
             EntityType.ELDER_GUARDIAN, EntityType.GIANT, EntityType.IRON_GOLEM);
-    private static final List<String> STICKMAN_SUBS = List.of("givegem", "nocooldowngem", "trust", "summon", "help", "cooldowns", "gems", "reload", "clearcd", "heal", "feed", "followers", "cleargems", "trustlist", "dismount", "killmounts", "time", "weather", "stats", "menu", "killfollowers", "lightning", "bring", "tp", "fly", "invis");
+    private static final List<String> STICKMAN_SUBS = List.of("givegem", "nocooldowngem", "trust", "summon", "help", "cooldowns", "gems", "reload", "clearcd", "heal", "feed", "followers", "cleargems", "trustlist", "dismount", "killmounts", "time", "weather", "stats", "menu", "killfollowers", "lightning", "bring", "tp", "fly", "invis", "crowncheck");
     private final Map<String, ShrineHolder> shrines = new HashMap<>();
     private final Map<UUID, List<ItemStack>> deathKeep = new HashMap<>();
     private final Map<UUID, Integer> boltCharges = new HashMap<>();
@@ -234,7 +234,6 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
         def("groundbreaker", "Groundbreaker", Material.MACE, "#FFB300", "Right-click for a shockwave that damages and knocks back nearby enemies. Breaks no blocks.");
         def("phoenixblade", "Phoenix Blade", Material.MACE, "#FF2D75", "Right-click to leap into the air, then dive and smash. Harder falls hit harder.");
         def("gauntlet", "Control Orb", Material.PRISMARINE_SHARD, "#7C4DFF", "Right-click a mob or player to take control of it. Right-click again to hurl it forward.");
-        def("jetpack", "Jetpack", Material.NETHERITE_CHESTPLATE, "#00BCD4", "Right-click to toggle thrust. 10 minutes of fuel. No cooldown.");
         def("grenade", "Grenade", Material.EGG, "#76FF03", "Right-click to throw. Explodes on impact without breaking blocks or hurting you.");
         def("magnetrod", "Magnet Rod", Material.IRON_NUGGET, "#D500F9", "Right-click to pull nearby mobs toward you, hard.");
         def("blizzardorb", "Blizzard Orb", Material.SNOWBALL, "#18FFFF", "Right-click to freeze everything nearby and slow it hard.");
@@ -266,6 +265,7 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
         def("rewindcompass", "Rewind Compass", Material.RECOVERY_COMPASS, "#00BFA5", "Right-click to teleport back to where you were 10 seconds ago. 30-second cooldown.");
         def("spoutshell", "Nautilus Spout", Material.NAUTILUS_SHELL, "#0288D1", "Right-click to raise a water spout where you aim. Enemies near it are launched 2.5 blocks up and take 8 damage. 12-second cooldown.");
         def("honeybomb", "Honey Bomb", Material.HONEY_BOTTLE, "#FFB300", "Right-click to throw a honey bomb. On impact enemies nearby are heavily slowed and take 4 damage. 6-second cooldown.");
+        def("cloudbottle", "Cloud Bottle", Material.GLASS_BOTTLE, "#B3E5FC", "Right-click to conjure a cloud that lifts you about 8 blocks and lowers you gently back down. 20-second cooldown.");
         def("ghostlantern", "Ghost Lantern", Material.GLOW_INK_SAC, "#B388FF", "Right-click for 10 seconds of orbiting spirits that zap nearby enemies. Never hits your golems.");
     }
 
@@ -689,10 +689,10 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
     @EventHandler
     public void onInteract(PlayerInteractEvent e) {
         if ((e.getAction() == Action.RIGHT_CLICK_AIR || e.getAction() == Action.RIGHT_CLICK_BLOCK)
-                && (e.getHand() == null || e.getHand() == EquipmentSlot.HAND)
-                && (e.getItem() == null || idOf(e.getItem()) == null)
                 && "cursedcrown".equals(idOf(e.getPlayer().getInventory().getHelmet()))
-                && (e.getClickedBlock() == null || !shrines.containsKey(keyOf(e.getClickedBlock().getLocation())))) {
+                && (e.getClickedBlock() == null || !shrines.containsKey(keyOf(e.getClickedBlock().getLocation())))
+                && (e.getHand() == null || e.getHand() == EquipmentSlot.HAND)) {
+            e.getPlayer().sendActionBar(ChatColor.GOLD + "Cursed Crown triggered");
             if (e.getPlayer().isSneaking()) rally(e.getPlayer());
             else summonSoldiers(e.getPlayer());
             return;
@@ -968,6 +968,15 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
                 Snowball bomb = p.launchProjectile(Snowball.class);
                 bomb.getPersistentDataContainer().set(projKey, PersistentDataType.STRING, "honey");
                 w.playSound(p.getLocation(), Sound.ENTITY_SNOWBALL_THROW, 1f, 0.5f);
+            }
+            case "cloudbottle" -> {
+                if (!ready(p, id, 20000)) return;
+                p.setVelocity(new Vector(0, 1.7, 0));
+                p.setFallDistance(0f);
+                p.addPotionEffect(new PotionEffect(PotionEffectType.SLOW_FALLING, 200, 0));
+                guard(p, 200);
+                w.spawnParticle(Particle.CLOUD, p.getLocation(), 60, 0.8, 0.2, 0.8, 0.05);
+                w.playSound(p.getLocation(), Sound.ENTITY_SHEEP_SHEAR, 1f, 1.4f);
             }
             case "tidal" -> {
                 if (!ready(p, id, 4000)) return;
@@ -4546,6 +4555,18 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
                     target.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 1000000, 0, false, false));
                     sender.sendMessage(ChatColor.GRAY + "Invisibility on for " + target.getName());
                 }
+            }
+            case "crowncheck" -> {
+                if (!(sender instanceof Player cp)) { sender.sendMessage(ChatColor.RED + "Players only."); return true; }
+                ItemStack helmet = cp.getInventory().getHelmet();
+                sender.sendMessage(ChatColor.GOLD + "Cursed Crown check:");
+                sender.sendMessage(ChatColor.GRAY + "Helmet slot: " + (helmet == null ? "empty" : helmet.getType().name()));
+                sender.sendMessage(ChatColor.GRAY + "Helmet id: " + idOf(helmet));
+                sender.sendMessage(ChatColor.GRAY + "Main hand id: " + idOf(cp.getInventory().getItemInMainHand()));
+                sender.sendMessage(ChatColor.GRAY + "Offhand id: " + idOf(cp.getInventory().getItemInOffHand()));
+                sender.sendMessage(ChatColor.GRAY + "holdsItem(cursedcrown): " + holdsItem(cp, "cursedcrown"));
+                sender.sendMessage(ChatColor.GRAY + "Soldiers owned: " + ownedSoldiers(cp));
+                sender.sendMessage(ChatColor.GRAY + "Soldier cooldown left: " + (cdLeft(cp, "g_soldiers") / 1000) + "s");
             }
             default -> sendStickmanHelp(sender);
         }
