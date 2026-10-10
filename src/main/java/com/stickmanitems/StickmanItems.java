@@ -56,6 +56,7 @@ import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Egg;
 import org.bukkit.entity.DragonFireball;
+import org.bukkit.entity.WitherSkull;
 import org.bukkit.entity.Mob;
 import org.bukkit.Color;
 import org.bukkit.entity.Warden;
