@@ -62,6 +62,7 @@ import org.bukkit.entity.Parrot;
 import org.bukkit.entity.Item;
 import org.bukkit.event.EventPriority;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.entity.Fireball;
 import org.bukkit.entity.IronGolem;
 import org.bukkit.entity.LivingEntity;
@@ -232,7 +233,7 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
         def("infernowand", "Inferno Wand", Material.BLAZE_ROD, "#FF9100", "Right-click to launch a fireball. Fireballs do not break blocks.");
         def("groundbreaker", "Groundbreaker", Material.MACE, "#FFB300", "Right-click for a shockwave that damages and knocks back nearby enemies. Breaks no blocks.");
         def("phoenixblade", "Phoenix Blade", Material.MACE, "#FF2D75", "Right-click to leap into the air, then dive and smash. Harder falls hit harder.");
-        def("gauntlet", "Control Orb", Material.ENDER_PEARL, "#7C4DFF", "Right-click a mob or player to take control of it. Right-click again to hurl it forward.");
+        def("gauntlet", "Control Orb", Material.PRISMARINE_CRYSTAL, "#7C4DFF", "Right-click a mob or player to take control of it. Right-click again to hurl it forward.");
         def("jetpack", "Jetpack", Material.NETHERITE_CHESTPLATE, "#00BCD4", "Right-click to toggle thrust. 10 minutes of fuel. No cooldown.");
         def("grenade", "Grenade", Material.EGG, "#76FF03", "Right-click to throw. Explodes on impact without breaking blocks or hurting you.");
         def("magnetrod", "Magnet Rod", Material.IRON_NUGGET, "#D500F9", "Right-click to pull nearby mobs toward you, hard.");
@@ -253,7 +254,7 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
         def("arccaster", "Arc Caster", Material.BOW, "#E1BEE7", "A bow. Arrows stun or freeze whatever they hit.");
         def("shadowdagger", "Shadow Dagger", Material.NETHERITE_SWORD, "#7E57C2", "Right-click to teleport behind the nearest enemy and strike for 10 damage.");
         def("solarlance", "Solar Lance", Material.NETHERITE_SWORD, "#FFD180", "Right-click for an instant beam that hits everything in a 25-block line for 14 damage.");
-        def("gravitywell", "Gravity Well", Material.ENDER_EYE, "#AB47BC", "Right-click to place a gravity well for 6 seconds. It pulls and damages nearby mobs.");
+        def("gravitywell", "Gravity Well", Material.MAGMA_CREAM, "#AB47BC", "Right-click to place a gravity well for 6 seconds. It pulls and damages nearby mobs.");
         def("aegistotem", "Aegis Totem", Material.TOTEM_OF_UNDYING, "#66BB6A", "Right-click for 15 seconds of Resistance and Regeneration for you and your trusted players nearby.");
         def("unoreverse", "Uno Reverse Blade", Material.NETHERITE_SWORD, "#00E5FF", "Saves every projectile that hits you (up to 30). Right-click to release them back, newest first.");
         def("chronohourglass", "Chrono Hourglass", Material.CLOCK, "#FFD700", "Right-click to freeze every enemy within 10 blocks for 4 seconds. Trusted players and your mobs are not affected.");
@@ -312,11 +313,12 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
     private String gemTable(Player p, String gem) {
         ItemDef d = gems.get(gem);
         StringBuilder sb = new StringBuilder(hexColor(d.hex()) + ChatColor.BOLD + d.name());
+        int slot = 0;
         for (String ab : GEM_ABILITIES.getOrDefault(gem, List.of())) {
+            slot++;
             long left = cdLeft(p, ab);
-            sb.append(ChatColor.GRAY).append(" | ").append(ChatColor.WHITE)
-              .append(ABILITY_NAMES.getOrDefault(ab, ab)).append(" ")
-              .append(left > 0 ? ChatColor.RED + "" + ((left / 1000) + 1) + "s" : ChatColor.GREEN + "READY");
+            sb.append(ChatColor.GRAY).append(" | ").append(left > 0 ? ChatColor.RED : ChatColor.GREEN).append("A").append(slot);
+            if (left > 0) sb.append(ChatColor.RED).append(" ").append((left / 1000) + 1).append("s");
         }
         return sb.toString();
     }
@@ -373,6 +375,20 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
         }
     }
 
+    // Stops any follower from holding its owner or trusted players as a target, including sonic and vibration AI.
+    private void tickFollowerTargets() {
+        for (UUID fid : followers) {
+            Entity f = Bukkit.getEntity(fid);
+            if (!(f instanceof Mob m) || !m.isValid()) continue;
+            UUID own = ownerOf(m);
+            if (own == null) continue;
+            LivingEntity t = m.getTarget();
+            if (t instanceof Player tp && (tp.getUniqueId().equals(own) || isTrusted(own, tp.getUniqueId()))) {
+                m.setTarget(null);
+            }
+        }
+    }
+
     private EntityType creakingType() {
         try {
             return EntityType.valueOf("CREAKING");
@@ -393,6 +409,24 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
         return c;
     }
 
+    private void burstFor(Player p, String id) {
+        Color c = colorFor(id);
+        for (Map.Entry<String, List<String>> en : GEM_ABILITIES.entrySet()) {
+            if (en.getValue().contains(id) && gems.containsKey(en.getKey())) {
+                c = colorFor(en.getKey());
+                break;
+            }
+        }
+        Location at = p.getLocation().add(0, 1, 0);
+        p.getWorld().spawnParticle(Particle.DUST, at, 60, 0.8, 0.9, 0.8, 0, new Particle.DustOptions(c, 1.6f));
+        p.getWorld().spawnParticle(Particle.END_ROD, at, 25, 0.8, 0.9, 0.8, 0.08);
+        for (int deg = 0; deg < 360; deg += 30) {
+            double r = Math.toRadians(deg);
+            p.getWorld().spawnParticle(Particle.DUST, at.clone().add(Math.cos(r) * 1.5, -0.8, Math.sin(r) * 1.5),
+                    2, 0, 0, 0, 0, new Particle.DustOptions(c, 1.2f));
+        }
+    }
+
     private String hexColor(String hex) {
         return net.md_5.bungee.api.ChatColor.of(hex).toString();
     }
@@ -403,11 +437,142 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
         return c.get(itemKey, PersistentDataType.STRING);
     }
 
+    // Bliss SMP style lore: grey description, gold activation line, bold headings, bullet passives.
+    private List<String> wrapText(String text, int width) {
+        List<String> lines = new ArrayList<>();
+        StringBuilder cur = new StringBuilder();
+        for (String word : text.split(" ")) {
+            if (cur.length() > 0 && cur.length() + word.length() + 1 > width) {
+                lines.add(cur.toString());
+                cur.setLength(0);
+            }
+            if (cur.length() > 0) cur.append(' ');
+            cur.append(word);
+        }
+        if (cur.length() > 0) lines.add(cur.toString());
+        return lines;
+    }
+
+    private static final Map<String, String> ITEM_PASSIVES = Map.ofEntries(
+            Map.entry("thunderstick", "Melee hits strike lightning and add 6 damage."),
+            Map.entry("vampirefang", "Heals you for 40% of the melee damage you deal."),
+            Map.entry("frostbite", "Melee hits slow the target and add 4 damage."),
+            Map.entry("venom", "Melee hits poison normal mobs and players, and heal undead mobs."),
+            Map.entry("reapersigil", "Each hit withers normal mobs and players and heals you 2 hearts. Heals undead mobs."),
+            Map.entry("bloodstone", "Melee hits heal you for 10% of the damage dealt."),
+            Map.entry("arccaster", "Each arrow stuns or freezes the target it hits."),
+            Map.entry("unoreverse", "Saves every projectile that hits you while you hold it, up to 30."),
+            Map.entry("winddash", "No fall damage from the dash."));
+
+    private static final Set<String> BOWS = Set.of("kaboom", "shakalaka", "arccaster");
+
+    private String keybindName(String label) {
+        return switch (label) {
+            case "Right-click" -> "Right-click";
+            case "Shift+right-click" -> "Shift + Right-click";
+            case "Sprint+F" -> "Sprint + F";
+            case "Shift+F" -> "Shift + F";
+            case "F" -> "F";
+            default -> label;
+        };
+    }
+
+    private List<String> loreFor(ItemDef d) {
+        List<String> out = new ArrayList<>();
+        if (gems.containsKey(d.id())) {
+            String text = d.lore();
+            java.util.regex.Matcher mt = java.util.regex.Pattern.compile(
+                    "(Right-click|Shift\\+right-click|Sprint\\+F|Shift\\+F|F|Passives|The Light Before the Dark):").matcher(text);
+            List<String[]> segs = new ArrayList<>();
+            int last = -1;
+            String lastLabel = null;
+            while (mt.find()) {
+                if (lastLabel != null) segs.add(new String[]{lastLabel, text.substring(last, mt.start()).trim()});
+                lastLabel = mt.group(1);
+                last = mt.end();
+            }
+            if (lastLabel != null) segs.add(new String[]{lastLabel, text.substring(last).trim()});
+
+            int abilityNo = 0;
+            String ultKey = null;
+            String ultText = null;
+            for (String[] seg : segs) {
+                String label = seg[0];
+                if (label.equals("Passives") || label.equals("The Light Before the Dark")) continue;
+                if (seg[1].contains("ultimate")) {
+                    ultKey = label;
+                    ultText = seg[1];
+                    continue;
+                }
+                abilityNo++;
+                out.add(ChatColor.GOLD + "" + ChatColor.BOLD + "Ability " + abilityNo + " (" + keybindName(label) + ")");
+                for (String ln : wrapText(seg[1], 40)) out.add(ChatColor.GRAY + ln);
+                out.add("");
+            }
+
+            out.add(ChatColor.GOLD + "" + ChatColor.BOLD + "Passive");
+            for (String[] seg : segs) {
+                if (seg[0].equals("Passives")) {
+                    for (String part : seg[1].split("\\. ")) {
+                        String t = part.trim().replaceAll("\\.$", "");
+                        if (!t.isEmpty()) out.add(ChatColor.GRAY + "- " + t);
+                    }
+                } else if (seg[0].equals("The Light Before the Dark")) {
+                    out.add(ChatColor.GRAY + "- The Light Before the Dark: " + seg[1].replaceAll("\\.$", ""));
+                }
+            }
+            out.add("");
+
+            if (ultText != null) {
+                out.add(ChatColor.GOLD + "" + ChatColor.BOLD + "Ult (" + keybindName(ultKey) + ")");
+                for (String ln : wrapText(ultText, 40)) out.add(ChatColor.GRAY + ln);
+            }
+            out.add("");
+            out.add(ChatColor.YELLOW + "Works from your main or offhand. Cooldowns show above the hotbar.");
+            return out;
+        }
+        if (d.id().equals("cursedcrown")) {
+            out.add(ChatColor.GOLD + "" + ChatColor.BOLD + "Ability 1 (Right-click)");
+            for (String ln : wrapText("Summons 4 soldiers that follow you and fight whatever you attack. Up to 8 at once, for 2 minutes.", 40)) out.add(ChatColor.GRAY + ln);
+            out.add("");
+            out.add(ChatColor.GOLD + "" + ChatColor.BOLD + "Ability 2 (Shift + Right-click)");
+            for (String ln : wrapText("Rally: teleports all your soldiers to you and gives them Strength II.", 40)) out.add(ChatColor.GRAY + ln);
+            out.add("");
+            out.add(ChatColor.GOLD + "" + ChatColor.BOLD + "Ability 3 (F)");
+            for (String ln : wrapText("Curse of Iron: enemies within 8 blocks get Weakness II and Slowness II.", 40)) out.add(ChatColor.GRAY + ln);
+            out.add("");
+            out.add(ChatColor.GOLD + "" + ChatColor.BOLD + "Passive");
+            out.add(ChatColor.GRAY + "- Your soldiers deal 25% more damage.");
+            out.add(ChatColor.GRAY + "- You take 10% more damage while holding or wearing the crown.");
+            out.add(ChatColor.GRAY + "- Sprinting leaves a yellow trail.");
+            out.add("");
+            out.add(ChatColor.GOLD + "" + ChatColor.BOLD + "Ult (Shift + F)");
+            for (String ln : wrapText("Dark Legion: summons 8 wither skeleton soldiers for 3 minutes and gives you Resistance II.", 40)) out.add(ChatColor.GRAY + ln);
+            out.add("");
+            out.add(ChatColor.YELLOW + "Works from your main hand, offhand, or head.");
+            return out;
+        }
+        String keybind = BOWS.contains(d.id()) ? "Shoot" : "Right-click";
+        String desc = d.lore().replaceAll("\\s*[0-9]+-second cooldown\\.", "").trim();
+        out.add(ChatColor.GOLD + "" + ChatColor.BOLD + "Ability 1 (" + keybind + ")");
+        for (String ln : wrapText(desc, 40)) out.add(ChatColor.GRAY + ln);
+        out.add("");
+        String passive = ITEM_PASSIVES.get(d.id());
+        if (passive != null) {
+            out.add(ChatColor.GOLD + "" + ChatColor.BOLD + "Passive");
+            for (String ln : wrapText(passive, 40)) out.add(ChatColor.GRAY + ln);
+            out.add("");
+        }
+        out.add(ChatColor.YELLOW + "Works from your main hand or offhand.");
+        return out;
+    }
+
     private ItemStack make(ItemDef d) {
         ItemStack it = new ItemStack(d.mat());
         ItemMeta m = it.getItemMeta();
         m.setDisplayName(hexColor(d.hex()) + ChatColor.BOLD + d.name());
-        m.setLore(List.of(ChatColor.GRAY + d.lore()));
+        m.setLore(loreFor(d));
+        m.setEnchantmentGlintOverride(true);
         if (d.id().equals("cursedcrown")) {
             m.setUnbreakable(true);
             m.addEnchant(Enchantment.PROTECTION, 10, true);
@@ -427,17 +592,12 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
         String key = p.getUniqueId() + ":" + id;
         Long expiry = cooldowns.get(key);
         if (expiry != null && now < expiry) {
-            p.sendMessage(ChatColor.RED + "On cooldown: " + ((expiry - now) / 1000 + 1) + "s");
             return false;
         }
         cooldowns.put(key, now + cdMs);
         String name = ABILITY_NAMES.getOrDefault(id, items.containsKey(id) ? items.get(id).name() : id);
-        p.sendMessage(ChatColor.AQUA + "» " + name + " used");
-        p.getWorld().spawnParticle(Particle.END_ROD, p.getLocation().add(0, 1, 0), 20, 0.6, 0.6, 0.6, 0.05);
+        burstFor(p, id);
         p.playSound(p.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 0.6f, 1.4f);
-        Bukkit.getScheduler().runTaskLater(this, () -> {
-            if (p.isOnline()) p.sendMessage(ChatColor.GREEN + "« " + name + " is ready");
-        }, Math.max(1L, cdMs / 50));
         return true;
     }
 
@@ -453,8 +613,12 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
     }
 
     private void hit(LivingEntity le, double dmg, Entity src) {
-        if (src != null) le.damage(dmg, src);
-        else le.damage(dmg);
+        double out = dmg;
+        if (src instanceof Player sp && gemOf(sp) != null) {
+            out *= getConfig().getDouble("damage.gem-multiplier", 1.5);
+        }
+        if (src != null) le.damage(out, src);
+        else le.damage(out);
     }
 
     private void damageArea(Location c, double r, double dmg, Entity src) {
@@ -524,6 +688,15 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
 
     @EventHandler
     public void onInteract(PlayerInteractEvent e) {
+        if ((e.getAction() == Action.RIGHT_CLICK_AIR || e.getAction() == Action.RIGHT_CLICK_BLOCK)
+                && (e.getHand() == null || e.getHand() == EquipmentSlot.HAND)
+                && (e.getItem() == null || idOf(e.getItem()) == null)
+                && "cursedcrown".equals(idOf(e.getPlayer().getInventory().getHelmet()))
+                && (e.getClickedBlock() == null || !shrines.containsKey(keyOf(e.getClickedBlock().getLocation())))) {
+            if (e.getPlayer().isSneaking()) rally(e.getPlayer());
+            else summonSoldiers(e.getPlayer());
+            return;
+        }
         if (e.getAction() == Action.RIGHT_CLICK_BLOCK
                 && (e.getHand() == null || e.getHand() == EquipmentSlot.HAND)
                 && e.getClickedBlock() != null
@@ -979,11 +1152,33 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
             }
             case "voidscythe" -> {
                 if (!ready(p, id, 1000)) return;
-                Fireball slash = p.launchProjectile(Fireball.class, look.clone().multiply(1.6));
-                slash.setYield(0f);
-                slash.setIsIncendiary(false);
-                slash.getPersistentDataContainer().set(projKey, PersistentDataType.STRING, "voidslash");
-                w.playSound(p.getLocation(), Sound.ENTITY_EVOKER_CAST_SPELL, 1f, 0.6f);
+                Vector fwd = p.getLocation().getDirection().setY(0);
+                if (fwd.lengthSquared() == 0) fwd = new Vector(0, 0, 1);
+                final Vector f = fwd.normalize();
+                final Location origin = p.getLocation().clone();
+                final Set<UUID> slashed = new HashSet<>();
+                for (int k = 0; k < 6; k++) {
+                    final int step = k;
+                    Bukkit.getScheduler().runTaskLater(this, () -> {
+                        double ang = Math.toRadians(-60 + step * 24);
+                        Vector dir = f.clone().rotateAroundY(ang);
+                        for (double r = 2; r <= 7; r += 1.0) {
+                            Location pt = origin.clone().add(0, 1, 0).add(dir.clone().multiply(r));
+                            w.spawnParticle(Particle.DRAGON_BREATH, pt, 2, 0.05, 0.05, 0.05, 0.01);
+                        }
+                        for (Entity en : w.getNearbyEntities(origin, 7, 3, 7)) {
+                            if (!(en instanceof LivingEntity le) || en.equals(p) || isFriendlyTo(p, le) || slashed.contains(le.getUniqueId())) continue;
+                            Vector to = le.getLocation().toVector().subtract(origin.toVector()).setY(0);
+                            if (to.lengthSquared() == 0) continue;
+                            if (to.normalize().dot(f) > 0.5) {
+                                slashed.add(le.getUniqueId());
+                                hit(le, 16, p);
+                                le.setVelocity(f.clone().multiply(0.6).setY(0.3));
+                            }
+                        }
+                    }, k);
+                }
+                w.playSound(origin, Sound.ENTITY_PLAYER_ATTACK_SWEEP, 1.5f, 0.8f);
             }
             case "grapple" -> {
                 if (!ready(p, id, 1500)) return;
@@ -1452,6 +1647,7 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
     }
 
     private boolean holdsItem(Player p, String id) {
+        if (id.equals("cursedcrown") && id.equals(idOf(p.getInventory().getHelmet()))) return true;
         return id.equals(idOf(p.getInventory().getItemInMainHand()))
                 || id.equals(idOf(p.getInventory().getItemInOffHand()));
     }
@@ -1474,7 +1670,7 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
         gemDef("thunder", "Thunder Master Gem", Material.AMETHYST_SHARD, "#FFEB3B", "Right-click: Thunder Strike (lightning at your aim, 12 damage and a stun). Shift+right-click: Chain Lightning (up to 5 foes). F: Overcharge (next 3 hits +10 damage). Shift+F: Zeus (ultimate, 20 seconds of lightning storm). Passives: 20% lightning on hit, immune to lightning, slowness and weakness.");
         gemDef("wind", "Wind Master Gem", Material.AMETHYST_SHARD, "#B2EBF2", "Right-click: Gust (pushes and damages nearby foes). Shift+right-click: Updraft (launch yourself up, no fall damage). F: Tornado (orbits foes within 12 blocks). Sprint+F: Berserk Breeze (ultimate, 30 seconds of gusts on every right-click). Passives: no fall damage, stronger bow, 5% chance to launch players on hit.");
         gemDef("inferno", "Inferno Gem", Material.AMETHYST_SHARD, "#FF6D00",
-                "Right-click: Meteor Shower. Shift+right-click: Cozy Campfire. F: Chargeable Fireball (press F to start, F again to release). Shift+F: Evaporation (toggle). Sprint+F: Blaze (ultimate). Passives: fire immunity, fire damage on swords.");
+                "Right-click: Meteor Shower. Shift+right-click: Cozy Campfire. F: Chargeable Fireball (press F to start charging, F again to release, charge rises to 100% then drains). Shift+F: Blaze (ultimate, explosive fireballs with no cooldown for 30 seconds). Sprint+F: Evaporation (toggle, water around you turns to air). Passives: fire immunity, fire damage on swords.");
         gemDef("atomic", "Atomic Gem", Material.AMETHYST_SHARD, "#76FF03",
                 "Right-click: Atomic Blast (shockwave, heavy damage and knockback). Shift+right-click: Radiation Cloud (15s wither and nausea nearby). F: Fallout Shield (10s, half damage, attackers blinded). Shift+F: Meltdown (ultimate, 20s glow, radiation damage nearby). Passives: immune to wither and poison, slow regeneration.");
         gemDef("warden", "Warden Keeper Gem", Material.AMETHYST_SHARD, "#0D47A1", "Right-click: Sonic Wave (a cone sonic boom). Shift+right-click: Echo Pulse (reveals enemies). F: Warden's Fist (warden-strength slam). Shift+F: Warden Monster (ultimate, a warden ally for 5 minutes). Passives: immune to fire, lava, falls, poison, wither, blindness, darkness, slowness and nausea.");
@@ -1529,6 +1725,20 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
         if (owner == null) return false;
         if (!(victim instanceof Player vp)) return false;
         return vp.getUniqueId().equals(owner) || isTrusted(owner, vp.getUniqueId());
+    }
+
+    private boolean isMount(Entity en) {
+        String t = en.getPersistentDataContainer().get(ultKey, PersistentDataType.STRING);
+        return "giantmob".equals(t) || "giantparrot".equals(t) || "giantaxo".equals(t);
+    }
+
+    @EventHandler
+    public void onMountNoSuffocate(EntityDamageEvent e) {
+        if (e.getCause() != EntityDamageEvent.DamageCause.SUFFOCATION) return;
+        Entity v = e.getEntity();
+        if (isMount(v) || (v instanceof Player pl && pl.getVehicle() != null && isMount(pl.getVehicle()))) {
+            e.setCancelled(true);
+        }
     }
 
     private boolean isUndead(LivingEntity t) {
@@ -1680,7 +1890,7 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
 
         final int[] runs = {0};
         final BukkitTask[] holder = new BukkitTask[1];
-        holder[0] = Bukkit.getScheduler().runTaskTimer(this, () -> {
+        holder[0] = gemTimer(p, () -> {
             runs[0]++;
             if (runs[0] > 60) {
                 holder[0].cancel();
@@ -1896,7 +2106,7 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
         p.sendMessage(ChatColor.DARK_PURPLE + "A small creaking follows you. It rots in 120 seconds.");
         final int[] runs = {0};
         final BukkitTask[] holder = new BukkitTask[1];
-        holder[0] = Bukkit.getScheduler().runTaskTimer(this, () -> {
+        holder[0] = gemTimer(p, () -> {
             runs[0]++;
             if (!creak.isValid()) {
                 holder[0].cancel();
@@ -1920,8 +2130,7 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
                 if (hidden.equals(p) || isFriendlyTo(p, hidden)) continue;
                 if (!hidden.isSneaking() && !hidden.hasPotionEffect(PotionEffectType.INVISIBILITY)) continue;
                 double d = hidden.getLocation().distance(p.getLocation());
-                p.sendMessage(ChatColor.DARK_PURPLE + "[Echo] " + ChatColor.WHITE + "Hidden enemy "
-                        + hidden.getName() + " is " + String.format(Locale.ROOT, "%.1f", d) + " blocks away.");
+                hidden.getWorld().spawnParticle(Particle.SCULK_SOUL, hidden.getLocation().add(0, 1, 0), 8, 0.3, 0.5, 0.3, 0.02);
             }
         }
     }
@@ -2167,6 +2376,7 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
         gemTick++;
         if (gemTick % 2 == 0) tickTrails();
         if (gemTick % 2 == 0) tickCrownTrail();
+        if (gemTick % 4 == 0) tickGemAuraAll();
         if (gemTick % 20 == 0) tickPosHistory();
         tickBlizzardPassive();
         if (gemTick % 5 == 0) tickBarriers();
@@ -2174,9 +2384,11 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
         if (gemTick % 10 == 0) tickFollowers();
         if (gemTick % 40 == 0) tickAtomicRegen();
         if (gemTick % 40 == 0) tickYinyangRegen();
+        if (gemTick % 10 == 0) tickFollowerTargets();
         if (gemTick % 5 == 0) tickThunderAura();
         if (gemTick % 5 == 0) tickGemAuras();
         if (gemTick % 5 == 0) tickEclipseAura();
+        if (gemTick % 5 == 0) cleanupGemTasks();
     }
 
     // ===================== ATOMIC =====================
@@ -2199,7 +2411,7 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
         p.sendMessage(ChatColor.GREEN + "Radiation Cloud for 15 seconds.");
         final int[] runs = {0};
         final BukkitTask[] holder = new BukkitTask[1];
-        holder[0] = Bukkit.getScheduler().runTaskTimer(this, () -> {
+        holder[0] = gemTimer(p, () -> {
             runs[0]++;
             if (runs[0] > 15 || !p.isOnline()) {
                 holder[0].cancel();
@@ -2231,7 +2443,7 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
         p.getWorld().playSound(p.getLocation(), Sound.BLOCK_BEACON_ACTIVATE, 2f, 0.8f);
         final int[] runs = {0};
         final BukkitTask[] holder = new BukkitTask[1];
-        holder[0] = Bukkit.getScheduler().runTaskTimer(this, () -> {
+        holder[0] = gemTimer(p, () -> {
             runs[0]++;
             if (runs[0] > 20 || !p.isOnline()) {
                 meltdownUntil.remove(p.getUniqueId());
@@ -2244,7 +2456,7 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
                 if (!(en instanceof LivingEntity le) || en.equals(p) || isFriendlyTo(p, le)) continue;
                 hit(le, 3, p);
                 if (le instanceof Player victim) {
-                    victim.sendMessage(ChatColor.GREEN + "You are being melted from the radiation");
+                    if (runs[0] % 5 == 1) victim.sendMessage(ChatColor.GREEN + "You are being melted from the radiation");
                 }
             }
         }, 0L, 20L);
@@ -2311,7 +2523,7 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
         final double[] spin = {0};
         final int[] runs = {0};
         final BukkitTask[] holder = new BukkitTask[1];
-        holder[0] = Bukkit.getScheduler().runTaskTimer(this, () -> {
+        holder[0] = gemTimer(p, () -> {
             runs[0]++;
             spin[0] += 0.3;
             if (runs[0] > 100 || !p.isOnline()) {
@@ -2472,7 +2684,7 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
         p.sendMessage(ChatColor.GOLD + "Cozy Campfire lit for 15 seconds.");
         final int[] runs = {0};
         final BukkitTask[] holder = new BukkitTask[1];
-        holder[0] = Bukkit.getScheduler().runTaskTimer(this, () -> {
+        holder[0] = gemTimer(p, () -> {
             runs[0]++;
             if (runs[0] > 15 || !p.isOnline()) {
                 holder[0].cancel();
@@ -2515,7 +2727,7 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
         charging.put(id, state);
         p.sendMessage(ChatColor.YELLOW + "Charging. Press F to release.");
         final BukkitTask[] holder = new BukkitTask[1];
-        holder[0] = Bukkit.getScheduler().runTaskTimer(this, () -> {
+        holder[0] = gemTimer(p, () -> {
             if (!charging.containsKey(id) || !p.isOnline()) {
                 holder[0].cancel();
                 return;
@@ -2704,7 +2916,7 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
         addFollower(warden);
         final int[] runs = {0};
         final BukkitTask[] holder = new BukkitTask[1];
-        holder[0] = Bukkit.getScheduler().runTaskTimer(this, () -> {
+        holder[0] = gemTimer(p, () -> {
             runs[0]++;
             if (!warden.isValid() || runs[0] > 600 || !p.isOnline()) {
                 if (warden.isValid()) warden.remove();
@@ -2812,7 +3024,7 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
         if (!ready(p, "g_taijitu", 300000)) return;
         final int[] runs = {0};
         final BukkitTask[] holder = new BukkitTask[1];
-        holder[0] = Bukkit.getScheduler().runTaskTimer(this, () -> {
+        holder[0] = gemTimer(p, () -> {
             runs[0]++;
             if (runs[0] > 120 || !p.isOnline()) {
                 holder[0].cancel();
@@ -2897,6 +3109,29 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
 
     private final Map<UUID, Long> umbralUntil = new HashMap<>();
     private final Map<UUID, Deque<Location>> posHistory = new HashMap<>();
+    private final Map<UUID, List<BukkitTask>> gemTasks = new HashMap<>();
+
+    // Repeating gem ability task, tracked so it stops as soon as the player no longer holds a gem or the crown.
+    private BukkitTask gemTimer(Player p, Runnable r, long delay, long period) {
+        BukkitTask t = Bukkit.getScheduler().runTaskTimer(this, r, delay, period);
+        gemTasks.computeIfAbsent(p.getUniqueId(), k -> new ArrayList<>()).add(t);
+        return t;
+    }
+
+    private void cleanupGemTasks() {
+        Iterator<Map.Entry<UUID, List<BukkitTask>>> it = gemTasks.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry<UUID, List<BukkitTask>> en = it.next();
+            Player p = Bukkit.getPlayer(en.getKey());
+            boolean holding = p != null && (gemOf(p) != null || holdsItem(p, "cursedcrown"));
+            if (!holding) {
+                for (BukkitTask t : en.getValue()) t.cancel();
+                it.remove();
+            } else {
+                en.getValue().removeIf(BukkitTask::isCancelled);
+            }
+        }
+    }
     private boolean reflectBusy = false;
 
     private void tickPosHistory() {
@@ -2908,6 +3143,21 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
     }
 
     // Yellow trail for anyone sprinting while wearing or holding the Cursed Crown.
+    private void tickGemAuraAll() {
+        for (Player p : Bukkit.getOnlinePlayers()) {
+            String g = gemOf(p);
+            if (g == null || !gems.containsKey(g)) continue;
+            Color c = colorFor(g);
+            double base = gemTick * 0.15;
+            for (int k = 0; k < 3; k++) {
+                double a = base + k * 2 * Math.PI / 3;
+                double h = 0.4 + ((gemTick + k * 7) % 20) * 0.08;
+                p.getWorld().spawnParticle(Particle.DUST, p.getLocation().add(Math.cos(a) * 1.0, h, Math.sin(a) * 1.0),
+                        1, 0, 0, 0, 0, new Particle.DustOptions(c, 1.3f));
+            }
+        }
+    }
+
     private void tickCrownTrail() {
         for (Player p : Bukkit.getOnlinePlayers()) {
             if (!p.isSprinting()) continue;
@@ -2971,7 +3221,7 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
         final Location center = p.getLocation().clone();
         final int[] runs = {0};
         final BukkitTask[] holder = new BukkitTask[1];
-        holder[0] = Bukkit.getScheduler().runTaskTimer(this, () -> {
+        holder[0] = gemTimer(p, () -> {
             runs[0]++;
             if (runs[0] > 15 || !p.isOnline()) {
                 holder[0].cancel();
@@ -3012,7 +3262,6 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
         if (in != null && (in.getType().equals(PotionEffectType.DARKNESS) || in.getType().equals(PotionEffectType.BLINDNESS))) {
             e.setCancelled(true);
             p.getWorld().spawnParticle(Particle.SMOKE, p.getLocation().add(0, 1, 0), 10, 0.4, 0.6, 0.4, 0.02);
-            p.sendActionBar(ChatColor.DARK_PURPLE + "Solar Eclipse blocked " + in.getType().getKey().getKey());
         }
     }
 
@@ -3415,6 +3664,11 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
         g.getPersistentDataContainer().set(ultKey, PersistentDataType.STRING, "giantmob");
         AttributeInstance sc = gl.getAttribute(Attribute.GENERIC_SCALE);
         if (sc != null) sc.setBaseValue(3.0);
+        AttributeInstance hp = gl.getAttribute(Attribute.GENERIC_MAX_HEALTH);
+        if (hp != null) {
+            hp.setBaseValue(400);
+            gl.setHealth(400);
+        }
         gl.setPersistent(true);
         gl.setCustomName(ChatColor.GOLD + "" + ChatColor.BOLD + "Giant " + t.name().replace('_', ' '));
         gl.setCustomNameVisible(true);
@@ -3431,11 +3685,6 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
         if (!"giantmob".equals(mount.getPersistentDataContainer().get(ultKey, PersistentDataType.STRING))) return;
         Player p = e.getPlayer();
         e.setCancelled(true);
-        UUID owner = ownerOf(mount);
-        if (owner == null || !owner.equals(p.getUniqueId())) {
-            p.sendMessage(ChatColor.RED + "That isn't your mount.");
-            return;
-        }
         if (!mount.getPassengers().isEmpty()) return;
         mount.addPassenger(p);
         if (FLYERS.contains(mount.getType())) mount.setGravity(false);
@@ -3480,6 +3729,11 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
         parrot.setPersistent(true);
         AttributeInstance sc = parrot.getAttribute(Attribute.GENERIC_SCALE);
         if (sc != null) sc.setBaseValue(3.0);
+        AttributeInstance php = parrot.getAttribute(Attribute.GENERIC_MAX_HEALTH);
+        if (php != null) {
+            php.setBaseValue(300);
+            parrot.setHealth(300);
+        }
         parrot.setCustomName(ChatColor.GREEN + "" + ChatColor.BOLD + "Giant Parrot");
         parrot.setCustomNameVisible(true);
         p.sendMessage(ChatColor.GREEN + "Giant Parrot summoned. Right-click it to ride. Sneak to get off.");
@@ -3492,11 +3746,6 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
         if (!"giantparrot".equals(par.getPersistentDataContainer().get(ultKey, PersistentDataType.STRING))) return;
         Player p = e.getPlayer();
         e.setCancelled(true);
-        UUID owner = ownerOf(par);
-        if (owner == null || !owner.equals(p.getUniqueId())) {
-            p.sendMessage(ChatColor.RED + "That's not your parrot.");
-            return;
-        }
         if (!par.getPassengers().isEmpty()) return;
         par.addPassenger(p);
         par.setGravity(false);
@@ -3543,11 +3792,6 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
         if (!"giantaxo".equals(ax.getPersistentDataContainer().get(ultKey, PersistentDataType.STRING))) return;
         Player p = e.getPlayer();
         e.setCancelled(true);
-        UUID owner = ownerOf(ax);
-        if (owner == null || !owner.equals(p.getUniqueId())) {
-            p.sendMessage(ChatColor.RED + "That's not your axolotl.");
-            return;
-        }
         if (!ax.getPassengers().isEmpty()) return;
         ax.addPassenger(p);
         ax.setGravity(false);
@@ -3677,7 +3921,7 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
         p.getWorld().playSound(p.getLocation(), Sound.ENTITY_LIGHTNING_BOLT_THUNDER, 2f, 0.8f);
         final int[] runs = {0};
         final BukkitTask[] holder = new BukkitTask[1];
-        holder[0] = Bukkit.getScheduler().runTaskTimer(this, () -> {
+        holder[0] = gemTimer(p, () -> {
             runs[0]++;
             if (!p.isOnline() || runs[0] > 10) {
                 zeusUntil.remove(p.getUniqueId());
@@ -3910,7 +4154,7 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
             return;
         }
 
-        boolean intoContainer = !top.equals(p.getInventory());
+        boolean intoContainer = !(top.getType() == InventoryType.PLAYER || top.getType() == InventoryType.CRAFTING);
         if (intoContainer && (isGem(e.getCursor()) || isGem(e.getCurrentItem()))) {
             e.setCancelled(true);
             return;
@@ -3933,7 +4177,7 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
             e.setCancelled(true);
             return;
         }
-        if (!top.equals(p.getInventory()) && isGem(e.getOldCursor())) {
+        if (!(top.getType() == InventoryType.PLAYER || top.getType() == InventoryType.CRAFTING) && isGem(e.getOldCursor())) {
             e.setCancelled(true);
         }
     }
@@ -4090,6 +4334,7 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
                     case "axolotlgiant" -> summonAxolotlGiant(sp);
                     case "giantparrot" -> summonGiantParrot(sp);
                     case "giantmob" -> summonGiantMob(sp, args.length > 2 ? args[2] : "horse");
+                    case "cutemob" -> summonGiantMob(sp, "panda");
                     default -> usage(sender, "/stickman summon <shrine|axolotlgiant>");
                 }
             }
@@ -4127,11 +4372,12 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
                 if (!(sender instanceof Player cp)) { sender.sendMessage(ChatColor.RED + "Players only."); return true; }
                 for (Map.Entry<String, List<String>> en : GEM_ABILITIES.entrySet()) {
                     StringBuilder sb = new StringBuilder(hexColor(gems.get(en.getKey()).hex()) + gems.get(en.getKey()).name());
+                    int slot = 0;
                     for (String ab : en.getValue()) {
+                        slot++;
                         long left = cdLeft(cp, ab);
-                        sb.append(ChatColor.GRAY).append(" | ").append(ChatColor.WHITE)
-                          .append(ABILITY_NAMES.getOrDefault(ab, ab)).append(" ")
-                          .append(left > 0 ? ChatColor.RED + "" + ((left / 1000) + 1) + "s" : ChatColor.GREEN + "READY");
+                        sb.append(ChatColor.GRAY).append(" | ").append(left > 0 ? ChatColor.RED : ChatColor.GREEN).append("A").append(slot);
+                        if (left > 0) sb.append(ChatColor.RED).append(" ").append((left / 1000) + 1).append("s");
                     }
                     sender.sendMessage(sb.toString());
                 }
@@ -4328,7 +4574,7 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
             return gems.keySet().stream().filter(s -> s.startsWith(last)).toList();
         }
         if (args.length == 2 && sub.equals("nocooldowngem")) return List.of("true", "false");
-        if (args.length == 2 && sub.equals("summon")) return List.of("shrine", "axolotlgiant", "giantparrot", "giantmob");
+        if (args.length == 2 && sub.equals("summon")) return List.of("shrine", "axolotlgiant", "giantparrot", "giantmob", "cutemob");
         boolean players = (args.length == 2 && sub.equals("trust"))
                 || (args.length == 3 && (sub.equals("givegem") || sub.equals("nocooldowngem")));
         if (players) {
