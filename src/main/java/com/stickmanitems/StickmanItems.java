@@ -748,9 +748,9 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
             }
             case "crystalpick" -> {
                 if (!ready(p, id, 6000)) return;
-                Vector look = eyeLoc.getDirection().normalize();
+                Vector shardDir = eyeLoc.getDirection().normalize();
                 for (int i = -2; i <= 2; i++) {
-                    Vector v = look.clone().rotateAroundY(Math.toRadians(i * 5)).multiply(1.8);
+                    Vector v = shardDir.clone().rotateAroundY(Math.toRadians(i * 5)).multiply(1.8);
                     Snowball shard = p.launchProjectile(Snowball.class, v);
                     shard.getPersistentDataContainer().set(projKey, PersistentDataType.STRING, "crystal");
                 }
