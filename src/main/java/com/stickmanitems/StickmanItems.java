@@ -65,6 +65,7 @@ import org.bukkit.entity.Item;
 import org.bukkit.event.EventPriority;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.event.inventory.InventoryType;
+import java.util.logging.Level;
 import org.bukkit.entity.Fireball;
 import org.bukkit.entity.IronGolem;
 import org.bukkit.entity.LivingEntity;
@@ -151,7 +152,7 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
             Map.entry("g_atomic", "Atomic Blast"), Map.entry("g_cloud", "Radiation Cloud"), Map.entry("g_shield", "Fallout Shield"),
             Map.entry("g_meltdown", "Meltdown"), Map.entry("g_sonic", "Sonic Wave"), Map.entry("g_echo", "Echo Pulse"),
             Map.entry("g_fist", "Warden's Fist"), Map.entry("g_wardenult", "Warden Monster"), Map.entry("g_yin", "Yin Strike"),
-            Map.entry("g_yang", "Yang Strike"), Map.entry("g_balance", "Balance"), Map.entry("g_taijitu", "Taijitu"),
+            Map.entry("g_yang", "Yang Strike"), Map.entry("g_balance", "Balance"), Map.entry("g_taijitu", "Taijitu"), Map.entry("reaper_soul", "Soul Drain"), Map.entry("reaper_mark", "Death Mark"),
             Map.entry("g_pad", "Jump Pad"), Map.entry("g_wburst", "Wind Burst"), Map.entry("g_pulse", "Void Pulse"),
             Map.entry("g_step", "Shadow Step"), Map.entry("g_umbral", "Umbral Shield"), Map.entry("g_eclipse", "Total Eclipse"),
             Map.entry("g_soldiers", "Summon Soldiers"), Map.entry("g_rally", "Rally"), Map.entry("g_curse", "Curse of Iron"),
@@ -171,7 +172,7 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
     private static final Set<EntityType> NO_SUMMON = EnumSet.of(
             EntityType.WARDEN, EntityType.WITHER, EntityType.ENDER_DRAGON,
             EntityType.ELDER_GUARDIAN, EntityType.GIANT, EntityType.IRON_GOLEM);
-    private static final List<String> STICKMAN_SUBS = List.of("givegem", "nocooldowngem", "trust", "summon", "help", "cooldowns", "gems", "reload", "clearcd", "heal", "feed", "followers", "cleargems", "trustlist", "dismount", "killmounts", "time", "weather", "stats", "menu", "killfollowers", "lightning", "bring", "tp", "fly", "invis", "crowncheck");
+    private static final List<String> STICKMAN_SUBS = List.of("givegem", "nocooldowngem", "trust", "summon", "help", "cooldowns", "gems", "reload", "clearcd", "heal", "feed", "followers", "cleargems", "trustlist", "dismount", "killmounts", "time", "weather", "stats", "menu", "killfollowers", "lightning", "bring", "tp", "fly", "invis", "crowncheck", "debug");
     private final Map<String, ShrineHolder> shrines = new HashMap<>();
     private final Map<UUID, List<ItemStack>> deathKeep = new HashMap<>();
     private final Map<UUID, Integer> boltCharges = new HashMap<>();
@@ -251,7 +252,7 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
         def("venom", "Venom Dagger", Material.NETHERITE_SWORD, "#64DD17", "Poisons normal mobs and players. Heals undead mobs. Right-click to lunge.");
         def("glacier", "Phoenix Call", Material.MACE, "#FF6E40", "Right-click to leap, then slam with fire and ice. The higher you fall, the harder it hits.");
         def("tidal", "Tidal Sword", Material.NETHERITE_SWORD, "#0091EA", "Right-click to fire a water orb that blasts everything near its impact.");
-        def("reapersigil", "Reaper's Sigil", Material.NETHER_STAR, "#E040FB", "Shoots a wither skull that damages and withers whatever it hits.");
+        def("reapersigil", "Reaper's Sigil", Material.WITHER_SKELETON_SKULL, "#2962FF", "Right-click: Blue Wither Skull, a blue skull that withers and damages whatever it hits. Shift + right-click: Soul Drain, 8 damage to nearby enemies and heals you per hit. Sprint + right-click: Death Mark, marks the nearest enemy for 10 seconds for +50% damage. Offhand: lifesteal, you heal the damage you deal to players.");
         def("arccaster", "Arc Caster", Material.BOW, "#E1BEE7", "A bow. Arrows stun or freeze whatever they hit.");
         def("shadowdagger", "Shadow Dagger", Material.NETHERITE_SWORD, "#7E57C2", "Right-click to teleport behind the nearest enemy and strike for 10 damage.");
         def("solarlance", "Solar Lance", Material.NETHERITE_SWORD, "#FFD180", "Right-click for an instant beam that hits everything in a 25-block line for 14 damage.");
@@ -268,10 +269,23 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
         def("honeybomb", "Honey Bomb", Material.HONEY_BOTTLE, "#FFB300", "Right-click to throw a honey bomb. On impact enemies nearby are heavily slowed and take 4 damage. 6-second cooldown.");
         def("cloudbottle", "Cloud Bottle", Material.GLASS_BOTTLE, "#B3E5FC", "Right-click to conjure a cloud that lifts you about 8 blocks and lowers you gently back down. 20-second cooldown.");
         def("meteor", "Meteor", Material.DRAGON_BREATH, "#E040FB", "Right-click to call 10 to 20 dragon fireballs down on random spots around where you aim. 90-second cooldown.");
+        def("hexbone", "Hex Bone", Material.BONE, "#CFD8DC", "Right-click to curse the ground around you for 15 seconds. Enemies within 6 blocks take 3 damage a second and are slowed. 25-second cooldown.");
+        def("cursedcoin", "Cursed Coin", Material.GOLD_NUGGET, "#FFB74D", "Right-click to flip a cursed coin. It can heal you, blind nearby enemies, or wail so loudly that nearby enemies are slowed. 15-second cooldown.");
+        def("spectralquill", "Spectral Quill", Material.FEATHER, "#E1F5FE", "Right-click to write a curse on the nearest enemy within 15 blocks. It takes 12 damage and gains Wither and Darkness. 12-second cooldown.");
+        def("rottenoffering", "Rotten Offering", Material.ROTTEN_FLESH, "#558B2F", "Right-click to raise 3 zombie servants for 60 seconds. They follow you and attack whatever you attack. 60-second cooldown.");
+        def("eyeofthecrypt", "Eye of the Crypt", Material.SPIDER_EYE, "#7E57C2", "Right-click to reveal every invisible or hidden creature within 20 blocks for 8 seconds. 20-second cooldown.");
         def("ghostlantern", "Ghost Lantern", Material.GLOW_INK_SAC, "#B388FF", "Right-click for 10 seconds of orbiting spirits that zap nearby enemies. Never hits your golems.");
     }
 
     private void tick() {
+        try {
+            tickInner();
+        } catch (Throwable t) {
+            getLogger().log(Level.SEVERE, "Tick error", t);
+        }
+    }
+
+    private void tickInner() {
         tickPhoenix();
         tickJetpack();
         tickGem();
@@ -287,6 +301,11 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
     // Action bar sits directly above the hotbar.
     private void updateHud() {
         for (Player p : Bukkit.getOnlinePlayers()) {
+            double[] cs = charging.get(p.getUniqueId());
+            if (cs != null) {
+                p.sendActionBar(ChatColor.GOLD + "Charge: " + (int) cs[0] + "%  (press F to release)");
+                continue;
+            }
             String gem = gemOf(p);
             if (gem != null && gems.containsKey(gem)) {
                 p.sendActionBar(gemTable(p, gem));
@@ -460,7 +479,7 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
             Map.entry("vampirefang", "Heals you for 40% of the melee damage you deal."),
             Map.entry("frostbite", "Melee hits slow the target and add 4 damage."),
             Map.entry("venom", "Melee hits poison normal mobs and players, and heal undead mobs."),
-            Map.entry("reapersigil", "Each hit withers normal mobs and players and heals you 2 hearts. Heals undead mobs."),
+            Map.entry("reapersigil", "Offhand: lifesteal, you heal the damage you deal to players. Passive: Harvest, every kill heals you 4 hearts while it is in your offhand."),
             Map.entry("bloodstone", "Melee hits heal you for 10% of the damage dealt."),
             Map.entry("arccaster", "Each arrow stuns or freezes the target it hits."),
             Map.entry("unoreverse", "Saves every projectile that hits you while you hold it, up to 30."),
@@ -594,9 +613,11 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
         String key = p.getUniqueId() + ":" + id;
         Long expiry = cooldowns.get(key);
         if (expiry != null && now < expiry) {
+            dbg(p, id + " is on cooldown");
             return false;
         }
         cooldowns.put(key, now + cdMs);
+        dbg(p, id + " fired (cooldown " + (cdMs / 1000) + "s)");
         String name = ABILITY_NAMES.getOrDefault(id, items.containsKey(id) ? items.get(id).name() : id);
         burstFor(p, id);
         p.playSound(p.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 0.6f, 1.4f);
@@ -690,6 +711,16 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
 
     @EventHandler
     public void onInteract(PlayerInteractEvent e) {
+        try {
+            onInteractInner(e);
+        } catch (Throwable t) {
+            getLogger().log(Level.SEVERE, "Click error", t);
+            e.getPlayer().sendMessage(ChatColor.RED + "Click error: " + t);
+        }
+    }
+
+    private void onInteractInner(PlayerInteractEvent e) {
+        dbg(e.getPlayer(), "click action=" + e.getAction() + " hand=" + e.getHand() + " item=" + idOf(e.getItem()) + " block=" + (e.getClickedBlock() == null ? "none" : e.getClickedBlock().getType().name()));
         if (e.getAction() == Action.RIGHT_CLICK_BLOCK
                 && (e.getHand() == null || e.getHand() == EquipmentSlot.HAND)
                 && e.getClickedBlock() != null
@@ -978,15 +1009,101 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
                 if (!ready(p, id, 90000)) return;
                 Location aim = aimPoint(p, 40);
                 int count = 10 + rnd.nextInt(11);
+                int spawned = 0;
                 for (int i = 0; i < count; i++) {
-                    final Location spot = aim.clone().add(rand(-12, 12), 0, rand(-12, 12));
-                    Bukkit.getScheduler().runTaskLater(this, () -> {
+                    Location spot = aim.clone().add(rand(-12, 12), 0, rand(-12, 12));
+                    try {
                         DragonFireball fb = w.spawn(spot.clone().add(0, 25, 0), DragonFireball.class);
                         fb.setVelocity(new Vector(0, -1.4, 0));
-                    }, rnd.nextInt(80));
+                        spawned++;
+                    } catch (Exception ex) {
+                        p.sendMessage(ChatColor.RED + "Meteor could not spawn a fireball: " + ex.getClass().getSimpleName());
+                        break;
+                    }
                 }
                 w.playSound(aim, Sound.ENTITY_ENDER_DRAGON_SHOOT, 2f, 1f);
-                p.sendMessage(ChatColor.LIGHT_PURPLE + "Meteor: " + count + " dragon fireballs incoming.");
+                p.sendMessage(ChatColor.LIGHT_PURPLE + "Meteor: " + spawned + " dragon fireballs incoming.");
+            }
+            case "hexbone" -> {
+                if (!ready(p, id, 25000)) return;
+                Location c = p.getLocation();
+                w.playSound(c, Sound.AMBIENT_CAVE, 2f, 0.7f);
+                final int[] runs = {0};
+                final BukkitTask[] holder = new BukkitTask[1];
+                holder[0] = Bukkit.getScheduler().runTaskTimer(this, () -> {
+                    runs[0]++;
+                    if (runs[0] > 15 || !p.isOnline()) {
+                        holder[0].cancel();
+                        return;
+                    }
+                    for (Entity en : c.getWorld().getNearbyEntities(c, 6, 3, 6)) {
+                        if (!(en instanceof LivingEntity le) || en.equals(p) || isFriendlyTo(p, le)) continue;
+                        hit(le, 3, p);
+                        le.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 30, 1));
+                    }
+                    particleRing(c.clone().add(0, 0.2, 0), 6, Particle.SOUL);
+                }, 0L, 20L);
+            }
+            case "cursedcoin" -> {
+                if (!ready(p, id, 15000)) return;
+                Location c = p.getLocation();
+                int flip = rnd.nextInt(3);
+                if (flip == 0) {
+                    p.setHealth(Math.min(p.getMaxHealth(), p.getHealth() + 6));
+                    p.sendMessage(ChatColor.GREEN + "The coin lands heads. You are healed.");
+                } else if (flip == 1) {
+                    for (Entity en : w.getNearbyEntities(c, 8, 4, 8)) {
+                        if (!(en instanceof LivingEntity le) || en.equals(p) || isFriendlyTo(p, le)) continue;
+                        le.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 80, 0));
+                    }
+                    p.sendMessage(ChatColor.DARK_GRAY + "The coin lands tails. Nearby enemies are blinded.");
+                } else {
+                    for (Entity en : w.getNearbyEntities(c, 8, 4, 8)) {
+                        if (!(en instanceof LivingEntity le) || en.equals(p) || isFriendlyTo(p, le)) continue;
+                        le.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 100, 1));
+                    }
+                    p.sendMessage(ChatColor.DARK_PURPLE + "The coin wails. Nearby enemies are slowed.");
+                }
+                w.playSound(c, Sound.ENTITY_GHAST_SCREAM, 1.5f, 0.6f);
+            }
+            case "spectralquill" -> {
+                LivingEntity target = nearestEnemy(p.getLocation(), 15, p);
+                if (target == null) {
+                    p.sendMessage(ChatColor.RED + "No enemy within 15 blocks.");
+                    return;
+                }
+                if (!ready(p, id, 12000)) return;
+                hit(target, 12, p);
+                target.addPotionEffect(new PotionEffect(PotionEffectType.WITHER, 120, 0));
+                target.addPotionEffect(new PotionEffect(PotionEffectType.DARKNESS, 120, 0));
+                target.getWorld().spawnParticle(Particle.SOUL, target.getLocation().add(0, 1, 0), 30, 0.4, 0.6, 0.4, 0.02);
+                w.playSound(target.getLocation(), Sound.ENTITY_ENDERMAN_STARE, 1.5f, 0.5f);
+            }
+            case "rottenoffering" -> {
+                if (!ready(p, id, 60000)) return;
+                for (int i = 0; i < 3; i++) {
+                    Zombie z = w.spawn(p.getLocation().add(rand(-2, 2), 0, rand(-2, 2)), Zombie.class);
+                    setOwner(z, p.getUniqueId());
+                    z.getPersistentDataContainer().set(ultKey, PersistentDataType.STRING, "servant");
+                    addFollower(z);
+                    Bukkit.getScheduler().runTaskLater(this, () -> {
+                        if (z.isValid()) z.remove();
+                    }, 1200L);
+                }
+                w.playSound(p.getLocation(), Sound.ENTITY_ZOMBIE_AMBIENT, 2f, 0.6f);
+            }
+            case "eyeofthecrypt" -> {
+                if (!ready(p, id, 20000)) return;
+                Location c = p.getLocation();
+                int revealed = 0;
+                for (Entity en : w.getNearbyEntities(c, 20, 20, 20)) {
+                    if (!(en instanceof LivingEntity le) || en.equals(p)) continue;
+                    if (!le.isInvisible() && !le.hasPotionEffect(PotionEffectType.INVISIBILITY)) continue;
+                    le.addPotionEffect(new PotionEffect(PotionEffectType.GLOWING, 160, 0));
+                    revealed++;
+                }
+                w.playSound(c, Sound.AMBIENT_CAVE, 2f, 1f);
+                p.sendMessage(ChatColor.DARK_PURPLE + "Eye of the Crypt revealed " + revealed + " hidden creature(s).");
             }
             case "tidal" -> {
                 if (!ready(p, id, 4000)) return;
@@ -995,6 +1112,14 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
                 w.playSound(p.getLocation(), Sound.ENTITY_PLAYER_SPLASH_HIGH_SPEED, 1f, 0.8f);
             }
             case "reapersigil" -> {
+                if (p.isSneaking()) {
+                    soulDrain(p);
+                    return;
+                }
+                if (p.isSprinting()) {
+                    deathMark(p);
+                    return;
+                }
                 if (!ready(p, id, 6000)) return;
                 WitherSkull skull = p.launchProjectile(WitherSkull.class);
                 if (skull instanceof Fireball fb) fb.setYield(0f);
@@ -1165,29 +1290,29 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
                 if (fwd.lengthSquared() == 0) fwd = new Vector(0, 0, 1);
                 final Vector f = fwd.normalize();
                 final Location origin = p.getLocation().clone();
-                final Set<UUID> slashed = new HashSet<>();
+                int hits = 0;
+                for (Entity en : w.getNearbyEntities(origin, 8, 4, 8)) {
+                    if (!(en instanceof LivingEntity le) || en.equals(p) || isFriendlyTo(p, le)) continue;
+                    Vector to = le.getLocation().toVector().subtract(origin.toVector()).setY(0);
+                    if (to.lengthSquared() == 0) continue;
+                    if (to.normalize().dot(f) > 0.2) {
+                        le.damage(20, p);
+                        le.setVelocity(f.clone().multiply(0.6).setY(0.3));
+                        hits++;
+                    }
+                }
                 for (int k = 0; k < 6; k++) {
                     final int step = k;
                     Bukkit.getScheduler().runTaskLater(this, () -> {
-                        double ang = Math.toRadians(-70 + step * 28);
+                        double ang = Math.toRadians(-80 + step * 32);
                         Vector dir = f.clone().rotateAroundY(ang);
                         for (double r = 2; r <= 8; r += 1.0) {
-                            Location pt = origin.clone().add(0, 1, 0).add(dir.clone().multiply(r));
-                            w.spawnParticle(Particle.DRAGON_BREATH, pt, 3, 0.05, 0.05, 0.05, 0.01);
-                        }
-                        for (Entity en : w.getNearbyEntities(origin, 8, 3, 8)) {
-                            if (!(en instanceof LivingEntity le) || en.equals(p) || isFriendlyTo(p, le) || slashed.contains(le.getUniqueId())) continue;
-                            Vector to = le.getLocation().toVector().subtract(origin.toVector()).setY(0);
-                            if (to.lengthSquared() == 0) continue;
-                            if (to.normalize().dot(f) > 0.35) {
-                                slashed.add(le.getUniqueId());
-                                hit(le, 20, p);
-                                le.setVelocity(f.clone().multiply(0.6).setY(0.3));
-                            }
+                            w.spawnParticle(Particle.DRAGON_BREATH, origin.clone().add(0, 1, 0).add(dir.clone().multiply(r)), 3, 0.05, 0.05, 0.05, 0.01);
                         }
                     }, k);
                 }
                 w.playSound(origin, Sound.ENTITY_PLAYER_ATTACK_SWEEP, 1.5f, 0.8f);
+                p.sendMessage(ChatColor.DARK_PURPLE + "Void Slasher hit " + hits + " target(s).");
             }
             case "grapple" -> {
                 if (!ready(p, id, 1500)) return;
@@ -1844,12 +1969,30 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
     @EventHandler
     public void onGemF(PlayerSwapHandItemsEvent e) {
         Player p = e.getPlayer();
+        try {
+            onGemFInner(e);
+            String g = gemOf(p);
+            if (g != null && GEM_ABILITIES.containsKey(g) && !charging.containsKey(p.getUniqueId())) {
+                boolean ult = g.equals("wind") ? p.isSprinting() : p.isSneaking();
+                List<String> ab = GEM_ABILITIES.get(g);
+                long left = cdLeft(p, ult ? ab.get(3) : ab.get(2));
+                if (left > 0) p.sendTitle("", ChatColor.RED + "Cooldown " + ((left / 1000) + 1) + "s", 0, 25, 5);
+            }
+        } catch (Throwable t) {
+            getLogger().log(Level.SEVERE, "F key error", t);
+            p.sendMessage(ChatColor.RED + "F key error: " + t);
+        }
+    }
+
+    private void onGemFInner(PlayerSwapHandItemsEvent e) {
+        Player p = e.getPlayer();
         String gem = gemOf(p);
         if (gem == null) return;
         e.setCancelled(true);
         boolean shift = p.isSneaking();
         boolean sprint = p.isSprinting();
         boolean ult = gem.equals("wind") ? sprint : shift;
+        dbg(p, "F press gem=" + gem + " ult=" + ult + " sneaking=" + shift + " sprinting=" + sprint);
         if (ult) {
             if (!ultGate(p)) return;
             switch (gem) {
@@ -2372,6 +2515,7 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
     // ----- Gem timers -----
 
     private Color colorFor(String id) {
+        if (id.equals("reaperskull")) return Color.fromRGB(0x2962FF);
         ItemDef d = items.get(id);
         if (d == null) d = gems.get(id);
         if (d == null) return Color.WHITE;
@@ -3148,8 +3292,15 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
     // ===================== SOLAR ECLIPSE =====================
 
     private final Map<UUID, Long> umbralUntil = new HashMap<>();
+    private final Map<UUID, UUID> deathMarkTarget = new HashMap<>();
+    private final Map<UUID, Long> deathMarkUntil = new HashMap<>();
     private final Map<UUID, Deque<Location>> posHistory = new HashMap<>();
     private final Map<UUID, List<BukkitTask>> gemTasks = new HashMap<>();
+    private final Set<UUID> debugOn = new HashSet<>();
+
+    private void dbg(Player p, String msg) {
+        if (debugOn.contains(p.getUniqueId())) p.sendMessage(ChatColor.DARK_GRAY + "[dbg] " + msg);
+    }
 
     // Repeating gem ability task, tracked so it stops as soon as the player no longer holds a gem or the crown.
     private BukkitTask gemTimer(Player p, Runnable r, long delay, long period) {
@@ -3437,6 +3588,63 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
         if (e.getEntity() instanceof Player p && holdsItem(p, "cursedcrown")) {
             e.setDamage(e.getDamage() * 1.1);
         }
+    }
+
+    // ===================== REAPER SIGIL =====================
+
+    private void soulDrain(Player p) {
+        if (!ready(p, "reaper_soul", 12000)) return;
+        World w = p.getWorld();
+        Location c = p.getLocation();
+        int hit = 0;
+        for (Entity en : w.getNearbyEntities(c, 6, 3, 6)) {
+            if (!(en instanceof LivingEntity le) || en.equals(p) || isFriendlyTo(p, le)) continue;
+            hit(le, 8, p);
+            le.addPotionEffect(new PotionEffect(PotionEffectType.WITHER, 60, 0));
+            if (hit < 4) p.setHealth(Math.min(p.getMaxHealth(), p.getHealth() + 2));
+            hit++;
+        }
+        particleRing(c.clone().add(0, 0.2, 0), 6, Particle.SOUL);
+        w.playSound(c, Sound.ENTITY_WITHER_AMBIENT, 1.5f, 1f);
+        p.sendMessage(ChatColor.DARK_AQUA + "Soul Drain hit " + hit + " target(s).");
+    }
+
+    private void deathMark(Player p) {
+        LivingEntity target = nearestEnemy(p.getLocation(), 20, p);
+        if (target == null) {
+            p.sendMessage(ChatColor.RED + "No enemy within 20 blocks.");
+            return;
+        }
+        if (!ready(p, "reaper_mark", 25000)) return;
+        deathMarkTarget.put(p.getUniqueId(), target.getUniqueId());
+        deathMarkUntil.put(p.getUniqueId(), System.currentTimeMillis() + 10000);
+        target.addPotionEffect(new PotionEffect(PotionEffectType.GLOWING, 200, 0));
+        p.sendMessage(ChatColor.DARK_RED + "Death Mark set on a " + target.getType().name().toLowerCase(Locale.ROOT).replace('_', ' ') + " for 10 seconds.");
+    }
+
+    // Offhand lifesteal: you heal by the health the victim loses.
+    @EventHandler
+    public void onReaperLifesteal(EntityDamageByEntityEvent e) {
+        if (e.isCancelled() || !(e.getDamager() instanceof Player p) || !(e.getEntity() instanceof Player)) return;
+        if (!"reapersigil".equals(idOf(p.getInventory().getItemInOffHand()))) return;
+        p.setHealth(Math.min(p.getMaxHealth(), p.getHealth() + e.getFinalDamage()));
+    }
+
+    @EventHandler
+    public void onDeathMarkDamage(EntityDamageByEntityEvent e) {
+        if (!(e.getDamager() instanceof Player p) || !(e.getEntity() instanceof LivingEntity v)) return;
+        UUID target = deathMarkTarget.get(p.getUniqueId());
+        if (target != null && target.equals(v.getUniqueId()) && isActive(deathMarkUntil, p)) {
+            e.setDamage(e.getDamage() * 1.5);
+        }
+    }
+
+    // Passive Harvest: every kill heals 4 hearts while the sigil is in your offhand.
+    @EventHandler
+    public void onReaperHarvest(EntityDeathEvent e) {
+        Player killer = e.getEntity().getKiller();
+        if (killer == null || !"reapersigil".equals(idOf(killer.getInventory().getItemInOffHand()))) return;
+        killer.setHealth(Math.min(killer.getMaxHealth(), killer.getHealth() + 8));
     }
 
     // ===================== GUI MENU =====================
@@ -4589,6 +4797,14 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
                 } else {
                     target.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 1000000, 0, false, false));
                     sender.sendMessage(ChatColor.GRAY + "Invisibility on for " + target.getName());
+                }
+            }
+            case "debug" -> {
+                if (!(sender instanceof Player dp)) { sender.sendMessage(ChatColor.RED + "Players only."); return true; }
+                if (debugOn.remove(dp.getUniqueId())) sender.sendMessage(ChatColor.GRAY + "Debug off.");
+                else {
+                    debugOn.add(dp.getUniqueId());
+                    sender.sendMessage(ChatColor.GRAY + "Debug on. Press F or click an item and send me these lines.");
                 }
             }
             case "crowncheck" -> {
