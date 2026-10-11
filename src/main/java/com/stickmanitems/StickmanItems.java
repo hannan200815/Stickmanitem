@@ -678,7 +678,8 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
         double bestDist = radius;
         for (Entity en : loc.getWorld().getNearbyEntities(loc, radius, radius, radius)) {
             if (!(en instanceof LivingEntity le) || en.equals(exclude)) continue;
-            if (en instanceof Player) continue;
+            if (en instanceof Player tp && exclude != null
+                    && (tp.getUniqueId().equals(exclude.getUniqueId()) || isTrusted(exclude.getUniqueId(), tp.getUniqueId()))) continue;
             UUID own = ownerOf(le);
             if (own != null && exclude != null && (own.equals(exclude.getUniqueId()) || isTrusted(own, exclude.getUniqueId()))) continue;
             double d = le.getLocation().distance(loc);
