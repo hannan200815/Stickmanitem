@@ -211,6 +211,7 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
 
     private void def(String id, String name, Material mat, String hex, String lore) {
         items.put(id, new ItemDef(id, name, mat, hex, lore));
+        modelIds.put(id, 1000 + items.size());
     }
 
     private void giveOrDrop(Player p, ItemStack it) {
@@ -592,6 +593,8 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
         ItemStack it = new ItemStack(d.mat());
         ItemMeta m = it.getItemMeta();
         m.setDisplayName(hexColor(d.hex()) + ChatColor.BOLD + d.name());
+        Integer model = modelIds.get(d.id());
+        if (model != null) m.setCustomModelData(model);
         m.setLore(loreFor(d));
         m.setEnchantmentGlintOverride(true);
         if (d.id().equals("cursedcrown")) {
@@ -1014,7 +1017,9 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
                     Location spot = aim.clone().add(rand(-12, 12), 0, rand(-12, 12));
                     try {
                         DragonFireball fb = w.spawn(spot.clone().add(0, 25, 0), DragonFireball.class);
+                        fb.setShooter(p);
                         fb.setVelocity(new Vector(0, -1.4, 0));
+                        meteorOwners.put(p.getUniqueId(), System.currentTimeMillis());
                         spawned++;
                     } catch (Exception ex) {
                         p.sendMessage(ChatColor.RED + "Meteor could not spawn a fireball: " + ex.getClass().getSimpleName());
@@ -1825,6 +1830,7 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
 
     private void gemDef(String id, String name, Material mat, String hex, String lore) {
         gems.put(id, new ItemDef(id, name, mat, hex, lore));
+        modelIds.put(id, 2000 + gems.size());
     }
 
     private boolean isActive(Map<UUID, Long> map, Player p) {
@@ -2844,6 +2850,23 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
 
     // ===================== INFERNO =====================
 
+    private final Map<UUID, Long> meteorOwners = new HashMap<>();
+
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    public void onMeteorSelfHarm(EntityDamageEvent e) {
+        if (!(e.getEntity() instanceof Player victim)) return;
+        Long cast = meteorOwners.get(victim.getUniqueId());
+        if (cast == null || System.currentTimeMillis() - cast > 20000L) return;
+        EntityDamageEvent.DamageCause cause = e.getCause();
+        if (cause != EntityDamageEvent.DamageCause.MAGIC
+                && cause != EntityDamageEvent.DamageCause.PROJECTILE
+                && cause != EntityDamageEvent.DamageCause.ENTITY_EXPLOSION) return;
+        if (e instanceof EntityDamageByEntityEvent de
+                && !(de.getDamager() instanceof DragonFireball)
+                && !(de.getDamager() instanceof Fireball)) return;
+        e.setCancelled(true);
+    }
+
     private void meteorShower(Player p) {
         if (!ready(p, "g_meteor", 20000)) return;
         Location aim = aimPoint(p, 25);
@@ -3297,6 +3320,7 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
     private final Map<UUID, Deque<Location>> posHistory = new HashMap<>();
     private final Map<UUID, List<BukkitTask>> gemTasks = new HashMap<>();
     private final Set<UUID> debugOn = new HashSet<>();
+    private final Map<String, Integer> modelIds = new HashMap<>();
 
     private void dbg(Player p, String msg) {
         if (debugOn.contains(p.getUniqueId())) p.sendMessage(ChatColor.DARK_GRAY + "[dbg] " + msg);
