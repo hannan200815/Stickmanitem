@@ -1,5 +1,6 @@
 package com.stickmanitems;
 
+import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.entity.Monster;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -200,6 +201,13 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
 
     @Override
     public void onEnable() {
+        loadVanillaCooldowns();
+        if (getCommand("stickcooldowns") != null) {
+            getCommand("stickcooldowns").setExecutor((sender, cmd, label, args) -> {
+                cooldownCommand(sender, args);
+                return true;
+            });
+        }
         creatures = new CreaturesModule();
         creatures.start(this);
         itemKey = new NamespacedKey(this, "item");
@@ -216,6 +224,12 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
         getCommand("stickman").setTabCompleter(this);
         Bukkit.getScheduler().runTaskTimer(this, this::tick, 1L, 1L);
         getLogger().info("StickmanItems " + VERSION + " enabled.");
+    }
+
+    /** Like def(), but the material is looked up by name, so a material missing from this server falls back to a Stick. */
+    private void def(String id, String name, String matName, String hex, String lore) {
+        Material m = Material.matchMaterial(matName);
+        def(id, name, m == null ? Material.STICK : m, hex, lore);
     }
 
     private void def(String id, String name, Material mat, String hex, String lore) {
@@ -237,97 +251,114 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
     }
 
     private void registerItems() {
-        def("thunderstick", "Thunderstick", Material.NETHERITE_SWORD, "#FFEA00", "Hits strike lightning. Right-click to call lightning where you look.");
-        def("vampirefang", "Vampire Fang", Material.NETHERITE_SWORD, "#FF1744", "Heals you for 40% of melee damage. Right-click for a 4-heart heal.");
-        def("frostbite", "Frostbite", Material.NETHERITE_SWORD, "#00E5FF", "Hits slow targets and add extra damage. Right-click for a frost nova.");
-        def("winddash", "Wind Shard", Material.BREEZE_ROD, "#B3E5FC", "Right-click to dash forward. No cooldown. No fall damage from the dash.");
-        def("infernowand", "Inferno Wand", Material.BLAZE_ROD, "#FF9100", "Right-click to launch a fireball. Fireballs do not break blocks.");
-        def("groundbreaker", "Groundbreaker", Material.MACE, "#FFB300", "Right-click for a shockwave that damages and knocks back nearby enemies. Breaks no blocks.");
-        def("phoenixblade", "Phoenix Blade", Material.MACE, "#FF2D75", "Right-click to leap into the air, then dive and smash. Harder falls hit harder.");
-        def("gauntlet", "Control Orb", Material.PRISMARINE_SHARD, "#7C4DFF", "Right-click a mob or player to take control of it. Right-click again to hurl it forward.");
-        def("grenade", "Grenade", Material.EGG, "#76FF03", "Right-click to throw. Explodes on impact without breaking blocks or hurting you.");
-        def("magnetrod", "Magnet Rod", Material.IRON_NUGGET, "#D500F9", "Right-click to pull nearby mobs toward you, hard.");
-        def("blizzardorb", "Blizzard Orb", Material.SNOWBALL, "#18FFFF", "Right-click to freeze everything nearby and slow it hard.");
-        def("healingcharm", "Healing Charm", Material.GHAST_TEAR, "#FF4081", "Right-click to heal 8 hearts, gain regeneration and remove negative effects.");
-        def("shadowcloak", "Shadow Cloak", Material.PHANTOM_MEMBRANE, "#6200EA", "Right-click for 20 seconds of invisibility and Speed II.");
-        def("golembell", "Golem Call", Material.GOAT_HORN, "#FFC400", "Blow the horn to summon a friendly iron golem for 90 seconds.");
-        def("sonichorn", "Sonic Horn", Material.GOAT_HORN, "#FFAB40", "Right-click for a sonic boom that hits hard and knocks back everything in its path.");
-        def("stormheart", "Storm Heart", Material.HEART_OF_THE_SEA, "#2962FF", "Right-click to call lightning on up to 5 nearby mobs.");
-        def("phasefruit", "Phase Fruit", Material.CHORUS_FRUIT, "#00E676", "Right-click to blink forward up to 12 blocks, then get Speed II. Never puts you inside a block.");
-        def("voidscythe", "Void Slasher", Material.NETHERITE_SWORD, "#651FFF", "Right-click for a wide void slash that hits everything in front of you.");
-        def("grapple", "Grapple Hook", Material.LEAD, "#8D6E63", "Right-click to hook a block or mob and pull yourself toward it. Pulls harder.");
-        def("starfall", "Starfall Staff", Material.STICK, "#FFF59D", "Right-click to call 5 falling stars onto the spot you look at.");
-        def("venom", "Venom Dagger", Material.NETHERITE_SWORD, "#64DD17", "Poisons normal mobs and players. Heals undead mobs. Right-click to lunge.");
-        def("glacier", "Phoenix Call", Material.MACE, "#FF6E40", "Right-click to leap, then slam with fire and ice. The higher you fall, the harder it hits.");
-        def("tidal", "Tidal Sword", Material.NETHERITE_SWORD, "#0091EA", "Right-click to fire a water orb that blasts everything near its impact.");
-        def("reapersigil", "Reaper's Sigil", Material.WITHER_SKELETON_SKULL, "#2962FF", "Right-click: Blue Wither Skull, a blue skull that withers and damages whatever it hits. Shift + right-click: Soul Drain, 8 damage to nearby enemies and heals you per hit. Sprint + right-click: Death Mark, marks the nearest enemy for 10 seconds for +50% damage. Offhand: lifesteal, you heal the damage you deal to players.");
-        def("shadowdagger", "Shadow Dagger", Material.NETHERITE_SWORD, "#7E57C2", "Right-click to teleport behind the nearest enemy and strike for 10 damage.");
-        def("solarlance", "Solar Lance", Material.NETHERITE_SWORD, "#FFD180", "Right-click for an instant beam that hits everything in a 25-block line for 14 damage.");
-        def("gravitywell", "Gravity Well", Material.MAGMA_CREAM, "#AB47BC", "Right-click to place a gravity well for 6 seconds. It pulls and damages nearby mobs.");
-        def("aegistotem", "Aegis Totem", Material.TOTEM_OF_UNDYING, "#66BB6A", "Right-click for 15 seconds of Resistance and Regeneration for you and your trusted players nearby.");
-        def("unoreverse", "Uno Reverse Blade", Material.NETHERITE_SWORD, "#00E5FF", "Saves every projectile that hits you (up to 30). Right-click to release them back, newest first.");
-        def("chronohourglass", "Chrono Hourglass", Material.CLOCK, "#FFD700", "Right-click to freeze every enemy within 10 blocks for 4 seconds. Trusted players and your mobs are not affected.");
-        def("bloodstone", "Bloodstone Mace", Material.MACE, "#B71C1C", "Hits heal you for 10% of the damage dealt. Right-click for a blood nova that damages and slows nearby enemies.");
-        def("quakehammer", "Quake Hammer", Material.MACE, "#8D6E63", "Right-click to slam the ground. Everything within 6 blocks takes 18 damage and is thrown into the air.");
-        def("venomsickle", "Venom Sickle", Material.NETHERITE_SWORD, "#33691E", "Right-click to release a poison cloud for 8 seconds. Poisons normal mobs and players, heals undead.");
-        def("crystalpick", "Crystal Pick", Material.NETHERITE_PICKAXE, "#E1F5FE", "Right-click to fire 5 crystal shards in a spread. Each does 7 damage in a small blast.");
-        def("rewindcompass", "Rewind Compass", Material.RECOVERY_COMPASS, "#00BFA5", "Right-click to teleport back to where you were 10 seconds ago. 30-second cooldown.");
-        def("spoutshell", "Nautilus Spout", Material.NAUTILUS_SHELL, "#0288D1", "Right-click to raise a water spout where you aim. Enemies near it are launched 2.5 blocks up and take 8 damage. 12-second cooldown.");
-        def("honeybomb", "Honey Bomb", Material.HONEY_BOTTLE, "#FFB300", "Right-click to throw a honey bomb. On impact enemies nearby are heavily slowed and take 4 damage. 6-second cooldown.");
-        def("cloudbottle", "Cloud Bottle", Material.GLASS_BOTTLE, "#B3E5FC", "Right-click to conjure a cloud that lifts you about 8 blocks and lowers you gently back down. 20-second cooldown.");
-        def("meteor", "Meteor", Material.DRAGON_BREATH, "#E040FB", "Right-click to call 10 to 20 dragon fireballs down on random spots around where you aim. 90-second cooldown.");
-        def("emberblade", "Ember Blade", Material.NETHERITE_SWORD, "#FF7043", "Ability 1 (right-click): Ember slash hits every enemy in a wide arc in front of you for 8 damage and sets them on fire for 4 seconds. 5-second cooldown.");
-        def("thornrapier", "Thorn Rapier", Material.NETHERITE_SWORD, "#66BB6A", "Ability 1 (right-click): Lunge forward and stab the first enemy you reach for 10 damage and 5 seconds of Poison. 6-second cooldown.");
-        def("moonsplitter", "Moonsplitter", Material.NETHERITE_SWORD, "#B39DDB", "Ability 1 (right-click): Crescent slash hits every enemy within 5 blocks for 9 damage and knocks them back. 7-second cooldown.");
-        def("frostfang", "Frostfang Greatsword", Material.NETHERITE_SWORD, "#81D4FA", "Ability 1 (right-click): Frost wave in a cone 8 blocks long deals 6 damage and slows enemies for 5 seconds. 9-second cooldown.");
-        def("voidcutter", "Void Cutter", Material.NETHERITE_SWORD, "#7E57C2", "Ability 1 (right-click): Blink 6 blocks forward and slash everything within 2.5 blocks of where you land for 10 damage. 8-second cooldown.");
-        def("bloodletter", "Bloodletter", Material.NETHERITE_SWORD, "#B71C1C", "Ability 1 (right-click): Spend 2 hearts to deal 12 damage to every enemy within 3 blocks. You need more than 3 hearts to use it. 10-second cooldown.");
-        def("sunder", "Sunder Blade", Material.NETHERITE_SWORD, "#8D6E63", "Ability 1 (right-click): Slam the ground, dealing 7 damage to enemies within 4 blocks and knocking them back. 6-second cooldown.");
-        def("soulreaver", "Soulreaver", Material.NETHERITE_SWORD, "#4A148C", "Ability 1 (right-click): Deals 6 hearts to every enemy within 4 blocks and heals you for half of the total, up to 6 hearts. 12-second cooldown.");
-        def("stormfang", "Stormfang", Material.NETHERITE_SWORD, "#29B6F6", "Ability 1 (right-click): Chain lightning strikes the 3 nearest enemies within 8 blocks for 6 damage each. 9-second cooldown.");
-        def("venomtooth", "Venomtooth", Material.NETHERITE_SWORD, "#7CB342", "Ability 1 (right-click): Releases a poison cloud around you for 6 seconds. Enemies within 3 blocks are poisoned and take damage each second. 14-second cooldown.");
-        def("bladestorm", "Bladestorm", Material.NETHERITE_SWORD, "#90A4AE", "Ability 1 (right-click): Spins twice, hitting every enemy within 3 blocks for 5 damage each time. 8-second cooldown.");
-        def("kaboom", "Kaboom Kachow", Material.BOW, "#FF3D00", "Every arrow shot from this bow explodes on impact.");
-        def("shakalaka", "Shakalaka Bow", Material.BOW, "#00FF9C", "Each arrow that lands triggers 3 random effects: lightning, explosion or fireball.");
-        def("arccaster", "Arc Caster", Material.BOW, "#E1BEE7", "A bow. Arrows stun or freeze whatever they hit.");
-        def("boomhammer", "Boom Hammer", Material.MACE, "#795548", "Ability 1 (right-click): Slams the ground, hitting foes within 4 blocks for 10 damage and knocking them back. 6-second cooldown.");
-        def("spearlance", "Spear of Dawn", Material.STICK, "#FFCA28", "Ability 1 (right-click): Lunges forward and hits the first foe you reach for 8 damage. 5-second cooldown.");
-        def("duskscythe", "Dusk Scythe", Material.NETHERITE_SWORD, "#6A1B9A", "Ability 1 (right-click): Sweeps a cone in front of you for 9 damage and slows everything it hits for 3 seconds. 6-second cooldown.");
-        def("thornwhip", "Thornwhip", Material.NETHERITE_SWORD, "#2E7D32", "Ability 1 (right-click): Whips a cone of foes in front of you for 5 damage and slows them for 4 seconds. 7-second cooldown.");
-        def("frostglaive", "Frost Glaive", Material.NETHERITE_SWORD, "#B3E5FC", "Ability 1 (right-click): Sweeps a cone for 7 damage and freezes foes for 4 seconds. 7-second cooldown.");
-        def("ironhalberd", "Iron Halberd", Material.NETHERITE_AXE, "#90A4AE", "Ability 1 (right-click): Hits everything within 3 blocks for 9 damage. 5-second cooldown.");
-        def("tidecaller", "Tidecaller Spear", Material.STICK, "#26C6DA", "Ability 1 (right-click): Calls lightning onto the nearest foe within 12 blocks for 8 damage. 8-second cooldown.");
-        def("bloodsickle", "Blood Sickle", Material.NETHERITE_SWORD, "#B71C1C", "Ability 1 (right-click): Hits everything within 3 blocks for 6 damage. 7-second cooldown.");
-        def("nagina", "Shadow Naginata", Material.NETHERITE_SWORD, "#263238", "Ability 1 (right-click): Long cone strike, 12 damage to foes up to 4 blocks away. 8-second cooldown.");
-        def("chainflail", "Chain Flail", Material.NETHERITE_SWORD, "#78909C", "Ability 1 (right-click): Swings in a wide ring, hitting everything within 5 blocks for 8 damage and knocking it back hard. 9-second cooldown.");
-        def("lanternstaff", "Lantern Staff", Material.BLAZE_ROD, "#FFB300", "Ability 1 (right-click): Fires a beam of light along your aim that deals 9 damage to the first foe it hits. 4-second cooldown.");
-        def("stonepike", "Stone Pike", Material.NETHERITE_SWORD, "#9E9E9E", "Ability 1 (right-click): Lunges forward and hits the first foe for 6 damage. 4-second cooldown.");
-        def("cleaver", "Obsidian Cleaver", Material.NETHERITE_AXE, "#311B92", "Ability 1 (right-click): Heavy swing hitting everything within 3.5 blocks for 11 damage. 7-second cooldown.");
-        def("wardenclaw", "Warden's Claw", Material.NETHERITE_SWORD, "#0D47A1", "Ability 1 (right-click): Lightning chains to the 3 nearest foes within 8 blocks for 6 damage each. 10-second cooldown.");
-        def("frostlance", "Frost Lance", Material.NETHERITE_SWORD, "#81D4FA", "Ability 1 (right-click): Chills everything within 4 blocks for 3 damage and slows it for 4 seconds. 9-second cooldown.");
-        def("emberpike", "Ember Pike", Material.STICK, "#FF6D00", "Ability 1 (right-click): Cone thrust for 9 damage. 6.5-second cooldown.");
-        def("stormhalberd", "Storm Halberd", Material.NETHERITE_AXE, "#FFEB3B", "Ability 1 (right-click): Lightning strikes the 2 nearest foes within 10 blocks for 9 damage each. 9-second cooldown.");
-        def("hexscythe", "Hexed Scythe", Material.NETHERITE_SWORD, "#4A148C", "Ability 1 (right-click): Withers everything within 5 blocks for 3 damage over 3 seconds. 14-second cooldown.");
-        def("windpike", "Wind Pike", Material.STICK, "#E0F7FA", "Ability 1 (right-click): Gust dash forward, hitting the first foe for 5 damage. 5-second cooldown.");
-        def("ironmaul", "Ironbound Maul", Material.NETHERITE_AXE, "#BCAAA4", "Ability 1 (right-click): Crushing blow hitting everything within 4 blocks for 13 damage. 10-second cooldown.");
-        def("ghostglaive", "Ghost Glaive", Material.NETHERITE_SWORD, "#EEEEEE", "Ability 1 (right-click): Marks everything within 4 blocks, making it glow for 5 seconds, and deals 4 damage. 7-second cooldown.");
-        def("dawnhalberd", "Dawn Halberd", Material.NETHERITE_SWORD, "#FFF59D", "Ability 1 (right-click): Restores 4 hearts and gives regeneration for 5 seconds. 12-second cooldown.");
-        def("tidallance", "Tidal Lance", Material.STICK, "#0097A7", "Ability 1 (right-click): Lunges forward and hits the first foe for 7 damage. 6-second cooldown.");
-        def("bloomstaff", "Bloom Staff", Material.STICK, "#66BB6A", "Ability 1 (right-click): Restores 3 hearts and gives regeneration for 10 seconds. 9-second cooldown.");
-        def("moonblade", "Moonlit Blade", Material.NETHERITE_SWORD, "#9FA8DA", "Ability 1 (right-click): Gives you Speed II for 5 seconds. 12-second cooldown.");
-        def("echohammer", "Echo Warhammer", Material.MACE, "#8E24AA", "Ability 1 (right-click): Shockwave hitting everything within 3.5 blocks for 9 damage. 7-second cooldown.");
-        def("gravelglaive", "Gravel Glaive", Material.NETHERITE_SWORD, "#616161", "Ability 1 (right-click): Pulls everything within 7 blocks toward you. 9-second cooldown.");
-        def("eclipsescythe", "Eclipse Scythe", Material.NETHERITE_SWORD, "#311B92", "Ability 1 (right-click): Blinds everything within 3 blocks for 3 seconds and deals 3 damage. 12-second cooldown.");
-        def("stormstaff", "Storm Staff", Material.BLAZE_ROD, "#FFD600", "Ability 1 (right-click): Lightning strikes the nearest foe within 14 blocks for 10 damage. 9-second cooldown.");
-        def("soulsickle", "Soul Sickle", Material.NETHERITE_SWORD, "#7E57C2", "Ability 1 (right-click): Soul ward giving damage resistance for 5 seconds. 15-second cooldown.");
-        def("emberglaive", "Ember Glaive", Material.NETHERITE_AXE, "#FF3D00", "Ability 1 (right-click): Fiery cone for 10 damage. 7-second cooldown.");
-        def("wardenspear", "Warden's Spear", Material.STICK, "#1A237E", "Ability 1 (right-click): Lightning chains to the 3 nearest foes within 9 blocks for 7 damage each. 11-second cooldown.");
-        def("hexbone", "Hex Bone", Material.BONE, "#CFD8DC", "Right-click to curse the ground around you for 15 seconds. Enemies within 6 blocks take 3 damage a second and are slowed. 25-second cooldown.");
-        def("cursedcoin", "Cursed Coin", Material.GOLD_NUGGET, "#FFB74D", "Right-click to flip a cursed coin. It can heal you, blind nearby enemies, or wail so loudly that nearby enemies are slowed. 15-second cooldown.");
-        def("spectralquill", "Spectral Quill", Material.FEATHER, "#E1F5FE", "Right-click to write a curse on the nearest enemy within 15 blocks. It takes 12 damage and gains Wither and Darkness. 12-second cooldown.");
-        def("rottenoffering", "Rotten Offering", Material.ROTTEN_FLESH, "#558B2F", "Right-click to raise 3 zombie servants for 60 seconds. They follow you and attack whatever you attack. 60-second cooldown.");
-        def("eyeofthecrypt", "Eye of the Crypt", Material.SPIDER_EYE, "#7E57C2", "Right-click to reveal every invisible or hidden creature within 20 blocks for 8 seconds. 20-second cooldown.");
-        def("ghostlantern", "Ghost Lantern", Material.GLOW_INK_SAC, "#B388FF", "Right-click for 10 seconds of orbiting spirits that zap nearby enemies. Never hits your golems.");
+        def("thunderstick", "Thunderstick", Material.NETHERITE_SWORD, "#FFEA00", "Hits strike lightning. Right-click to call lightning where you look. Passive: Storm Touch: 10% chance on hit to call lightning for 3 damage.");
+        def("vampirefang", "Vampire Fang", Material.NETHERITE_SWORD, "#FF1744", "Heals you for 40% of melee damage. Right-click for a 4-heart heal. Passive: Blood Drain: heals you 1 heart on hit.");
+        def("frostbite", "Frostbite", Material.NETHERITE_SWORD, "#00E5FF", "Hits slow targets and add extra damage. Right-click for a frost nova. Passive: Frost Bite: slows the target for 1 second on hit.");
+        def("winddash", "Wind Shard", Material.BREEZE_ROD, "#B3E5FC", "Right-click to dash forward. No cooldown. No fall damage from the dash. Passive: Gust: knocks the target back on hit.");
+        def("infernowand", "Inferno Wand", Material.BLAZE_ROD, "#FF9100", "Right-click to launch a fireball. Fireballs do not break blocks. Passive: Ember: sets the target on fire for 2 seconds on hit.");
+        def("groundbreaker", "Groundbreaker", Material.MACE, "#FFB300", "Right-click for a shockwave that damages and knocks back nearby enemies. Breaks no blocks. Passive: Seismic Rhythm: every 4th hit deals 4 extra damage.");
+        def("phoenixblade", "Phoenix Blade", Material.MACE, "#FF2D75", "Right-click to leap into the air, then dive and smash. Harder falls hit harder. Passive: Rebirth: heals you 1 heart on hit while below half health.");
+        def("gauntlet", "Control Orb", Material.PRISMARINE_SHARD, "#7C4DFF", "Right-click a mob or player to take control of it. Right-click again to hurl it forward. Passive: Orb Control: 1 extra damage and a 1-second slow on hit.");
+        def("grenade", "Grenade", Material.EGG, "#76FF03", "Ability 1 (right-click): Throw a grenade. It explodes on impact, then explodes again one second later, both at half a TNT minecart's power. Passive: Pin Pull. Each melee hit deals 1 extra damage and gives the target 1 second of nausea.");
+        def("magnetrod", "Magnet Rod", Material.IRON_NUGGET, "#D500F9", "Right-click to pull nearby mobs toward you, hard. Passive: Magnetism: pulls the target a block toward you on hit.");
+        def("blizzardorb", "Blizzard Orb", Material.SNOWBALL, "#18FFFF", "Right-click to freeze everything nearby and slow it hard. Passive: Blizzard Chill: slows the target for 2 seconds on hit.");
+        def("healingcharm", "Healing Charm", Material.GHAST_TEAR, "#FF4081", "Right-click to heal 8 hearts, gain regeneration and remove negative effects. Passive: Charm Heal: heals you half a heart on hit.");
+        def("shadowcloak", "Shadow Cloak", Material.PHANTOM_MEMBRANE, "#6200EA", "Right-click for 20 seconds of invisibility and Speed II. Passive: Shroud: 1 second of invisibility on hit.");
+        def("golembell", "Golem Call", Material.GOAT_HORN, "#FFC400", "Blow the horn to summon a friendly iron golem for 90 seconds. Passive: Iron Call: 10% chance on hit to knock the target back.");
+        def("sonichorn", "Sonic Horn", Material.GOAT_HORN, "#FFAB40", "Right-click for a sonic boom that hits hard and knocks back everything in its path. Passive: Sonic Echo: 2 damage to foes within 2 blocks of the target on hit.");
+        def("stormheart", "Storm Heart", Material.HEART_OF_THE_SEA, "#2962FF", "Right-click to call lightning on up to 5 nearby mobs. Passive: Storm Surge: 10% chance on hit to call lightning for 3 damage.");
+        def("phasefruit", "Phase Fruit", Material.CHORUS_FRUIT, "#00E676", "Right-click to blink forward up to 12 blocks, then get Speed II. Never puts you inside a block. Passive: Phase Strike: 1 second of speed on hit.");
+        def("voidscythe", "Void Slasher", Material.NETHERITE_SWORD, "#651FFF", "Right-click for a wide void slash that hits everything in front of you. Passive: Void Drain: 1 extra damage on hit, and you heal half a heart.");
+        def("grapple", "Grapple Hook", Material.LEAD, "#8D6E63", "Right-click to hook a block or mob and pull yourself toward it. Pulls harder. Passive: Hook Pull: pulls the target a block toward you on hit.");
+        def("starfall", "Starfall Staff", Material.STICK, "#FFF59D", "Right-click to call 5 falling stars onto the spot you look at. Passive: Starlight: 10% chance on hit to deal 4 extra damage.");
+        def("venom", "Venom Dagger", Material.NETHERITE_SWORD, "#64DD17", "Poisons normal mobs and players. Heals undead mobs. Right-click to lunge. Passive: Venom Stack: poisons the target for 2 seconds on hit.");
+        def("glacier", "Phoenix Call", Material.MACE, "#FF6E40", "Right-click to leap, then slam with fire and ice. The higher you fall, the harder it hits. Passive: Glacial Hold: slows the target for 2 seconds on hit.");
+        def("tidal", "Tidal Sword", Material.NETHERITE_SWORD, "#0091EA", "Right-click to fire a water orb that blasts everything near its impact. Passive: Undertow: slows the target for 1 second on hit.");
+        def("reapersigil", "Reaper's Sigil", Material.WITHER_SKELETON_SKULL, "#2962FF", "Right-click: Blue Wither Skull, a blue skull that withers and damages whatever it hits. Shift + right-click: Soul Drain, 8 damage to nearby enemies and heals you per hit. Sprint + right-click: Death Mark, marks the nearest enemy for 10 seconds for +50% damage. Offhand: lifesteal, you heal the damage you deal to players. Passive: Reaper's Mark: 2 extra damage on hit to targets below half health.");
+        def("shadowdagger", "Shadow Dagger", Material.NETHERITE_SWORD, "#7E57C2", "Right-click to teleport behind the nearest enemy and strike for 10 damage. Passive: Backstab: 3 extra damage when you hit a foe from behind.");
+        def("solarlance", "Solar Lance", Material.NETHERITE_SWORD, "#FFD180", "Right-click for an instant beam that hits everything in a 25-block line for 14 damage. Passive: Solar Flare: sets the target on fire for 3 seconds on hit.");
+        def("gravitywell", "Gravity Well", Material.MAGMA_CREAM, "#AB47BC", "Right-click to place a gravity well for 6 seconds. It pulls and damages nearby mobs. Passive: Gravity Tug: pulls the target a block toward you on hit.");
+        def("aegistotem", "Aegis Totem", Material.TOTEM_OF_UNDYING, "#66BB6A", "Right-click for 15 seconds of Resistance and Regeneration for you and your trusted players nearby. Passive: Aegis: 1 heart of absorption on hit.");
+        def("unoreverse", "Uno Reverse Blade", Material.NETHERITE_SWORD, "#00E5FF", "Saves every projectile that hits you (up to 30). Right-click to release them back, newest first. Passive: Desperate Reverse: 2 extra damage on hit while below half health.");
+        def("chronohourglass", "Chrono Hourglass", Material.CLOCK, "#FFD700", "Right-click to freeze every enemy within 10 blocks for 4 seconds. Trusted players and your mobs are not affected. Passive: Rewind: 10% chance on hit to heal 1 heart.");
+        def("bloodstone", "Bloodstone Mace", Material.MACE, "#B71C1C", "Hits heal you for 10% of the damage dealt. Right-click for a blood nova that damages and slows nearby enemies. Passive: Blood Pact: heals you 1 heart on hit.");
+        def("quakehammer", "Quake Hammer", Material.MACE, "#8D6E63", "Right-click to slam the ground. Everything within 6 blocks takes 18 damage and is thrown into the air. Passive: Aftershock: 15% chance on hit to knock the target up.");
+        def("venomsickle", "Venom Sickle", Material.NETHERITE_SWORD, "#33691E", "Right-click to release a poison cloud for 8 seconds. Poisons normal mobs and players, heals undead. Passive: Sickle Venom: poisons the target for 3 seconds on hit.");
+        def("crystalpick", "Crystal Pick", Material.NETHERITE_PICKAXE, "#E1F5FE", "Right-click to fire 5 crystal shards in a spread. Each does 7 damage in a small blast. Passive: Crystal Edge: 2 extra damage on hit.");
+        def("rewindcompass", "Rewind Compass", Material.RECOVERY_COMPASS, "#00BFA5", "Right-click to teleport back to where you were 10 seconds ago. 30-second cooldown. Passive: Waypoint: 1 extra damage on hit.");
+        def("spoutshell", "Nautilus Spout", Material.NAUTILUS_SHELL, "#0288D1", "Right-click to raise a water spout where you aim. Enemies near it are launched 2.5 blocks up and take 8 damage. 12-second cooldown. Passive: Spout Spray: knocks the target up slightly on hit.");
+        def("honeybomb", "Honey Bomb", Material.HONEY_BOTTLE, "#FFB300", "Right-click to throw a honey bomb. On impact enemies nearby are heavily slowed and take 4 damage. 6-second cooldown. Passive: Sticky Honey: slows the target for 1 second on hit.");
+        def("cloudbottle", "Cloud Bottle", Material.GLASS_BOTTLE, "#B3E5FC", "Right-click to conjure a cloud that lifts you about 8 blocks and lowers you gently back down. 20-second cooldown. Passive: Cloud Step: 1 second of Slow Falling on hit.");
+        def("meteor", "Meteor", Material.DRAGON_BREATH, "#E040FB", "Right-click to call 10 to 20 dragon fireballs down on random spots around where you aim. 90-second cooldown. Passive: Ember Dust: sets the target on fire for 1 second on hit.");
+        def("emberblade", "Ember Blade", Material.NETHERITE_SWORD, "#FF7043", "Ability 1 (right-click): Ember slash hits every enemy in a wide arc in front of you for 8 damage and sets them on fire for 4 seconds. 5-second cooldown. Passive: Ember Trail: sets the target on fire for 3 seconds on hit.");
+        def("thornrapier", "Thorn Rapier", Material.NETHERITE_SWORD, "#66BB6A", "Ability 1 (right-click): Lunge forward and stab the first enemy you reach for 10 damage and 5 seconds of Poison. 6-second cooldown. Passive: Thorn Poison: poisons the target for 3 seconds on hit.");
+        def("moonsplitter", "Moonsplitter", Material.NETHERITE_SWORD, "#B39DDB", "Ability 1 (right-click): Crescent slash hits every enemy within 5 blocks for 9 damage and knocks them back. 7-second cooldown. Passive: Moon Edge: 2 extra damage on hit at night.");
+        def("frostfang", "Frostfang Greatsword", Material.NETHERITE_SWORD, "#81D4FA", "Ability 1 (right-click): Frost wave in a cone 8 blocks long deals 6 damage and slows enemies for 5 seconds. 9-second cooldown. Passive: Frostbite Edge: slows the target for 2 seconds on hit.");
+        def("voidcutter", "Void Cutter", Material.NETHERITE_SWORD, "#7E57C2", "Ability 1 (right-click): Blink 6 blocks forward and slash everything within 2.5 blocks of where you land for 10 damage. 8-second cooldown. Passive: Rift Cut: 15% chance on hit to deal 4 extra damage.");
+        def("bloodletter", "Bloodletter", Material.NETHERITE_SWORD, "#B71C1C", "Ability 1 (right-click): Spend 2 hearts to deal 12 damage to every enemy within 3 blocks. You need more than 3 hearts to use it. 10-second cooldown. Passive: Hemophilia: the target bleeds 1 damage one second after the hit.");
+        def("sunder", "Sunder Blade", Material.NETHERITE_SWORD, "#8D6E63", "Ability 1 (right-click): Slam the ground, dealing 7 damage to enemies within 4 blocks and knocking them back. 6-second cooldown. Passive: Quakebreak: knocks the target back a block on hit.");
+        def("soulreaver", "Soulreaver", Material.NETHERITE_SWORD, "#4A148C", "Ability 1 (right-click): Deals 6 hearts to every enemy within 4 blocks and heals you for half of the total, up to 6 hearts. 12-second cooldown. Passive: Soul Siphon: heals you 1 heart on hit.");
+        def("stormfang", "Stormfang", Material.NETHERITE_SWORD, "#29B6F6", "Ability 1 (right-click): Chain lightning strikes the 3 nearest enemies within 8 blocks for 6 damage each. 9-second cooldown. Passive: Storm Chain: 10% chance on hit to strike lightning for 3 damage.");
+        def("venomtooth", "Venomtooth", Material.NETHERITE_SWORD, "#7CB342", "Ability 1 (right-click): Releases a poison cloud around you for 6 seconds. Enemies within 3 blocks are poisoned and take damage each second. 14-second cooldown. Passive: Venom Bite: poisons the target for 2 seconds on hit.");
+        def("bladestorm", "Bladestorm", Material.NETHERITE_SWORD, "#90A4AE", "Ability 1 (right-click): Spins twice, hitting every enemy within 3 blocks for 5 damage each time. 8-second cooldown. Passive: Whirl Cut: 1 extra damage on hit.");
+        def("kaboom", "Kaboom Kachow", Material.BOW, "#FF3D00", "Every arrow shot from this bow explodes on impact. Passive: Kaboom Spark: 10% chance on hit to deal 4 extra damage.");
+        def("shakalaka", "Shakalaka Bow", Material.BOW, "#00FF9C", "Each arrow that lands triggers 3 random effects: lightning, explosion or fireball. Passive: Shaka Rush: 1 second of speed on hit.");
+        def("arccaster", "Arc Caster", Material.BOW, "#E1BEE7", "A bow. Arrows stun or freeze whatever they hit. Passive: Arc Charge: 15% chance on hit to strike lightning for 3 damage.");
+        def("hyperion", "Hyperion Blade", Material.NETHERITE_SWORD, "#00E5FF", "Ability 1 (right-click): Hyperion Burst. Hits everything within 4 blocks for 9 damage. 8-second cooldown. Passive: Life Ward. Each melee hit gives you 2 hearts of absorption.");
+        def("mistral", "Mistral Spear", "NETHERITE_SPEAR", "#B2DFDB", "Ability 1 (right-click): Mistral Lunge. Dash forward and hit the first foe for 9 damage. 6-second cooldown. Passive: Wind Cut. Each melee hit deals 1 extra damage.");
+        def("obsidianfist", "Obsidian Fist", Material.NETHERITE_SHOVEL, "#3E2723", "Ability 1 (right-click): Obsidian Quake. Everything within 4 blocks takes 4 damage and is slowed for 2 seconds. 9-second cooldown. Passive: Hardened. Each melee hit slows the target for 1 second.");
+        def("starshard", "Starshard Scepter", Material.GLOWSTONE_DUST, "#FFF176", "Ability 1 (right-click): Star Mark. Marks everything within 10 blocks, making it glow for 5 seconds, and deals 3 damage to foes within 3 blocks. 8-second cooldown. Passive: Constellation. 10% chance on hit to deal 5 extra damage.");
+        def("cryptbone", "Crypt Bone", Material.BONE_MEAL, "#CFD8DC", "Ability 1 (right-click): Bone Burst. Hits everything within 3 blocks for 6 damage. 7-second cooldown. Passive: Bone Shatter. Each melee hit deals 2 extra damage.");
+        def("tempesthalberd", "Tempest Halberd", Material.NETHERITE_AXE, "#00838F", "Ability 1 (right-click): Tempest Spin. Hits everything within 4 blocks for 6 damage and launches it. 8-second cooldown. Passive: Storm Edge. 10% chance on hit to call lightning for 2 damage.");
+        def("bloodmoon", "Bloodmoon Scythe", Material.NETHERITE_HOE, "#B71C1C", "Ability 1 (right-click): Blood Moon. Restores 2 hearts and gives regeneration for 10 seconds. 10-second cooldown. Passive: Blood Thirst. At night, each melee hit heals you 1 heart.");
+        def("prismblade", "Prism Blade", Material.DIAMOND_SWORD, "#E040FB", "Ability 1 (right-click): Prism Beam. A beam 10 blocks long deals 6 damage to the first foe it hits. 6-second cooldown. Passive: Refraction. 15% chance on hit to deal 3 extra damage.");
+        def("voidfang", "Voidfang Dagger", Material.NETHERITE_SWORD, "#311B92", "Ability 1 (right-click): Void Lunge. Dash forward and hit the first foe for 8 damage. 5-second cooldown. Passive: Void Bite. Each melee hit deals 1 extra damage.");
+        def("solstice", "Solstice Hammer", Material.MACE, "#FFB300", "Ability 1 (right-click): Solstice Slam. Hits everything within 4.5 blocks for 11 damage and launches it. 9-second cooldown. Passive: Sunburst. Each melee hit sets the target on fire for 2 seconds.");
+        def("glacierhalberd", "Glacier Halberd", Material.NETHERITE_AXE, "#B3E5FC", "Ability 1 (right-click): Glacier Nova. Everything within 5 blocks takes 4 damage and is heavily slowed for 3 seconds. 10-second cooldown. Passive: Permafrost. Each melee hit slows the target for 1 second.");
+        def("embershort", "Ember Shortspear", "NETHERITE_SPEAR", "#FF5722", "Ability 1 (right-click): Ember Stab. A cone 5 blocks long deals 8 damage. 6-second cooldown. Passive: Smoulder Pierce. Each melee hit sets the target on fire for 2 seconds.");
+        def("runescythe", "Rune Scythe", Material.NETHERITE_HOE, "#7B1FA2", "Ability 1 (right-click): Rune Sweep. A cone 6 blocks long deals 7 damage and slows everything in it for 4 seconds. 7-second cooldown. Passive: Rune Mark. Each melee hit makes the target glow for 2 seconds.");
+        def("thundercudgel", "Thunder Cudgel", Material.GOLDEN_AXE, "#FFEB3B", "Ability 1 (right-click): Thunder Chain. Lightning strikes the 2 nearest foes within 10 blocks for 7 damage each. 8-second cooldown. Passive: Thunder Hammer. 10% chance on hit to call lightning for 3 damage.");
+        def("duskblade", "Dusk Blade", Material.NETHERITE_SWORD, "#37474F", "Ability 1 (right-click): Dusk Veil. Everything within 4 blocks takes 4 damage and gets Darkness for 3 seconds. 9-second cooldown. Passive: Dusk Edge. At night, each melee hit deals 1 extra damage.");
+        def("ironbulwark", "Iron Bulwark", Material.IRON_SWORD, "#CFD8DC", "Ability 1 (right-click): Bulwark Mend. Restores 3 hearts. 11-second cooldown. Passive: Bulwark. Each melee hit gives you 1 heart of absorption.");
+        def("crazyrolls", "CrazyRolls", Material.NETHER_STAR, "#FF00FF", "Ability 1 (right-click): Fires one random ability from every single-ability weapon and every gem. Passive: Everything. Each melee hit triggers a random weapon passive and a random gem passive.");
+        def("boomhammer", "Boom Hammer", Material.MACE, "#795548", "Ability 1 (right-click): Thunder Slam. Leap upward, then crash down after 1 second, hitting everything within 5 blocks for 14 damage and launching it. 9-second cooldown. Passive: 25% chance on a melee hit to launch the target into the air.");
+        def("spearlance", "Spear of Dawn", "NETHERITE_SPEAR", "#FFCA28", "Ability 1 (right-click): Sunlance. A line of light 8 blocks long strikes every foe along it for 6 damage and makes them glow. 8-second cooldown. Passive: Bleed. Each melee hit makes the target bleed 1 damage a second for 3 seconds.");
+        def("duskscythe", "Dusk Scythe", Material.NETHERITE_SWORD, "#6A1B9A", "Ability 1 (right-click): Reaping Arc. Pulls every foe in a 6-block cone toward you, then deals 4 damage to them. 6-second cooldown. Passive: Lifesteal. Each melee hit heals you 1 heart.");
+        def("thornwhip", "Thornwhip", Material.NETHERITE_SWORD, "#2E7D32", "Ability 1 (right-click): Lash Chain. Hooks the first foe in your aim within 8 blocks, dealing 6 damage and pulling them to you. 7-second cooldown. Passive: Thorns. Each melee hit slows the target for 2 seconds.");
+        def("frostglaive", "Frost Glaive", Material.NETHERITE_SWORD, "#B3E5FC", "Ability 1 (right-click): Frost Zone. Every foe within 4 blocks takes 2 damage and is heavily slowed for 3 seconds. 7-second cooldown. Passive: Frostbite. Each melee hit puts out the target's fire and deals 1 extra damage.");
+        def("ironhalberd", "Iron Halberd", Material.NETHERITE_AXE, "#90A4AE", "Ability 1 (right-click): Cleaving Spin. Spin for 1 second, hitting foes within 3 blocks four times for 3 damage each. 5-second cooldown. Passive: Sweep. Each melee hit also strikes one other foe within 2 blocks of the target for 2 damage.");
+        def("tidecaller", "Tidecaller Spear", "NETHERITE_SPEAR", "#26C6DA", "Ability 1 (right-click): Maelstrom. Makes a pull point 6 blocks ahead that drags foes within 4 blocks toward it and deals 5 damage. 8-second cooldown. Passive: Tidal Surge. Each melee hit knocks the target back.");
+        def("bloodsickle", "Blood Sickle", Material.NETHERITE_SWORD, "#B71C1C", "Ability 1 (right-click): Hemorrhage. The nearest foe within 5 blocks bleeds 3 damage over 3 seconds, and you heal 1 heart per hit. 7-second cooldown. Passive: Blood Bond. Each melee hit on a player heals you 1 heart.");
+        def("nagina", "Shadow Naginata", Material.NETHERITE_SWORD, "#263238", "Ability 1 (right-click): Shadow Slash. Dash 4 blocks forward, hitting everything in the path for 7 damage and blinding it for 2 seconds. 8-second cooldown. Passive: Veiled. Each melee hit makes you invisible for 1 second.");
+        def("chainflail", "Chain Flail", Material.NETHERITE_SWORD, "#78909C", "Ability 1 (right-click): Chain Whirl. Spin for 2 seconds, hitting foes within 3 blocks four times for 2 damage each. 9-second cooldown. Passive: Hook. 20% chance on a melee hit to pull the target toward you.");
+        def("lanternstaff", "Lantern Staff", Material.BLAZE_ROD, "#FFB300", "Ability 1 (right-click): Lantern Beam. Fires a beam of light along your aim that deals 9 damage to the first foe it hits. 4-second cooldown. Passive: Lamplight. Each melee hit makes the target glow for 3 seconds and deals 1 extra damage.");
+        def("stonepike", "Stone Pike", Material.NETHERITE_SWORD, "#9E9E9E", "Ability 1 (right-click): Bedrock Stab. Plunge into the first foe in your aim within 3 blocks for 9 damage and slow them heavily for 1.5 seconds. 6-second cooldown. Passive: Stonehide. Each melee hit gives you 2 hearts of absorption.");
+        def("cleaver", "Obsidian Cleaver", Material.NETHERITE_AXE, "#311B92", "Ability 1 (right-click): Shatter Slash. A cone 4 blocks long deals 10 damage and gives everything in it Weakness for 3 seconds. 7-second cooldown. Passive: Brittle Bite. Each melee hit gives the target Weakness for 2 seconds.");
+        def("wardenclaw", "Warden's Claw", Material.NETHERITE_SWORD, "#0D47A1", "Ability 1 (right-click): Sonic Claw. A sonic wave 12 blocks long deals 6 damage to everything along it. 10-second cooldown. Passive: Tremor. Each melee hit knocks the target back a little.");
+        def("frostlance", "Frost Lance", Material.NETHERITE_SWORD, "#81D4FA", "Ability 1 (right-click): Glacier Lance. A line of ice 6 blocks long deals 5 damage to everything along it and heavily slows it for 2 seconds. 8-second cooldown. Passive: Cold Snap. Each melee hit has a 20% chance to root the target for 1 second.");
+        def("emberpike", "Ember Pike", "NETHERITE_SPEAR", "#FF6D00", "Ability 1 (right-click): Phoenix Thrust. Dash forward, and where you land a fire burst hits everything within 2.5 blocks for 8 damage and sets it alight for 4 seconds. 6.5-second cooldown. Passive: Ember Trail. Each melee hit sets the target on fire for 3 seconds.");
+        def("stormhalberd", "Storm Halberd", Material.NETHERITE_AXE, "#FFEB3B", "Ability 1 (right-click): Storm Cleave. Calls lightning on up to 3 random foes within 6 blocks for 4 damage each. 9-second cooldown. Passive: Static. Each melee hit has a 15% chance to call lightning onto the target for 3 damage.");
+        def("hexscythe", "Hexed Scythe", Material.NETHERITE_SWORD, "#4A148C", "Ability 1 (right-click): Hex Curse. The nearest foe within 6 blocks takes 3 damage and gets Wither and Nausea for 3 seconds. 14-second cooldown. Passive: Withering Touch. Each melee hit gives the target Wither for 2 seconds.");
+        def("windpike", "Wind Pike", "NETHERITE_SPEAR", "#E0F7FA", "Ability 1 (right-click): Gust Vault. Leap up and forward, then a gust slams down after 0.9 seconds, pushing everything within 3 blocks away for 3 damage. 8-second cooldown. Passive: Tailwind. Each melee hit gives you Speed I for 2 seconds.");
+        def("ironmaul", "Ironbound Maul", Material.NETHERITE_AXE, "#BCAAA4", "Ability 1 (right-click): Seismic Dash. Leap forward, then crash down after 0.75 seconds, hitting everything within 3 blocks for 12 damage. 10-second cooldown. Passive: Heavy Hit. Every 5th melee hit deals 6 extra damage.");
+        def("ghostglaive", "Ghost Glaive", Material.NETHERITE_SWORD, "#EEEEEE", "Ability 1 (right-click): Phantom Step. Become invisible for 3 seconds. Your next melee hit in that time deals 6 extra damage. 9-second cooldown. Passive: Haunting. Each melee hit makes the target glow for 3 seconds.");
+        def("dawnhalberd", "Dawn Halberd", Material.NETHERITE_SWORD, "#FFF59D", "Ability 1 (right-click): Dawn Radiance. Restore 3 hearts and gain fire resistance for 5 seconds. 12-second cooldown. Passive: Dawnbringer. Melee hits deal 3 extra damage to undead mobs.");
+        def("tidallance", "Tidal Lance", "NETHERITE_SPEAR", "#0097A7", "Ability 1 (right-click): Tidal Hook. Pulls you behind the first foe within 8 blocks and hits them for 5 damage. 6-second cooldown. Passive: Undertow. Each melee hit slows the target for 1 second.");
+        def("bloomstaff", "Bloom Staff", Material.STICK, "#66BB6A", "Ability 1 (right-click): Bloom Bloom. Restore 3 hearts and remove poison, wither, slowness, blindness and nausea. 9-second cooldown. Passive: Verdant Blessing. Each melee hit gives you Regeneration for 2 seconds.");
+        def("moonblade", "Moonlit Blade", Material.NETHERITE_SWORD, "#9FA8DA", "Ability 1 (right-click): Lunar Blink. Teleport up to 5 blocks forward through open space. 10-second cooldown. Passive: Moonlight. At night, melee hits deal 2 extra damage.");
+        def("echohammer", "Echo Warhammer", Material.MACE, "#8E24AA", "Ability 1 (right-click): Echo Shout. Two shockwaves hit everything within 4 blocks: 5 damage, then 3 damage a second later. 7-second cooldown. Passive: Resonance. Each melee hit echoes 2 damage to the nearest other foe within 3 blocks.");
+        def("gravelglaive", "Gravel Glaive", Material.NETHERITE_SWORD, "#616161", "Ability 1 (right-click): Gravel Well. A well forms 5 blocks ahead for 1.5 seconds, pulling foes within 4 blocks toward its centre and dealing 2 damage each second. 9-second cooldown. Passive: Heavy Stone. Each melee hit deals 1 extra damage and slows the target for 1 second.");
+        def("eclipsescythe", "Eclipse Scythe", Material.NETHERITE_SWORD, "#311B92", "Ability 1 (right-click): Umbral Veil. Everything within 5 blocks takes 2 damage and gets Darkness for 4 seconds. 11-second cooldown. Passive: Umbral Edge. Each melee hit gives the target Darkness for 2 seconds.");
+        def("stormstaff", "Storm Staff", Material.BLAZE_ROD, "#FFD600", "Ability 1 (right-click): Storm Pulse. Calls lightning on the foe closest to your aim within 16 blocks for 10 damage, and 3 damage to foes within 2 blocks of it. 9-second cooldown. Passive: Charged. Every 4th melee hit chains lightning to the nearest other foe within 4 blocks for 3 damage.");
+        def("soulsickle", "Soul Sickle", Material.NETHERITE_SWORD, "#7E57C2", "Ability 1 (right-click): Soul Harvest. Drains 2 damage from up to 5 foes within 6 blocks and gives you absorption for each one drained. 15-second cooldown. Passive: Soul Link. Killing a foe with a melee hit heals you 2 hearts.");
+        def("emberglaive", "Ember Glaive", Material.NETHERITE_AXE, "#FF3D00", "Ability 1 (right-click): Ember Crescent. A fiery cone 6 blocks long deals 8 damage and sets everything in it on fire for 4 seconds. 7-second cooldown. Passive: Smolder. Each melee hit sets the target on fire for 2 seconds.");
+        def("wardenspear", "Warden's Spear", "NETHERITE_SPEAR", "#1A237E", "Ability 1 (right-click): Echolocation. Everything within 12 blocks glows for 6 seconds, and foes within 3 blocks take 3 damage. 11-second cooldown. Passive: Dark Resonance. Each melee hit gives the target Darkness for 2 seconds.");
+        def("hexbone", "Hex Bone", Material.BONE, "#CFD8DC", "Right-click to curse the ground around you for 15 seconds. Enemies within 6 blocks take 3 damage a second and are slowed. 25-second cooldown. Passive: Hex Touch: 1 extra damage and 1 second of Weakness on hit.");
+        def("cursedcoin", "Cursed Coin", Material.GOLD_NUGGET, "#FFB74D", "Right-click to flip a cursed coin. It can heal you, blind nearby enemies, or wail so loudly that nearby enemies are slowed. 15-second cooldown. Passive: Cursed Luck: 10% chance on hit to give you Luck for 5 seconds.");
+        def("spectralquill", "Spectral Quill", Material.FEATHER, "#E1F5FE", "Right-click to write a curse on the nearest enemy within 15 blocks. It takes 12 damage and gains Wither and Darkness. 12-second cooldown. Passive: Ink Curse: blinds the target for 1 second on hit.");
+        def("rottenoffering", "Rotten Offering", Material.ROTTEN_FLESH, "#558B2F", "Right-click to raise 3 zombie servants for 60 seconds. They follow you and attack whatever you attack. 60-second cooldown. Passive: Rotten Bite: poisons the target for 2 seconds on hit.");
+        def("eyeofthecrypt", "Eye of the Crypt", Material.SPIDER_EYE, "#7E57C2", "Right-click to reveal every invisible or hidden creature within 20 blocks for 8 seconds. 20-second cooldown. Passive: Crypt Sight: the target glows for 3 seconds on hit.");
+        def("ghostlantern", "Ghost Lantern", Material.GLOW_INK_SAC, "#B388FF", "Right-click for 10 seconds of orbiting spirits that zap nearby enemies. Never hits your golems. Passive: Lantern Glow: the target glows for 2 seconds on hit.");
     }
 
     private void tick() {
@@ -501,6 +532,21 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
         }
     }
 
+    /** Bold, italic name where each letter fades from the item's colour to white. */
+    private String styledName(String name, String hex) {
+        int[] c = {Integer.parseInt(hex.substring(1, 3), 16), Integer.parseInt(hex.substring(3, 5), 16), Integer.parseInt(hex.substring(5, 7), 16)};
+        StringBuilder sb = new StringBuilder();
+        int n = Math.max(1, name.length() - 1);
+        for (int i = 0; i < name.length(); i++) {
+            double t = (double) i / n;
+            int r = (int) Math.round(c[0] + (255 - c[0]) * t);
+            int g = (int) Math.round(c[1] + (255 - c[1]) * t);
+            int b = (int) Math.round(c[2] + (255 - c[2]) * t);
+            sb.append(hexColor(String.format("#%02X%02X%02X", r, g, b))).append(ChatColor.BOLD).append(ChatColor.ITALIC).append(name.charAt(i));
+        }
+        return sb.toString();
+    }
+
     private String hexColor(String hex) {
         return net.md_5.bungee.api.ChatColor.of(hex).toString();
     }
@@ -645,7 +691,7 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
     private ItemStack make(ItemDef d) {
         ItemStack it = new ItemStack(d.mat());
         ItemMeta m = it.getItemMeta();
-        m.setDisplayName(hexColor(d.hex()) + ChatColor.BOLD + d.name());
+        m.setDisplayName(styledName(d.name(), d.hex()));
         Integer model = modelIds.get(d.id());
         if (model != null) m.setCustomModelData(model);
         m.setLore(loreFor(d));
@@ -692,7 +738,7 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
     }
 
     private void hit(LivingEntity le, double dmg, Entity src) {
-        double out = dmg;
+        double out = dmg * ABILITY_DAMAGE_MULT;
         if (src instanceof Player sp && gemOf(sp) != null) {
             out *= getConfig().getDouble("damage.gem-multiplier", 1.5);
         }
@@ -714,7 +760,7 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
         w.spawnParticle(Particle.EXPLOSION, c, 2, 0.4, 0.4, 0.4, 0);
         w.spawnParticle(Particle.FLAME, c, 25, r / 2, 0.3, r / 2, 0.05);
         w.playSound(c, Sound.ENTITY_GENERIC_EXPLODE, 1f, 1f);
-        damageArea(c, r, dmg, src);
+        w.createExplosion(c, 2.0f, false, false);
     }
 
     private void knockArea(Location c, double r, double up, Entity src) {
@@ -1280,38 +1326,55 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
                 p.getWorld().spawnParticle(Particle.EXPLOSION, c, 3, 1, 0.2, 1, 0);
                 p.getWorld().playSound(c, Sound.ENTITY_GENERIC_EXPLODE, 1f, 0.7f);
             }
-            case "boomhammer" -> gearBurst(p, "boomhammer", 4, 10, 1.2, 6000);
-            case "spearlance" -> gearDash(p, "spearlance", 1.6, 8, 5000);
-            case "duskscythe" -> gearCone(p, "duskscythe", 5, 9, 60, 6000);
-            case "thornwhip" -> gearCone(p, "thornwhip", 6, 5, 80, 7000);
-            case "frostglaive" -> gearCone(p, "frostglaive", 6, 7, 80, 7000);
-            case "ironhalberd" -> gearBurst(p, "ironhalberd", 3, 9, 0.8, 5000);
-            case "tidecaller" -> gearChain(p, "tidecaller", 1, 12, 8, 8000);
-            case "bloodsickle" -> gearBurst(p, "bloodsickle", 3, 6, 0.4, 7000);
-            case "nagina" -> gearCone(p, "nagina", 4, 12, 0, 8000);
-            case "chainflail" -> gearBurst(p, "chainflail", 5, 8, 1.5, 9000);
+            case "crazyrolls" -> crazyRolls(p);
+            case "voidfang" -> gearDash(p, "voidfang", 2.0, 8, 5000);
+            case "solstice" -> gearBurst(p, "solstice", 4.5, 11, 1.3, 9000);
+            case "glacierhalberd" -> gearAoe(p, "glacierhalberd", 5, PotionEffectType.SLOWNESS, 60, 3, 4, 10000);
+            case "embershort" -> gearCone(p, "embershort", 5, 8, 0, 6000);
+            case "runescythe" -> gearCone(p, "runescythe", 6, 7, 80, 7000);
+            case "thundercudgel" -> gearChain(p, "thundercudgel", 2, 10, 7, 8000);
+            case "duskblade" -> gearAoe(p, "duskblade", 4, PotionEffectType.DARKNESS, 60, 0, 4, 9000);
+            case "ironbulwark" -> gearMend(p, "ironbulwark", 3, 0, 11000);
+            case "hyperion" -> gearBurst(p, "hyperion", 4, 9, 0.8, 8000);
+            case "mistral" -> gearDash(p, "mistral", 1.8, 9, 6000);
+            case "obsidianfist" -> gearAoe(p, "obsidianfist", 4, PotionEffectType.SLOWNESS, 40, 2, 4, 9000);
+            case "starshard" -> gearAoe(p, "starshard", 10, PotionEffectType.GLOWING, 100, 0, 3, 8000);
+            case "cryptbone" -> gearBurst(p, "cryptbone", 3, 6, 0.2, 7000);
+            case "tempesthalberd" -> gearBurst(p, "tempesthalberd", 4, 6, 1.4, 8000);
+            case "bloodmoon" -> gearMend(p, "bloodmoon", 2, 200, 10000);
+            case "prismblade" -> gearBeam(p, "prismblade", 10, 6, 6000);
+            case "boomhammer" -> thunderSlam(p);
+            case "spearlance" -> sunlance(p);
+            case "duskscythe" -> reapingArc(p);
+            case "thornwhip" -> lashChain(p);
+            case "frostglaive" -> frostZone(p);
+            case "ironhalberd" -> cleavingSpin(p);
+            case "tidecaller" -> maelstrom(p);
+            case "bloodsickle" -> hemorrhage(p);
+            case "nagina" -> shadowSlash(p);
+            case "chainflail" -> chainWhirl(p);
             case "lanternstaff" -> gearBeam(p, "lanternstaff", 25, 9, 4000);
-            case "stonepike" -> gearDash(p, "stonepike", 1.2, 6, 4000);
-            case "cleaver" -> gearBurst(p, "cleaver", 3.5, 11, 0.6, 7000);
-            case "wardenclaw" -> gearChain(p, "wardenclaw", 3, 8, 6, 10000);
-            case "frostlance" -> gearAoe(p, "frostlance", 4, PotionEffectType.SLOWNESS, 80, 2, 3, 9000);
-            case "emberpike" -> gearCone(p, "emberpike", 6, 9, 0, 6500);
-            case "stormhalberd" -> gearChain(p, "stormhalberd", 2, 10, 9, 9000);
-            case "hexscythe" -> gearAoe(p, "hexscythe", 5, PotionEffectType.WITHER, 60, 0, 3, 14000);
-            case "windpike" -> gearDash(p, "windpike", 1.8, 5, 5000);
-            case "ironmaul" -> gearBurst(p, "ironmaul", 4, 13, 1.0, 10000);
-            case "ghostglaive" -> gearAoe(p, "ghostglaive", 4, PotionEffectType.GLOWING, 100, 0, 4, 7000);
-            case "dawnhalberd" -> gearMend(p, "dawnhalberd", 4, 100, 12000);
-            case "tidallance" -> gearDash(p, "tidallance", 1.4, 7, 6000);
-            case "bloomstaff" -> gearMend(p, "bloomstaff", 3, 200, 9000);
-            case "moonblade" -> gearBuff(p, "moonblade", PotionEffectType.SPEED, 100, 1, 12000);
-            case "echohammer" -> gearBurst(p, "echohammer", 3.5, 9, 1.1, 7000);
-            case "gravelglaive" -> gearPull(p, "gravelglaive", 7, 1.1, 9000);
-            case "eclipsescythe" -> gearAoe(p, "eclipsescythe", 3, PotionEffectType.BLINDNESS, 60, 0, 3, 12000);
-            case "stormstaff" -> gearChain(p, "stormstaff", 1, 14, 10, 9000);
-            case "soulsickle" -> gearBuff(p, "soulsickle", PotionEffectType.RESISTANCE, 100, 0, 15000);
-            case "emberglaive" -> gearCone(p, "emberglaive", 6, 10, 0, 7000);
-            case "wardenspear" -> gearChain(p, "wardenspear", 3, 9, 7, 11000);
+            case "stonepike" -> bedrockStab(p);
+            case "cleaver" -> shatterSlash(p);
+            case "wardenclaw" -> sonicClaw(p);
+            case "frostlance" -> glacierLance(p);
+            case "emberpike" -> emberThrust(p);
+            case "stormhalberd" -> stormCleave(p);
+            case "hexscythe" -> hexCurse(p);
+            case "windpike" -> gustVault(p);
+            case "ironmaul" -> seismicDash(p);
+            case "ghostglaive" -> phantomStep(p);
+            case "dawnhalberd" -> dawnRadiance(p);
+            case "tidallance" -> tidalHookPull(p);
+            case "bloomstaff" -> bloomBloom(p);
+            case "moonblade" -> lunarBlink(p);
+            case "echohammer" -> echoShout(p);
+            case "gravelglaive" -> gravelWell(p);
+            case "eclipsescythe" -> umbralVeil(p);
+            case "stormstaff" -> stormPulse(p);
+            case "soulsickle" -> soulHarvest(p);
+            case "emberglaive" -> emberCrescent(p);
+            case "wardenspear" -> sonarLance(p);
             case "arccaster" -> {
                 if (!ready(p, id, 6000)) return;
                 List<LivingEntity> chain = new ArrayList<>();
@@ -1904,7 +1967,10 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
         Entity shooter = src instanceof Entity en ? en : null;
 
         switch (tag) {
-            case "grenade" -> boom(loc, 3.5, 12, shooter);
+            case "grenade" -> {
+                boom(loc, 3.5, 12, shooter);
+                Bukkit.getScheduler().runTaskLater(this, () -> boom(loc, 3.5, 12, shooter), 20L);
+            }
             case "kaboom" -> boom(loc, 4, 12, shooter);
             case "arccaster" -> {
                 if (shooter instanceof Player ap && e.getHitEntity() instanceof LivingEntity arcHit && !isFriendlyTo(ap, arcHit)) {
@@ -2052,11 +2118,11 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
         gemDef("eclipse", "Solar Eclipse Gem", Material.AMETHYST_SHARD, "#4A148C", "Right-click: Eclipse Pulse (12 damage, blind, slow and weaken nearby). Shift+right-click: Shadow Lunge (teleport behind the nearest enemy, 15 damage). F: Eclipse Ward (10 hearts of absorption, attackers blinded, 25% of their damage reflected). Shift+F: Total Eclipse (ultimate, 30 seconds of darkness, invisibility and Strength II). Passives: blocks darkness and blindness, takes 15% less damage at night, dark aura. The Light Before the Dark: below 5 hearts you get Resistance, a black campfire aura and slow healing.");
         gemDef("undead", "Undead Legion Gem", Material.AMETHYST_SHARD, "#A5D6A7",
                 "Right-click: Wither Legion. Shift+right-click: Fallen Recall. F: Wither Touch. Shift+F: Giant Wither Skeleton (ultimate). Passives: heal and extra damage vs undead.");
-        gemDef("tide", "Tidal Gem", Material.AMETHYST_SHARD, "#0097A7", "Right-click: Tidal Wave (8 damage and a push in a cone). Shift+right-click: Whirlpool (pulls and slows nearby foes). F: Riptide Dash (dash forward and hit the first foe for 6). Shift+F: Kraken Call (3 lightning strikes for 10 damage each).");
-        gemDef("stonefist", "Stone Fist Gem", Material.AMETHYST_SHARD, "#8D6E63", "Right-click: Quake Stomp (6 damage and a knock-up around you). Shift+right-click: Stone Armor (4 hearts of absorption). F: Boulder Throw (10 damage to the first foe you look at). Shift+F: Titan Form (20 hearts of absorption and Strength II).");
-        gemDef("spectral", "Spectral Gem", Material.AMETHYST_SHARD, "#B39DDB", "Right-click: Haunt Pulse (5 damage and glowing around you). Shift+right-click: Phase Walk (invisible and fast). F: Banshee Wail (blindness and nausea nearby). Shift+F: Reaper's Harvest (10 damage to up to 5 foes, healing you 1 heart per hit).");
-        gemDef("verdant", "Verdant Gem", Material.AMETHYST_SHARD, "#66BB6A", "Right-click: Vine Snare (4 damage and roots foes in front). Shift+right-click: Bloom Heal (4 hearts and regeneration). F: Thorn Burst (6 damage to foes within 4 blocks). Shift+F: Living Forest (regeneration, absorption and speed).");
-        gemDef("gravity", "Gravity Gem", Material.AMETHYST_SHARD, "#5C6BC0", "Right-click: Gravity Pull (drags foes within 8 blocks toward you). Shift+right-click: Gravity Crush (8 damage and slow within 4 blocks). F: Feather Float (slow falling). Shift+F: Singularity (pulls and damages foes within 10 blocks for 3 seconds).");
+        gemDef("tide", "Tidal Gem", Material.AMETHYST_SHARD, "#0097A7", "Right-click: Tidal Wave (8 damage and a push in a cone). Shift+right-click: Whirlpool (pulls and slows nearby foes). F: Riptide Dash (dash forward and hit the first foe for 6). Shift+F: Kraken Call (3 lightning strikes for 10 damage each). Passive: Soaked: slows the target for 1 second on hit.");
+        gemDef("stonefist", "Stone Fist Gem", Material.AMETHYST_SHARD, "#8D6E63", "Right-click: Quake Stomp (6 damage and a knock-up around you). Shift+right-click: Stone Armor (4 hearts of absorption). F: Boulder Throw (10 damage to the first foe you look at). Shift+F: Titan Form (20 hearts of absorption and Strength II). Passive: Quake Knuckles: 1 extra damage on hit.");
+        gemDef("spectral", "Spectral Gem", Material.AMETHYST_SHARD, "#B39DDB", "Right-click: Haunt Pulse (5 damage and glowing around you). Shift+right-click: Phase Walk (invisible and fast). F: Banshee Wail (blindness and nausea nearby). Shift+F: Reaper's Harvest (10 damage to up to 5 foes, healing you 1 heart per hit). Passive: Phantom Touch: the target glows for 2 seconds on hit.");
+        gemDef("verdant", "Verdant Gem", Material.AMETHYST_SHARD, "#66BB6A", "Right-click: Vine Snare (4 damage and roots foes in front). Shift+right-click: Bloom Heal (4 hearts and regeneration). F: Thorn Burst (6 damage to foes within 4 blocks). Shift+F: Living Forest (regeneration, absorption and speed). Passive: Living Bark: you regenerate for 2 seconds on hit.");
+        gemDef("gravity", "Gravity Gem", Material.AMETHYST_SHARD, "#5C6BC0", "Right-click: Gravity Pull (drags foes within 8 blocks toward you). Shift+right-click: Gravity Crush (8 damage and slow within 4 blocks). F: Feather Float (slow falling). Shift+F: Singularity (pulls and damages foes within 10 blocks for 3 seconds). Passive: Crushing Weight: slows the target for 1 second on hit.");
     }
 
     private void gemDef(String id, String name, Material mat, String hex, String lore) {
@@ -2673,6 +2739,1118 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
         if (target != null) hit(target, dmg, p);
         else p.sendMessage(ChatColor.GRAY + "The beam found no foe.");
         p.getWorld().playSound(p.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1f, 0.6f);
+    }
+
+    // ----- Unique weapon abilities and passives (batch 1) -----
+
+    private boolean inPassive = false;
+
+    static final double ABILITY_DAMAGE_MULT = 1.25;
+
+    private static final String[] ABILITY_ITEM_IDS = {"unoreverse", "boomhammer", "spearlance", "duskscythe", "thornwhip", "frostglaive", "ironhalberd", "tidecaller", "bloodsickle", "nagina", "chainflail", "lanternstaff", "stonepike", "cleaver", "wardenclaw", "frostlance", "emberpike", "stormhalberd", "hexscythe", "windpike", "ironmaul", "ghostglaive", "dawnhalberd", "tidallance", "bloomstaff", "moonblade", "echohammer", "gravelglaive", "eclipsescythe", "stormstaff", "soulsickle", "emberglaive", "wardenspear", "hyperion", "mistral", "obsidianfist", "starshard", "cryptbone", "tempesthalberd", "bloodmoon", "prismblade", "voidfang", "solstice", "glacierhalberd", "embershort", "runescythe", "thundercudgel", "duskblade", "ironbulwark"};
+    private static final String[] GEM_PASSIVE_IDS = {"tide", "stonefist", "spectral", "verdant", "gravity", "blizzard", "nightmare", "thunder", "wind", "inferno", "atomic", "warden", "yinyang", "eclipse", "undead"};
+    private static final java.util.List<String> NEW_GEM_PASSIVES = java.util.List.of("tide", "stonefist", "spectral", "verdant", "gravity");
+
+    /** Runs the ability of any single-ability weapon by its id. Used by CrazyRolls. */
+    private void runAbilityFor(Player p, String id) {
+        switch (id) {
+            case "unoreverse" -> releaseProjectile(p);
+            case "boomhammer" -> thunderSlam(p);
+            case "spearlance" -> sunlance(p);
+            case "duskscythe" -> reapingArc(p);
+            case "thornwhip" -> lashChain(p);
+            case "frostglaive" -> frostZone(p);
+            case "ironhalberd" -> cleavingSpin(p);
+            case "tidecaller" -> maelstrom(p);
+            case "bloodsickle" -> hemorrhage(p);
+            case "nagina" -> shadowSlash(p);
+            case "chainflail" -> chainWhirl(p);
+            case "lanternstaff" -> gearBeam(p, "lanternstaff", 25, 9, 4000);
+            case "stonepike" -> bedrockStab(p);
+            case "cleaver" -> shatterSlash(p);
+            case "wardenclaw" -> sonicClaw(p);
+            case "frostlance" -> glacierLance(p);
+            case "emberpike" -> emberThrust(p);
+            case "stormhalberd" -> stormCleave(p);
+            case "hexscythe" -> hexCurse(p);
+            case "windpike" -> gustVault(p);
+            case "ironmaul" -> seismicDash(p);
+            case "ghostglaive" -> phantomStep(p);
+            case "dawnhalberd" -> dawnRadiance(p);
+            case "tidallance" -> tidalHookPull(p);
+            case "bloomstaff" -> bloomBloom(p);
+            case "moonblade" -> lunarBlink(p);
+            case "echohammer" -> echoShout(p);
+            case "gravelglaive" -> gravelWell(p);
+            case "eclipsescythe" -> umbralVeil(p);
+            case "stormstaff" -> stormPulse(p);
+            case "soulsickle" -> soulHarvest(p);
+            case "emberglaive" -> emberCrescent(p);
+            case "wardenspear" -> sonarLance(p);
+            default -> { }
+        }
+    }
+
+    private void applyGemPassive(Player p, LivingEntity le, String gem) {
+        switch (gem) {
+            case "tide" -> le.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 20, 0));
+            case "stonefist" -> hit(le, 1, p);
+            case "spectral" -> le.addPotionEffect(new PotionEffect(PotionEffectType.GLOWING, 40, 0));
+            case "verdant" -> p.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, 40, 0));
+            case "gravity" -> le.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 20, 0));
+            case "blizzard" -> le.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 20, 0));
+            case "nightmare" -> le.addPotionEffect(new PotionEffect(PotionEffectType.DARKNESS, 40, 0));
+            case "thunder" -> {
+                if (rnd.nextDouble() < 0.1) {
+                    le.getWorld().strikeLightningEffect(le.getLocation());
+                    hit(le, 2, p);
+                }
+            }
+            case "wind" -> le.setVelocity(new Vector(0, 0.5, 0));
+            case "inferno" -> le.setFireTicks(40);
+            case "atomic" -> hit(le, 1, p);
+            case "warden" -> le.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 20, 0));
+            case "yinyang" -> p.setHealth(Math.min(p.getMaxHealth(), p.getHealth() + 1));
+            case "eclipse" -> le.addPotionEffect(new PotionEffect(PotionEffectType.WEAKNESS, 20, 0));
+            case "undead" -> le.addPotionEffect(new PotionEffect(PotionEffectType.POISON, 40, 0));
+            default -> { }
+        }
+    }
+
+
+    private static final String[] RANDOM_PASSIVES = {"boomhammer", "spearlance", "duskscythe", "thornwhip",
+            "frostglaive", "ironhalberd", "tidecaller", "bloodsickle", "frostlance", "stormhalberd", "hexscythe",
+            "ironmaul", "ghostglaive", "dawnhalberd", "moonblade", "soulsickle", "emberpike", "windpike", "tidallance",
+            "gravelglaive", "echohammer", "eclipsescythe", "stormstaff", "emberglaive", "wardenspear", "bloomstaff",
+            "cleaver", "wardenclaw", "stonepike", "chainflail", "nagina", "lanternstaff", "hyperion", "mistral", "obsidianfist", "starshard", "cryptbone", "tempesthalberd", "bloodmoon", "prismblade", "voidfang", "solstice", "glacierhalberd", "embershort", "runescythe", "thundercudgel", "duskblade", "ironbulwark"};
+
+    private final Map<UUID, Integer> chargeCount = new HashMap<>();
+    private final Map<UUID, Integer> comboCount = new HashMap<>();
+
+    private final Map<UUID, Integer> hitCount = new HashMap<>();
+    private final Map<UUID, Long> phantomUntil = new HashMap<>();
+
+    private boolean undeadMob(LivingEntity le) {
+        EntityType t = le.getType();
+        return t == EntityType.ZOMBIE || t == EntityType.ZOMBIE_VILLAGER || t == EntityType.HUSK || t == EntityType.DROWNED
+                || t == EntityType.SKELETON || t == EntityType.STRAY || t == EntityType.WITHER_SKELETON || t == EntityType.PHANTOM;
+    }
+
+    /** CrazyRolls: one random ability from the batch-one arsenal per right-click. */
+    private void crazyRolls(Player p) {
+        int pick = rnd.nextInt(ABILITY_ITEM_IDS.length + GEM_PASSIVE_IDS.length);
+        if (pick < ABILITY_ITEM_IDS.length) runAbilityFor(p, ABILITY_ITEM_IDS[pick]);
+        else handleGemRight(p, GEM_PASSIVE_IDS[pick - ABILITY_ITEM_IDS.length]);
+    }
+
+    private void thunderSlam(Player p) {
+        if (!ready(p, "boomhammer", 9000)) return;
+        p.setVelocity(new Vector(0, 1.0, 0));
+        final Player sp = p;
+        Bukkit.getScheduler().runTaskLater(this, () -> {
+            Location c = sp.getLocation().clone();
+            for (Entity en : c.getWorld().getNearbyEntities(c, 5, 3, 5)) {
+                if (!(en instanceof LivingEntity le) || en.equals(sp) || isFriendlyTo(sp, le)) continue;
+                hit(le, 14, sp);
+                Vector out = le.getLocation().toVector().subtract(c.toVector()).setY(0.6);
+                if (out.lengthSquared() > 0) le.setVelocity(out.normalize().multiply(1.2));
+            }
+            c.getWorld().spawnParticle(Particle.EXPLOSION, c, 3, 1, 0.2, 1, 0);
+            c.getWorld().playSound(c, Sound.ENTITY_GENERIC_EXPLODE, 1.5f, 0.6f);
+        }, 20L);
+        p.getWorld().playSound(p.getLocation(), Sound.ENTITY_BREEZE_JUMP, 1f, 0.8f);
+    }
+
+    private void sunlance(Player p) {
+        if (!ready(p, "spearlance", 8000)) return;
+        Location eye = p.getEyeLocation();
+        Vector dir = eye.getDirection().normalize();
+        Set<LivingEntity> struck = new HashSet<>();
+        for (double d = 0.5; d <= 8; d += 0.5) {
+            Location pt = eye.clone().add(dir.clone().multiply(d));
+            p.getWorld().spawnParticle(Particle.END_ROD, pt, 1, 0, 0, 0, 0);
+            for (Entity en : pt.getWorld().getNearbyEntities(pt, 1, 1, 1)) {
+                if (en instanceof LivingEntity le && !en.equals(p) && !isFriendlyTo(p, le) && struck.add(le)) {
+                    hit(le, 6, p);
+                    le.addPotionEffect(new PotionEffect(PotionEffectType.GLOWING, 100, 0));
+                }
+            }
+        }
+        p.getWorld().playSound(p.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1f, 1.6f);
+    }
+
+    private void reapingArc(Player p) {
+        if (!ready(p, "duskscythe", 6000)) return;
+        Vector fwd = p.getLocation().getDirection().setY(0);
+        if (fwd.lengthSquared() < 0.01) return;
+        fwd = fwd.normalize();
+        List<LivingEntity> victims = new ArrayList<>();
+        for (Entity en : p.getWorld().getNearbyEntities(p.getLocation(), 6, 3, 6)) {
+            if (!(en instanceof LivingEntity le) || en.equals(p) || isFriendlyTo(p, le)) continue;
+            Vector to = le.getLocation().toVector().subtract(p.getLocation().toVector()).setY(0);
+            if (to.lengthSquared() == 0 || to.clone().normalize().dot(fwd) < 0.5) continue;
+            victims.add(le);
+        }
+        for (LivingEntity v : victims) {
+            Vector pull = p.getLocation().toVector().subtract(v.getLocation().toVector()).setY(0.1);
+            if (pull.lengthSquared() > 0) v.setVelocity(pull.normalize().multiply(1.1));
+        }
+        final Player sp = p;
+        Bukkit.getScheduler().runTaskLater(this, () -> {
+            for (LivingEntity v : victims) {
+                if (v.isValid() && !v.isDead()) hit(v, 4, sp);
+            }
+        }, 8L);
+        p.getWorld().playSound(p.getLocation(), Sound.ENTITY_WITHER_SHOOT, 0.8f, 1.4f);
+    }
+
+    private void lashChain(Player p) {
+        if (!ready(p, "thornwhip", 7000)) return;
+        Location eye = p.getEyeLocation();
+        Vector dir = eye.getDirection().normalize();
+        LivingEntity target = null;
+        for (double d = 0.5; d <= 8 && target == null; d += 0.5) {
+            Location pt = eye.clone().add(dir.clone().multiply(d));
+            for (Entity en : pt.getWorld().getNearbyEntities(pt, 0.8, 0.8, 0.8)) {
+                if (en instanceof LivingEntity le && !en.equals(p) && !isFriendlyTo(p, le)) {
+                    target = le;
+                    break;
+                }
+            }
+        }
+        if (target == null) {
+            p.sendMessage(ChatColor.GRAY + "Lash Chain found no foe.");
+            return;
+        }
+        hit(target, 6, p);
+        Vector pull = p.getLocation().toVector().subtract(target.getLocation().toVector()).setY(0.2);
+        if (pull.lengthSquared() > 0) target.setVelocity(pull.normalize().multiply(1.3));
+        p.getWorld().playSound(p.getLocation(), Sound.ENTITY_FISHING_BOBBER_THROW, 1f, 0.7f);
+    }
+
+    private void frostZone(Player p) {
+        if (!ready(p, "frostglaive", 7000)) return;
+        Location c = p.getLocation().clone();
+        for (Entity en : c.getWorld().getNearbyEntities(c, 4, 3, 4)) {
+            if (!(en instanceof LivingEntity le) || en.equals(p) || isFriendlyTo(p, le)) continue;
+            hit(le, 2, p);
+            le.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 60, 3));
+        }
+        c.getWorld().spawnParticle(Particle.SNOWFLAKE, c.clone().add(0, 1, 0), 60, 3, 0.8, 3, 0.05);
+        c.getWorld().playSound(c, Sound.BLOCK_GLASS_BREAK, 1f, 0.6f);
+    }
+
+    private void cleavingSpin(Player p) {
+        if (!ready(p, "ironhalberd", 5000)) return;
+        final Player sp = p;
+        for (int i = 0; i < 4; i++) {
+            Bukkit.getScheduler().runTaskLater(this, () -> {
+                if (!sp.isOnline()) return;
+                Location c = sp.getLocation().clone();
+                for (Entity en : c.getWorld().getNearbyEntities(c, 3, 2, 3)) {
+                    if (!(en instanceof LivingEntity le) || en.equals(sp) || isFriendlyTo(sp, le)) continue;
+                    hit(le, 3, sp);
+                }
+                c.getWorld().spawnParticle(Particle.SWEEP_ATTACK, c.clone().add(0, 1, 0), 10, 2, 0.5, 2, 0);
+            }, i * 5L);
+        }
+        p.getWorld().playSound(p.getLocation(), Sound.ENTITY_PLAYER_ATTACK_SWEEP, 1f, 0.9f);
+    }
+
+    private void maelstrom(Player p) {
+        if (!ready(p, "tidecaller", 8000)) return;
+        Vector fwd = p.getLocation().getDirection().setY(0);
+        if (fwd.lengthSquared() < 0.01) return;
+        Location point = p.getLocation().clone().add(fwd.normalize().multiply(6));
+        for (Entity en : point.getWorld().getNearbyEntities(point, 4, 3, 4)) {
+            if (!(en instanceof LivingEntity le) || en.equals(p) || isFriendlyTo(p, le)) continue;
+            hit(le, 5, p);
+            Vector pull = point.toVector().subtract(le.getLocation().toVector()).setY(0.1);
+            if (pull.lengthSquared() > 0) le.setVelocity(pull.normalize().multiply(1.0));
+        }
+        point.getWorld().spawnParticle(Particle.BUBBLE_POP, point.clone().add(0, 1, 0), 80, 3, 1, 3, 0.2);
+        point.getWorld().playSound(point, Sound.ENTITY_PLAYER_SPLASH_HIGH_SPEED, 1f, 0.7f);
+    }
+
+    private void hemorrhage(Player p) {
+        if (!ready(p, "bloodsickle", 7000)) return;
+        LivingEntity target = null;
+        double best = 5;
+        for (Entity en : p.getWorld().getNearbyEntities(p.getLocation(), 5, 3, 5)) {
+            if (!(en instanceof LivingEntity le) || en.equals(p) || isFriendlyTo(p, le)) continue;
+            double d = le.getLocation().distance(p.getLocation());
+            if (d < best) {
+                best = d;
+                target = le;
+            }
+        }
+        if (target == null) {
+            p.sendMessage(ChatColor.GRAY + "Hemorrhage found no foe.");
+            return;
+        }
+        final LivingEntity victim = target;
+        final Player sp = p;
+        for (int i = 1; i <= 3; i++) {
+            Bukkit.getScheduler().runTaskLater(this, () -> {
+                if (!victim.isValid() || victim.isDead()) return;
+                victim.damage(1);
+                if (sp.isOnline()) sp.setHealth(Math.min(sp.getMaxHealth(), sp.getHealth() + 2));
+                victim.getWorld().spawnParticle(Particle.DAMAGE_INDICATOR, victim.getLocation().add(0, 1, 0), 8, 0.3, 0.3, 0.3, 0.1);
+            }, i * 20L);
+        }
+    }
+
+    /** One passive per weapon, on melee hits only. */
+    /** Weapons hit harder: a melee hit with any held weapon deals 50% more damage. */
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+    public void onWeaponDamage(EntityDamageByEntityEvent e) {
+        if (inPassive || e.getCause() != EntityDamageEvent.DamageCause.ENTITY_ATTACK) return;
+        if (!(e.getDamager() instanceof Player p)) return;
+        if (idOf(p.getInventory().getItemInMainHand()) == null) return;
+        e.setDamage(e.getDamage() * 1.5);
+    }
+
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+    public void onWeaponPassive(EntityDamageByEntityEvent e) {
+        if (inPassive || e.getCause() != EntityDamageEvent.DamageCause.ENTITY_ATTACK) return;
+        if (!(e.getDamager() instanceof Player p) || !(e.getEntity() instanceof LivingEntity le)) return;
+        if (le.equals(p) || isFriendlyTo(p, le)) return;
+        String id = idOf(p.getInventory().getItemInMainHand());
+        if (id == null) return;
+        inPassive = true;
+        try {
+            String passive = id.equals("crazyrolls") ? RANDOM_PASSIVES[rnd.nextInt(RANDOM_PASSIVES.length)] : id;
+            switch (passive) {
+                case "boomhammer" -> {
+                    if (rnd.nextDouble() < 0.25) le.setVelocity(new Vector(0, 0.8, 0));
+                }
+                case "spearlance" -> {
+                    for (int i = 1; i <= 3; i++) {
+                        Bukkit.getScheduler().runTaskLater(this, () -> {
+                            if (le.isValid() && !le.isDead()) le.damage(1);
+                        }, i * 20L);
+                    }
+                }
+                case "duskscythe" -> p.setHealth(Math.min(p.getMaxHealth(), p.getHealth() + 2));
+                case "thornwhip" -> le.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 40, 0));
+                case "frostglaive" -> {
+                    le.setFireTicks(0);
+                    hit(le, 1, p);
+                }
+                case "ironhalberd" -> {
+                    for (Entity en : le.getWorld().getNearbyEntities(le.getLocation(), 2, 2, 2)) {
+                        if (en instanceof LivingEntity other && !en.equals(le) && !en.equals(p) && !isFriendlyTo(p, other)) {
+                            hit(other, 2, p);
+                            break;
+                        }
+                    }
+                }
+                case "tidecaller" -> {
+                    Vector out = le.getLocation().toVector().subtract(p.getLocation().toVector()).setY(0.1);
+                    if (out.lengthSquared() > 0) le.setVelocity(out.normalize().multiply(0.8));
+                }
+                case "bloodsickle" -> {
+                    if (le instanceof Player) p.setHealth(Math.min(p.getMaxHealth(), p.getHealth() + 2));
+                }
+                case "frostlance" -> {
+                    if (rnd.nextDouble() < 0.2) le.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 20, 9));
+                }
+                case "stormhalberd" -> {
+                    if (rnd.nextDouble() < 0.15) {
+                        le.getWorld().strikeLightningEffect(le.getLocation());
+                        hit(le, 3, p);
+                    }
+                }
+                case "hexscythe" -> le.addPotionEffect(new PotionEffect(PotionEffectType.WITHER, 40, 0));
+                case "ironmaul" -> {
+                    int count = hitCount.merge(p.getUniqueId(), 1, Integer::sum);
+                    if (count % 5 == 0) hit(le, 6, p);
+                }
+                case "ghostglaive" -> {
+                    le.addPotionEffect(new PotionEffect(PotionEffectType.GLOWING, 60, 0));
+                    Long until = phantomUntil.get(p.getUniqueId());
+                    if (until != null && System.currentTimeMillis() < until) {
+                        phantomUntil.remove(p.getUniqueId());
+                        hit(le, 6, p);
+                    }
+                }
+                case "dawnhalberd" -> {
+                    if (undeadMob(le)) hit(le, 3, p);
+                }
+                case "moonblade" -> {
+                    long time = p.getWorld().getTime();
+                    if (time >= 13000 && time < 23000) hit(le, 2, p);
+                }
+                case "soulsickle" -> Bukkit.getScheduler().runTaskLater(this, () -> {
+                    if (le.isDead() && p.isOnline()) p.setHealth(Math.min(p.getMaxHealth(), p.getHealth() + 4));
+                }, 1L);
+                case "emberpike" -> le.setFireTicks(60);
+                case "windpike" -> p.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 40, 0));
+                case "tidallance" -> le.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 20, 2));
+                case "gravelglaive" -> {
+                    hit(le, 1, p);
+                    le.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 20, 0));
+                }
+                case "echohammer" -> {
+                    LivingEntity nearest = null;
+                    double best = 3;
+                    for (Entity en : le.getWorld().getNearbyEntities(le.getLocation(), 3, 3, 3)) {
+                        if (en instanceof LivingEntity other && !en.equals(le) && !en.equals(p) && !isFriendlyTo(p, other)) {
+                            double d = other.getLocation().distance(le.getLocation());
+                            if (d < best) {
+                                best = d;
+                                nearest = other;
+                            }
+                        }
+                    }
+                    if (nearest != null) hit(nearest, 2, p);
+                }
+                case "eclipsescythe" -> le.addPotionEffect(new PotionEffect(PotionEffectType.DARKNESS, 40, 0));
+                case "stormstaff" -> {
+                    int count = chargeCount.merge(p.getUniqueId(), 1, Integer::sum);
+                    if (count % 4 == 0) {
+                        LivingEntity chain = null;
+                        double best = 4;
+                        for (Entity en : le.getWorld().getNearbyEntities(le.getLocation(), 4, 3, 4)) {
+                            if (en instanceof LivingEntity other && !en.equals(le) && !en.equals(p) && !isFriendlyTo(p, other)) {
+                                double d = other.getLocation().distance(le.getLocation());
+                                if (d < best) {
+                                    best = d;
+                                    chain = other;
+                                }
+                            }
+                        }
+                        if (chain != null) {
+                            chain.getWorld().strikeLightningEffect(chain.getLocation());
+                            hit(chain, 3, p);
+                        }
+                    }
+                }
+                case "emberglaive" -> le.setFireTicks(40);
+                case "wardenspear" -> le.addPotionEffect(new PotionEffect(PotionEffectType.DARKNESS, 40, 0));
+                case "bloomstaff" -> p.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, 40, 0));
+                case "cleaver" -> le.addPotionEffect(new PotionEffect(PotionEffectType.WEAKNESS, 40, 0));
+                case "wardenclaw" -> {
+                    Vector push = le.getLocation().toVector().subtract(p.getLocation().toVector()).setY(0.1);
+                    if (push.lengthSquared() > 0) le.setVelocity(push.normalize().multiply(0.6));
+                }
+                case "stonepike" -> p.addPotionEffect(new PotionEffect(PotionEffectType.ABSORPTION, 100, 0));
+                case "chainflail" -> {
+                    if (rnd.nextDouble() < 0.2) {
+                        Vector pull = p.getLocation().toVector().subtract(le.getLocation().toVector()).setY(0.1);
+                        if (pull.lengthSquared() > 0) le.setVelocity(pull.normalize().multiply(1.2));
+                    }
+                }
+                case "nagina" -> p.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 20, 0));
+                case "lanternstaff" -> {
+                    le.addPotionEffect(new PotionEffect(PotionEffectType.GLOWING, 60, 0));
+                    hit(le, 1, p);
+                }
+                case "thunderstick" -> {
+                    if (rnd.nextDouble() < 0.1) {
+                        le.getWorld().strikeLightningEffect(le.getLocation());
+                        hit(le, 3, p);
+                    }
+                }
+                case "vampirefang" -> p.setHealth(Math.min(p.getMaxHealth(), p.getHealth() + 2));
+                case "frostbite" -> le.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 20, 0));
+                case "winddash" -> {
+                    Vector gust = le.getLocation().toVector().subtract(p.getLocation().toVector()).setY(0.2);
+                    if (gust.lengthSquared() > 0) le.setVelocity(gust.normalize().multiply(0.9));
+                }
+                case "infernowand" -> le.setFireTicks(40);
+                case "groundbreaker" -> {
+                    int combo = comboCount.merge(p.getUniqueId(), 1, Integer::sum);
+                    if (combo % 4 == 0) hit(le, 4, p);
+                }
+                case "phoenixblade" -> {
+                    if (p.getHealth() < p.getMaxHealth() / 2) p.setHealth(Math.min(p.getMaxHealth(), p.getHealth() + 2));
+                }
+                case "gauntlet" -> {
+                    hit(le, 1, p);
+                    le.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 20, 0));
+                }
+                case "voidscythe" -> {
+                    hit(le, 1, p);
+                    p.setHealth(Math.min(p.getMaxHealth(), p.getHealth() + 1));
+                }
+                case "venom" -> le.addPotionEffect(new PotionEffect(PotionEffectType.POISON, 40, 0));
+                case "tidal" -> le.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 20, 0));
+                case "shadowdagger" -> {
+                    if (le.getLocation().getDirection().dot(p.getLocation().getDirection()) > 0.5) hit(le, 3, p);
+                }
+                case "solarlance" -> le.setFireTicks(60);
+                case "unoreverse" -> {
+                    if (p.getHealth() < p.getMaxHealth() / 2) hit(le, 2, p);
+                }
+                case "bloodstone" -> p.setHealth(Math.min(p.getMaxHealth(), p.getHealth() + 2));
+                case "quakehammer" -> {
+                    if (rnd.nextDouble() < 0.15) le.setVelocity(new Vector(0, 0.6, 0));
+                }
+                case "glacier" -> le.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 40, 0));
+                case "starfall" -> {
+                    if (rnd.nextDouble() < 0.1) hit(le, 4, p);
+                }
+                case "venomsickle" -> le.addPotionEffect(new PotionEffect(PotionEffectType.POISON, 60, 0));
+                case "crystalpick" -> hit(le, 2, p);
+                case "voidcutter" -> {
+                    if (rnd.nextDouble() < 0.15) hit(le, 4, p);
+                }
+                case "bloodletter" -> Bukkit.getScheduler().runTaskLater(this, () -> {
+                    if (le.isValid() && !le.isDead()) le.damage(1);
+                }, 20L);
+                case "sunder" -> {
+                    Vector away = le.getLocation().toVector().subtract(p.getLocation().toVector()).setY(0.2);
+                    if (away.lengthSquared() > 0) le.setVelocity(away.normalize().multiply(1.0));
+                }
+                case "reapersigil" -> {
+                    if (le.getHealth() < le.getMaxHealth() / 2) hit(le, 2, p);
+                }
+                case "shadowcloak" -> p.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 20, 0));
+                case "golembell" -> {
+                    if (rnd.nextDouble() < 0.1) {
+                        Vector back = le.getLocation().toVector().subtract(p.getLocation().toVector()).setY(0.2);
+                        if (back.lengthSquared() > 0) le.setVelocity(back.normalize().multiply(1.2));
+                    }
+                }
+                case "sonichorn" -> {
+                    for (Entity en : le.getWorld().getNearbyEntities(le.getLocation(), 2, 2, 2)) {
+                        if (en instanceof LivingEntity other && !en.equals(le) && !en.equals(p) && !isFriendlyTo(p, other)) hit(other, 2, p);
+                    }
+                }
+                case "stormheart" -> {
+                    if (rnd.nextDouble() < 0.1) {
+                        le.getWorld().strikeLightningEffect(le.getLocation());
+                        hit(le, 3, p);
+                    }
+                }
+                case "phasefruit" -> p.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 20, 0));
+                case "grapple" -> {
+                    Vector pull = p.getLocation().toVector().subtract(le.getLocation().toVector()).setY(0.1);
+                    if (pull.lengthSquared() > 0) le.setVelocity(pull.normalize().multiply(0.8));
+                }
+                case "aegistotem" -> p.addPotionEffect(new PotionEffect(PotionEffectType.ABSORPTION, 40, 0));
+                case "chronohourglass" -> {
+                    if (rnd.nextDouble() < 0.1) p.setHealth(Math.min(p.getMaxHealth(), p.getHealth() + 2));
+                }
+                case "rewindcompass" -> hit(le, 1, p);
+                case "spoutshell" -> le.setVelocity(new Vector(0, 0.4, 0));
+                case "honeybomb" -> le.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 20, 0));
+                case "cloudbottle" -> p.addPotionEffect(new PotionEffect(PotionEffectType.SLOW_FALLING, 20, 0));
+                case "meteor" -> le.setFireTicks(20);
+                case "hexbone" -> {
+                    hit(le, 1, p);
+                    le.addPotionEffect(new PotionEffect(PotionEffectType.WEAKNESS, 20, 0));
+                }
+                case "healingcharm" -> p.setHealth(Math.min(p.getMaxHealth(), p.getHealth() + 1));
+                case "ghostlantern" -> le.addPotionEffect(new PotionEffect(PotionEffectType.GLOWING, 40, 0));
+                case "kaboom" -> {
+                    if (rnd.nextDouble() < 0.1) hit(le, 4, p);
+                }
+                case "shakalaka" -> p.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 20, 0));
+                case "arccaster" -> {
+                    if (rnd.nextDouble() < 0.15) {
+                        le.getWorld().strikeLightningEffect(le.getLocation());
+                        hit(le, 3, p);
+                    }
+                }
+                case "cursedcoin" -> {
+                    if (rnd.nextDouble() < 0.1) p.addPotionEffect(new PotionEffect(PotionEffectType.LUCK, 100, 0));
+                }
+                case "spectralquill" -> le.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 20, 0));
+                case "rottenoffering" -> le.addPotionEffect(new PotionEffect(PotionEffectType.POISON, 40, 0));
+                case "eyeofthecrypt" -> le.addPotionEffect(new PotionEffect(PotionEffectType.GLOWING, 60, 0));
+                case "magnetrod" -> {
+                    Vector pull = p.getLocation().toVector().subtract(le.getLocation().toVector()).setY(0.1);
+                    if (pull.lengthSquared() > 0) le.setVelocity(pull.normalize().multiply(0.8));
+                }
+                case "blizzardorb" -> le.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 40, 0));
+                case "grenade" -> {
+                    hit(le, 1, p);
+                    le.addPotionEffect(new PotionEffect(PotionEffectType.NAUSEA, 20, 0));
+                }
+                case "gravitywell" -> {
+                    Vector tug = p.getLocation().toVector().subtract(le.getLocation().toVector()).setY(0.1);
+                    if (tug.lengthSquared() > 0) le.setVelocity(tug.normalize().multiply(0.8));
+                }
+                case "emberblade" -> le.setFireTicks(60);
+                case "thornrapier" -> le.addPotionEffect(new PotionEffect(PotionEffectType.POISON, 60, 0));
+                case "moonsplitter" -> {
+                    long time = p.getWorld().getTime();
+                    if (time >= 13000 && time < 23000) hit(le, 2, p);
+                }
+                case "frostfang" -> le.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 40, 0));
+                case "soulreaver" -> p.setHealth(Math.min(p.getMaxHealth(), p.getHealth() + 2));
+                case "stormfang" -> {
+                    if (rnd.nextDouble() < 0.1) {
+                        le.getWorld().strikeLightningEffect(le.getLocation());
+                        hit(le, 3, p);
+                    }
+                }
+                case "venomtooth" -> le.addPotionEffect(new PotionEffect(PotionEffectType.POISON, 40, 0));
+                case "bladestorm" -> hit(le, 1, p);
+                case "hyperion" -> p.addPotionEffect(new PotionEffect(PotionEffectType.ABSORPTION, 40, 0));
+                case "mistral" -> hit(le, 1, p);
+                case "obsidianfist" -> le.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 20, 0));
+                case "starshard" -> {
+                    if (rnd.nextDouble() < 0.1) hit(le, 5, p);
+                }
+                case "cryptbone" -> hit(le, 2, p);
+                case "tempesthalberd" -> {
+                    if (rnd.nextDouble() < 0.1) {
+                        le.getWorld().strikeLightningEffect(le.getLocation());
+                        hit(le, 2, p);
+                    }
+                }
+                case "bloodmoon" -> {
+                    long t = p.getWorld().getTime();
+                    if (t >= 13000 && t < 23000) p.setHealth(Math.min(p.getMaxHealth(), p.getHealth() + 2));
+                }
+                case "prismblade" -> {
+                    if (rnd.nextDouble() < 0.15) hit(le, 3, p);
+                }
+                case "voidfang" -> hit(le, 1, p);
+                case "solstice" -> le.setFireTicks(40);
+                case "glacierhalberd" -> le.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 20, 0));
+                case "embershort" -> le.setFireTicks(40);
+                case "runescythe" -> le.addPotionEffect(new PotionEffect(PotionEffectType.GLOWING, 40, 0));
+                case "thundercudgel" -> {
+                    if (rnd.nextDouble() < 0.1) {
+                        le.getWorld().strikeLightningEffect(le.getLocation());
+                        hit(le, 3, p);
+                    }
+                }
+                case "duskblade" -> {
+                    long t = p.getWorld().getTime();
+                    if (t >= 13000 && t < 23000) hit(le, 1, p);
+                }
+                case "ironbulwark" -> p.addPotionEffect(new PotionEffect(PotionEffectType.ABSORPTION, 20, 0));
+                default -> { }
+            }
+            String gemHeld = gemOf(p);
+            if (gemHeld != null && NEW_GEM_PASSIVES.contains(gemHeld)) applyGemPassive(p, le, gemHeld);
+            if (id.equals("crazyrolls")) applyGemPassive(p, le, GEM_PASSIVE_IDS[rnd.nextInt(GEM_PASSIVE_IDS.length)]);
+        } finally {
+            inPassive = false;
+        }
+    }
+
+    // ----- Batch 2 abilities -----
+
+    private void glacierLance(Player p) {
+        if (!ready(p, "frostlance", 8000)) return;
+        Location eye = p.getEyeLocation();
+        Vector dir = eye.getDirection().normalize();
+        Set<LivingEntity> struck = new HashSet<>();
+        for (double d = 0.5; d <= 6; d += 0.5) {
+            Location pt = eye.clone().add(dir.clone().multiply(d));
+            p.getWorld().spawnParticle(Particle.SNOWFLAKE, pt, 2, 0.1, 0.1, 0.1, 0);
+            for (Entity en : pt.getWorld().getNearbyEntities(pt, 1, 1, 1)) {
+                if (en instanceof LivingEntity le && !en.equals(p) && !isFriendlyTo(p, le) && struck.add(le)) {
+                    hit(le, 5, p);
+                    le.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 40, 9));
+                }
+            }
+        }
+        p.getWorld().playSound(p.getLocation(), Sound.BLOCK_GLASS_BREAK, 1f, 1.4f);
+    }
+
+    private void stormCleave(Player p) {
+        if (!ready(p, "stormhalberd", 9000)) return;
+        List<LivingEntity> foes = new ArrayList<>();
+        for (Entity en : p.getWorld().getNearbyEntities(p.getLocation(), 6, 3, 6)) {
+            if (en instanceof LivingEntity le && !en.equals(p) && !isFriendlyTo(p, le)) foes.add(le);
+        }
+        Collections.shuffle(foes);
+        int n = Math.min(3, foes.size());
+        for (int i = 0; i < n; i++) {
+            LivingEntity t = foes.get(i);
+            t.getWorld().strikeLightningEffect(t.getLocation());
+            hit(t, 4, p);
+        }
+        p.getWorld().playSound(p.getLocation(), Sound.ENTITY_LIGHTNING_BOLT_THUNDER, 1f, 1.1f);
+    }
+
+    private void hexCurse(Player p) {
+        if (!ready(p, "hexscythe", 14000)) return;
+        LivingEntity target = null;
+        double best = 6;
+        for (Entity en : p.getWorld().getNearbyEntities(p.getLocation(), 6, 3, 6)) {
+            if (!(en instanceof LivingEntity le) || en.equals(p) || isFriendlyTo(p, le)) continue;
+            double d = le.getLocation().distance(p.getLocation());
+            if (d < best) {
+                best = d;
+                target = le;
+            }
+        }
+        if (target == null) {
+            p.sendMessage(ChatColor.GRAY + "Hex Curse found no foe.");
+            return;
+        }
+        hit(target, 3, p);
+        target.addPotionEffect(new PotionEffect(PotionEffectType.WITHER, 60, 0));
+        target.addPotionEffect(new PotionEffect(PotionEffectType.NAUSEA, 60, 0));
+        target.getWorld().spawnParticle(Particle.WITCH, target.getLocation().add(0, 1, 0), 30, 0.5, 0.8, 0.5, 0.02);
+        target.getWorld().playSound(target.getLocation(), Sound.ENTITY_WITCH_AMBIENT, 1f, 0.6f);
+    }
+
+    private void seismicDash(Player p) {
+        if (!ready(p, "ironmaul", 10000)) return;
+        Vector fwd = p.getLocation().getDirection().setY(0);
+        if (fwd.lengthSquared() < 0.01) return;
+        p.setVelocity(fwd.normalize().multiply(1.6).setY(0.35));
+        final Player sp = p;
+        Bukkit.getScheduler().runTaskLater(this, () -> {
+            Location c = sp.getLocation().clone();
+            for (Entity en : c.getWorld().getNearbyEntities(c, 3, 2, 3)) {
+                if (!(en instanceof LivingEntity le) || en.equals(sp) || isFriendlyTo(sp, le)) continue;
+                hit(le, 12, sp);
+            }
+            c.getWorld().spawnParticle(Particle.EXPLOSION, c, 2, 0.6, 0.1, 0.6, 0);
+            c.getWorld().playSound(c, Sound.BLOCK_ANVIL_LAND, 1.2f, 0.6f);
+        }, 15L);
+    }
+
+    private void phantomStep(Player p) {
+        if (!ready(p, "ghostglaive", 9000)) return;
+        p.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 60, 0));
+        phantomUntil.put(p.getUniqueId(), System.currentTimeMillis() + 3000L);
+        p.getWorld().spawnParticle(Particle.SMOKE, p.getLocation().add(0, 1, 0), 40, 0.5, 1, 0.5, 0.02);
+        p.getWorld().playSound(p.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 1f, 1.6f);
+    }
+
+    private void dawnRadiance(Player p) {
+        if (!ready(p, "dawnhalberd", 12000)) return;
+        p.setHealth(Math.min(p.getMaxHealth(), p.getHealth() + 6));
+        p.addPotionEffect(new PotionEffect(PotionEffectType.FIRE_RESISTANCE, 100, 0));
+        p.getWorld().spawnParticle(Particle.HAPPY_VILLAGER, p.getLocation().add(0, 1, 0), 50, 1, 1, 1, 0.1);
+        p.getWorld().playSound(p.getLocation(), Sound.BLOCK_BEACON_ACTIVATE, 1f, 1.6f);
+    }
+
+    private void lunarBlink(Player p) {
+        if (!ready(p, "moonblade", 10000)) return;
+        Vector dir = p.getLocation().getDirection().setY(0);
+        if (dir.lengthSquared() < 0.01) return;
+        dir = dir.normalize();
+        Location from = p.getLocation().clone();
+        Location dest = from.clone();
+        for (double d = 1; d <= 5; d += 1) {
+            Location next = from.clone().add(dir.clone().multiply(d));
+            if (!next.getBlock().isPassable() || !next.clone().add(0, 1, 0).getBlock().isPassable()) break;
+            dest = next;
+        }
+        dest.setYaw(from.getYaw());
+        dest.setPitch(from.getPitch());
+        p.getWorld().spawnParticle(Particle.PORTAL, from.clone().add(0, 1, 0), 40, 0.4, 0.8, 0.4, 0.3);
+        p.teleport(dest);
+        p.getWorld().spawnParticle(Particle.PORTAL, dest.clone().add(0, 1, 0), 40, 0.4, 0.8, 0.4, 0.3);
+        p.getWorld().playSound(dest, Sound.ENTITY_ENDERMAN_TELEPORT, 1f, 1.2f);
+    }
+
+    private void soulHarvest(Player p) {
+        if (!ready(p, "soulsickle", 15000)) return;
+        int drained = 0;
+        for (Entity en : p.getWorld().getNearbyEntities(p.getLocation(), 6, 3, 6)) {
+            if (drained >= 5) break;
+            if (!(en instanceof LivingEntity le) || en.equals(p) || isFriendlyTo(p, le)) continue;
+            hit(le, 2, p);
+            drained++;
+        }
+        if (drained > 0) p.addPotionEffect(new PotionEffect(PotionEffectType.ABSORPTION, 200, Math.min(4, drained - 1)));
+        p.getWorld().spawnParticle(Particle.SOUL, p.getLocation().add(0, 1, 0), 40, 2, 1, 2, 0.05);
+        p.getWorld().playSound(p.getLocation(), Sound.ENTITY_WITHER_AMBIENT, 1f, 1.3f);
+    }
+
+    // ----- Batch 3 abilities -----
+
+    private void emberThrust(Player p) {
+        if (!ready(p, "emberpike", 6500)) return;
+        Vector dir = p.getEyeLocation().getDirection().normalize();
+        p.setVelocity(dir.clone().multiply(1.2).setY(0.1));
+        final Player sp = p;
+        Bukkit.getScheduler().runTaskLater(this, () -> {
+            Location c = sp.getLocation().clone();
+            for (Entity en : c.getWorld().getNearbyEntities(c, 2.5, 2.5, 2.5)) {
+                if (!(en instanceof LivingEntity le) || en.equals(sp) || isFriendlyTo(sp, le)) continue;
+                hit(le, 8, sp);
+                le.setFireTicks(80);
+            }
+            c.getWorld().spawnParticle(Particle.FLAME, c.clone().add(0, 1, 0), 50, 2, 0.8, 2, 0.05);
+            c.getWorld().playSound(c, Sound.ITEM_FIRECHARGE_USE, 1.2f, 0.7f);
+        }, 8L);
+        p.getWorld().spawnParticle(Particle.FLAME, p.getLocation(), 30, 0.4, 0.4, 0.4, 0.05);
+    }
+
+    private void gustVault(Player p) {
+        if (!ready(p, "windpike", 8000)) return;
+        Vector fwd = p.getLocation().getDirection().setY(0);
+        if (fwd.lengthSquared() < 0.01) return;
+        p.setVelocity(fwd.normalize().multiply(1.1).setY(0.9));
+        final Player sp = p;
+        Bukkit.getScheduler().runTaskLater(this, () -> {
+            Location c = sp.getLocation().clone();
+            for (Entity en : c.getWorld().getNearbyEntities(c, 3, 2, 3)) {
+                if (!(en instanceof LivingEntity le) || en.equals(sp) || isFriendlyTo(sp, le)) continue;
+                hit(le, 3, sp);
+                Vector out = le.getLocation().toVector().subtract(c.toVector()).setY(0.4);
+                if (out.lengthSquared() > 0) le.setVelocity(out.normalize().multiply(1.2));
+            }
+            c.getWorld().spawnParticle(Particle.CLOUD, c, 40, 2, 0.5, 2, 0.05);
+            c.getWorld().playSound(c, Sound.ENTITY_BREEZE_WIND_BURST, 1f, 1f);
+        }, 18L);
+    }
+
+    private void tidalHookPull(Player p) {
+        if (!ready(p, "tidallance", 6000)) return;
+        Location eye = p.getEyeLocation();
+        Vector dir = eye.getDirection().normalize();
+        LivingEntity target = null;
+        for (double d = 0.5; d <= 8 && target == null; d += 0.5) {
+            Location pt = eye.clone().add(dir.clone().multiply(d));
+            for (Entity en : pt.getWorld().getNearbyEntities(pt, 0.8, 0.8, 0.8)) {
+                if (en instanceof LivingEntity le && !en.equals(p) && !isFriendlyTo(p, le)) {
+                    target = le;
+                    break;
+                }
+            }
+        }
+        if (target == null) {
+            p.sendMessage(ChatColor.GRAY + "Tidal Hook found no foe.");
+            return;
+        }
+        Location behind = target.getLocation().clone().subtract(dir.clone().multiply(1.5));
+        if (!behind.getBlock().isPassable()) {
+            p.sendMessage(ChatColor.GRAY + "No room behind that foe.");
+            return;
+        }
+        behind.setYaw(p.getLocation().getYaw());
+        behind.setPitch(p.getLocation().getPitch());
+        p.teleport(behind);
+        hit(target, 5, p);
+        p.getWorld().spawnParticle(Particle.BUBBLE_POP, behind.clone().add(0, 1, 0), 30, 0.5, 0.8, 0.5, 0.1);
+        p.getWorld().playSound(behind, Sound.ENTITY_FISHING_BOBBER_THROW, 1f, 0.6f);
+    }
+
+    private void gravelWell(Player p) {
+        if (!ready(p, "gravelglaive", 9000)) return;
+        Vector fwd = p.getLocation().getDirection().setY(0);
+        if (fwd.lengthSquared() < 0.01) return;
+        final Location center = p.getLocation().clone().add(fwd.normalize().multiply(5));
+        final int[] ticks = {0};
+        final BukkitTask[] holder = new BukkitTask[1];
+        holder[0] = Bukkit.getScheduler().runTaskTimer(this, () -> {
+            ticks[0]++;
+            if (ticks[0] > 30) {
+                holder[0].cancel();
+                return;
+            }
+            for (Entity en : center.getWorld().getNearbyEntities(center, 4, 3, 4)) {
+                if (!(en instanceof LivingEntity le) || en.equals(p) || isFriendlyTo(p, le)) continue;
+                Vector pull = center.toVector().subtract(le.getLocation().toVector()).setY(0.1);
+                if (pull.lengthSquared() > 0.5) le.setVelocity(pull.normalize().multiply(0.4));
+                if (ticks[0] % 20 == 0) hit(le, 2, p);
+            }
+            center.getWorld().spawnParticle(Particle.PORTAL, center.clone().add(0, 1, 0), 20, 2, 0.5, 2, 0.3);
+        }, 0L, 1L);
+        p.getWorld().playSound(center, Sound.BLOCK_STONE_BREAK, 1f, 0.6f);
+    }
+
+    private void echoShout(Player p) {
+        if (!ready(p, "echohammer", 7000)) return;
+        final Location c = p.getLocation().clone();
+        echoPulse(p, c, 5);
+        Bukkit.getScheduler().runTaskLater(this, () -> echoPulse(p, c, 3), 20L);
+        p.getWorld().playSound(c, Sound.BLOCK_BELL_USE, 1.2f, 0.8f);
+    }
+
+    private void echoPulse(Player p, Location c, double dmg) {
+        for (Entity en : c.getWorld().getNearbyEntities(c, 4, 2.5, 4)) {
+            if (!(en instanceof LivingEntity le) || en.equals(p) || isFriendlyTo(p, le)) continue;
+            hit(le, dmg, p);
+            Vector out = le.getLocation().toVector().subtract(c.toVector()).setY(0.3);
+            if (out.lengthSquared() > 0) le.setVelocity(out.normalize().multiply(0.9));
+        }
+        c.getWorld().spawnParticle(Particle.NOTE, c.clone().add(0, 1.5, 0), 20, 2, 0.5, 2, 1);
+    }
+
+    private void umbralVeil(Player p) {
+        if (!ready(p, "eclipsescythe", 11000)) return;
+        Location c = p.getLocation().clone();
+        for (Entity en : c.getWorld().getNearbyEntities(c, 5, 3, 5)) {
+            if (!(en instanceof LivingEntity le) || en.equals(p) || isFriendlyTo(p, le)) continue;
+            hit(le, 2, p);
+            le.addPotionEffect(new PotionEffect(PotionEffectType.DARKNESS, 80, 0));
+        }
+        c.getWorld().spawnParticle(Particle.SMOKE, c.clone().add(0, 1, 0), 80, 3, 1, 3, 0.02);
+        c.getWorld().playSound(c, Sound.ENTITY_WITHER_AMBIENT, 0.8f, 0.5f);
+    }
+
+    private void stormPulse(Player p) {
+        if (!ready(p, "stormstaff", 9000)) return;
+        Vector dir = p.getEyeLocation().getDirection().normalize();
+        LivingEntity best = null;
+        double bestDot = 0.9;
+        for (Entity en : p.getWorld().getNearbyEntities(p.getLocation(), 16, 8, 16)) {
+            if (!(en instanceof LivingEntity le) || en.equals(p) || isFriendlyTo(p, le)) continue;
+            Vector to = le.getLocation().add(0, 1, 0).toVector().subtract(p.getEyeLocation().toVector());
+            if (to.lengthSquared() == 0) continue;
+            double dot = to.clone().normalize().dot(dir);
+            if (dot > bestDot) {
+                bestDot = dot;
+                best = le;
+            }
+        }
+        if (best == null) {
+            p.sendMessage(ChatColor.GRAY + "Storm Pulse found no foe in your aim.");
+            return;
+        }
+        best.getWorld().strikeLightningEffect(best.getLocation());
+        hit(best, 10, p);
+        for (Entity en : best.getWorld().getNearbyEntities(best.getLocation(), 2, 2, 2)) {
+            if (!(en instanceof LivingEntity other) || en.equals(best) || en.equals(p) || isFriendlyTo(p, other)) continue;
+            hit(other, 3, p);
+        }
+    }
+
+    private void emberCrescent(Player p) {
+        if (!ready(p, "emberglaive", 7000)) return;
+        Vector fwd = p.getLocation().getDirection().setY(0);
+        if (fwd.lengthSquared() < 0.01) return;
+        fwd = fwd.normalize();
+        for (Entity en : p.getWorld().getNearbyEntities(p.getLocation(), 6, 3, 6)) {
+            if (!(en instanceof LivingEntity le) || en.equals(p) || isFriendlyTo(p, le)) continue;
+            Vector to = le.getLocation().toVector().subtract(p.getLocation().toVector()).setY(0);
+            if (to.lengthSquared() == 0 || to.clone().normalize().dot(fwd) < 0.55) continue;
+            hit(le, 8, p);
+            le.setFireTicks(80);
+        }
+        p.getWorld().spawnParticle(Particle.FLAME, p.getLocation().add(fwd.clone().multiply(3)).add(0, 1, 0), 40, 2, 0.8, 2, 0.05);
+        p.getWorld().playSound(p.getLocation(), Sound.ITEM_FIRECHARGE_USE, 1f, 0.9f);
+    }
+
+    // ----- Batch 4 abilities -----
+
+    private void sonarLance(Player p) {
+        if (!ready(p, "wardenspear", 11000)) return;
+        for (Entity en : p.getWorld().getNearbyEntities(p.getLocation(), 12, 6, 12)) {
+            if (!(en instanceof LivingEntity le) || en.equals(p) || isFriendlyTo(p, le)) continue;
+            le.addPotionEffect(new PotionEffect(PotionEffectType.GLOWING, 120, 0));
+            if (le.getLocation().distance(p.getLocation()) <= 3) hit(le, 3, p);
+        }
+        p.getWorld().spawnParticle(Particle.SONIC_BOOM, p.getLocation().add(0, 1, 0), 1, 0, 0, 0, 0);
+        p.getWorld().playSound(p.getLocation(), Sound.ENTITY_WARDEN_LISTENING, 1.2f, 1f);
+    }
+
+    private void bloomBloom(Player p) {
+        if (!ready(p, "bloomstaff", 9000)) return;
+        p.setHealth(Math.min(p.getMaxHealth(), p.getHealth() + 6));
+        p.removePotionEffect(PotionEffectType.POISON);
+        p.removePotionEffect(PotionEffectType.WITHER);
+        p.removePotionEffect(PotionEffectType.SLOWNESS);
+        p.removePotionEffect(PotionEffectType.BLINDNESS);
+        p.removePotionEffect(PotionEffectType.NAUSEA);
+        p.getWorld().spawnParticle(Particle.HAPPY_VILLAGER, p.getLocation().add(0, 1, 0), 60, 1.2, 1, 1.2, 0.1);
+        p.getWorld().playSound(p.getLocation(), Sound.BLOCK_AZALEA_LEAVES_PLACE, 1f, 1.2f);
+    }
+
+    private void shatterSlash(Player p) {
+        if (!ready(p, "cleaver", 7000)) return;
+        Vector fwd = p.getLocation().getDirection().setY(0);
+        if (fwd.lengthSquared() < 0.01) return;
+        fwd = fwd.normalize();
+        for (Entity en : p.getWorld().getNearbyEntities(p.getLocation(), 4, 3, 4)) {
+            if (!(en instanceof LivingEntity le) || en.equals(p) || isFriendlyTo(p, le)) continue;
+            Vector to = le.getLocation().toVector().subtract(p.getLocation().toVector()).setY(0);
+            if (to.lengthSquared() == 0 || to.clone().normalize().dot(fwd) < 0.55) continue;
+            hit(le, 10, p);
+            le.addPotionEffect(new PotionEffect(PotionEffectType.WEAKNESS, 60, 0));
+        }
+        p.getWorld().spawnParticle(Particle.SWEEP_ATTACK, p.getLocation().add(fwd.clone().multiply(2)).add(0, 1, 0), 15, 1.5, 0.5, 1.5, 0);
+        p.getWorld().playSound(p.getLocation(), Sound.BLOCK_DEEPSLATE_BREAK, 1f, 0.8f);
+    }
+
+    private void sonicClaw(Player p) {
+        if (!ready(p, "wardenclaw", 10000)) return;
+        Location eye = p.getEyeLocation();
+        Vector dir = eye.getDirection().normalize();
+        Set<LivingEntity> hitSet = new HashSet<>();
+        for (double d = 1; d <= 12; d += 1) {
+            Location pt = eye.clone().add(dir.clone().multiply(d));
+            p.getWorld().spawnParticle(Particle.SONIC_BOOM, pt, 1, 0, 0, 0, 0);
+            for (Entity en : pt.getWorld().getNearbyEntities(pt, 1, 1, 1)) {
+                if (en instanceof LivingEntity le && !en.equals(p) && !isFriendlyTo(p, le) && hitSet.add(le)) {
+                    hit(le, 6, p);
+                }
+            }
+        }
+        p.getWorld().playSound(p.getLocation(), Sound.ENTITY_WARDEN_SONIC_BOOM, 1.5f, 1f);
+    }
+
+    private void bedrockStab(Player p) {
+        if (!ready(p, "stonepike", 6000)) return;
+        Vector fwd = p.getEyeLocation().getDirection().normalize();
+        LivingEntity target = null;
+        double best = 0.7;
+        for (Entity en : p.getWorld().getNearbyEntities(p.getLocation(), 3, 3, 3)) {
+            if (!(en instanceof LivingEntity le) || en.equals(p) || isFriendlyTo(p, le)) continue;
+            Vector to = le.getLocation().add(0, 1, 0).toVector().subtract(p.getEyeLocation().toVector());
+            if (to.lengthSquared() == 0) continue;
+            double dot = to.clone().normalize().dot(fwd);
+            if (dot > best) {
+                best = dot;
+                target = le;
+            }
+        }
+        if (target == null) {
+            p.sendMessage(ChatColor.GRAY + "Bedrock Stab found no foe in reach.");
+            return;
+        }
+        hit(target, 9, p);
+        target.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 30, 9));
+        target.getWorld().spawnParticle(Particle.CRIT, target.getLocation().add(0, 1, 0), 30, 0.4, 0.5, 0.4, 0.2);
+        target.getWorld().playSound(target.getLocation(), Sound.BLOCK_STONE_BREAK, 1f, 0.6f);
+    }
+
+    private void chainWhirl(Player p) {
+        if (!ready(p, "chainflail", 9000)) return;
+        final Player sp = p;
+        for (int i = 0; i < 4; i++) {
+            Bukkit.getScheduler().runTaskLater(this, () -> {
+                if (!sp.isOnline()) return;
+                Location c = sp.getLocation().clone();
+                for (Entity en : c.getWorld().getNearbyEntities(c, 3, 2, 3)) {
+                    if (!(en instanceof LivingEntity le) || en.equals(sp) || isFriendlyTo(sp, le)) continue;
+                    hit(le, 2, sp);
+                }
+                c.getWorld().spawnParticle(Particle.SWEEP_ATTACK, c.clone().add(0, 1, 0), 12, 2, 0.5, 2, 0);
+            }, i * 10L);
+        }
+        p.getWorld().playSound(p.getLocation(), Sound.ENTITY_IRON_GOLEM_ATTACK, 1f, 1.2f);
+    }
+
+    private void shadowSlash(Player p) {
+        if (!ready(p, "nagina", 8000)) return;
+        Location eye = p.getEyeLocation();
+        Vector dir = eye.getDirection().setY(0);
+        if (dir.lengthSquared() < 0.01) return;
+        dir = dir.normalize();
+        Set<LivingEntity> struck = new HashSet<>();
+        for (double d = 0.5; d <= 4; d += 0.5) {
+            Location pt = p.getLocation().clone().add(dir.clone().multiply(d)).add(0, 1, 0);
+            p.getWorld().spawnParticle(Particle.SMOKE, pt, 4, 0.2, 0.3, 0.2, 0.02);
+            for (Entity en : pt.getWorld().getNearbyEntities(pt, 1, 1.5, 1)) {
+                if (en instanceof LivingEntity le && !en.equals(p) && !isFriendlyTo(p, le) && struck.add(le)) {
+                    hit(le, 7, p);
+                    le.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 40, 0));
+                }
+            }
+        }
+        p.setVelocity(dir.clone().multiply(0.8).setY(0.1));
+        p.getWorld().playSound(p.getLocation(), Sound.ENTITY_ENDERMAN_STARE, 1f, 0.8f);
+    }
+
+    // ----- Cooldowns for any Minecraft item (/stickcooldowns) -----
+
+    private final Map<Material, Long> vanillaCooldownMs = new HashMap<>();
+    private final Map<UUID, Map<Material, Long>> vanillaUntil = new HashMap<>();
+
+    private void loadVanillaCooldowns() {
+        vanillaCooldownMs.clear();
+        ConfigurationSection sec = getConfig().getConfigurationSection("vanilla-cooldowns");
+        if (sec == null) return;
+        for (String k : sec.getKeys(false)) {
+            Material m = Material.matchMaterial(k);
+            if (m != null) vanillaCooldownMs.put(m, Math.round(sec.getDouble(k) * 1000));
+        }
+    }
+
+    /** Returns true (and tells the player) if this plain Minecraft item is still cooling down. Starts the cooldown otherwise. */
+    private boolean vanillaOnCooldown(Player p, ItemStack it) {
+        if (it == null || it.getType().isAir() || idOf(it) != null) return false;
+        Long cd = vanillaCooldownMs.get(it.getType());
+        if (cd == null || cd <= 0 || p.hasPermission("stickcooldowns.bypass")) return false;
+        long now = System.currentTimeMillis();
+        Map<Material, Long> mine = vanillaUntil.computeIfAbsent(p.getUniqueId(), k -> new HashMap<>());
+        long until = mine.getOrDefault(it.getType(), 0L);
+        if (until > now) {
+            p.sendMessage(ChatColor.RED + prettyMaterial(it.getType()) + " is on cooldown for " + ((until - now + 999) / 1000) + "s.");
+            return true;
+        }
+        mine.put(it.getType(), now + cd);
+        return false;
+    }
+
+    private static String prettyMaterial(Material m) {
+        StringBuilder sb = new StringBuilder();
+        for (String w : m.name().toLowerCase(Locale.ROOT).split("_")) {
+            if (sb.length() > 0) sb.append(' ');
+            sb.append(Character.toUpperCase(w.charAt(0))).append(w.substring(1));
+        }
+        return sb.toString();
+    }
+
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+    public void onVanillaUse(PlayerInteractEvent e) {
+        if (e.getHand() != EquipmentSlot.HAND) return;
+        if (e.getAction() != Action.RIGHT_CLICK_AIR && e.getAction() != Action.RIGHT_CLICK_BLOCK) return;
+        if (vanillaOnCooldown(e.getPlayer(), e.getItem())) e.setCancelled(true);
+    }
+
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+    public void onVanillaMelee(EntityDamageByEntityEvent e) {
+        if (inPassive || e.getCause() != EntityDamageEvent.DamageCause.ENTITY_ATTACK) return;
+        if (!(e.getDamager() instanceof Player p)) return;
+        if (vanillaOnCooldown(p, p.getInventory().getItemInMainHand())) e.setCancelled(true);
+    }
+
+    /** /stickcooldowns <item> <seconds> | <item> 0 (clears) | list */
+    private void cooldownCommand(CommandSender sender, String[] args) {
+        if (!sender.hasPermission("stickcooldowns.admin")) {
+            sender.sendMessage(ChatColor.RED + "You do not have permission.");
+            return;
+        }
+        if (args.length == 0 || args[0].equalsIgnoreCase("help")) {
+            sender.sendMessage(ChatColor.GOLD + "/stickcooldowns <item> <seconds>" + ChatColor.GRAY + " - set a cooldown (0 clears it)");
+            sender.sendMessage(ChatColor.GOLD + "/stickcooldowns list" + ChatColor.GRAY + " - show set cooldowns");
+            return;
+        }
+        if (args[0].equalsIgnoreCase("list")) {
+            if (vanillaCooldownMs.isEmpty()) sender.sendMessage(ChatColor.GRAY + "No item cooldowns are set.");
+            for (Map.Entry<Material, Long> en : vanillaCooldownMs.entrySet()) {
+                sender.sendMessage(ChatColor.GRAY + " - " + prettyMaterial(en.getKey()) + ": " + (en.getValue() / 1000.0) + "s");
+            }
+            return;
+        }
+        Material m = Material.matchMaterial(args[0]);
+        if (m == null || !m.isItem()) {
+            sender.sendMessage(ChatColor.RED + "Unknown item: " + args[0]);
+            return;
+        }
+        if (args.length < 2) {
+            sender.sendMessage(ChatColor.RED + "Usage: /stickcooldowns " + args[0] + " <seconds>");
+            return;
+        }
+        double secs;
+        try {
+            secs = Double.parseDouble(args[1]);
+        } catch (NumberFormatException ex) {
+            sender.sendMessage(ChatColor.RED + "Seconds must be a number.");
+            return;
+        }
+        if (secs < 0) {
+            sender.sendMessage(ChatColor.RED + "Seconds cannot be negative.");
+            return;
+        }
+        if (secs == 0) {
+            vanillaCooldownMs.remove(m);
+            getConfig().set("vanilla-cooldowns." + m.name(), null);
+            sender.sendMessage(ChatColor.GREEN + prettyMaterial(m) + " has no cooldown now.");
+        } else {
+            vanillaCooldownMs.put(m, Math.round(secs * 1000));
+            getConfig().set("vanilla-cooldowns." + m.name(), secs);
+            sender.sendMessage(ChatColor.GREEN + prettyMaterial(m) + " now has a " + secs + "s cooldown.");
+        }
+        saveConfig();
     }
 
     // ----- Blizzard -----
@@ -5683,10 +6861,18 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
         void start(StickmanItems h) {
             host = h;
             ownerKey = new NamespacedKey(host, "creature-owner");
+            tamerKey = new NamespacedKey(host, "creature-tamer");
+            registerTamerRecipe();
             host.getServer().getPluginManager().registerEvents(this, host);
-            host.getCommand("stickmancreatures").setExecutor(this);
-            host.getCommand("stickmancreatures").setTabCompleter(this);
+            if (host.getCommand("stickmancreatures") != null) {
+                host.getCommand("stickmancreatures").setExecutor(this);
+                host.getCommand("stickmancreatures").setTabCompleter(this);
+            } else {
+                host.getLogger().severe("Command stickmancreatures is missing from plugin.yml. Creature commands are off.");
+            }
             Bukkit.getScheduler().runTaskTimer(host, this::tick, 10L, 10L);
+            Bukkit.getScheduler().runTaskTimer(host, this::tickTamed, 10L, 10L);
+            Bukkit.getScheduler().runTaskTimer(host, this::tickAura, 10L, 10L);
             host.getLogger().info("StickmanCreatures loaded " + CREATURES.size() + " creatures.");
         }
         void stop() {
@@ -5695,6 +6881,8 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
 
     
         static final long HIT_COOLDOWN_MS = 1500L;
+        static final double CREATURE_DAMAGE_MULT = 3.0;
+        static final double AURA_RANGE = 50.0;
         static final long ATTACKER_MEMORY_MS = 10000L;
         static final double MEDIUM_SCALE = 1.4;
     
@@ -5770,6 +6958,10 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
         private final Map<UUID, Companion> companions = new HashMap<>();
         private final Map<UUID, Hostile> lastAttackers = new HashMap<>();
         private NamespacedKey ownerKey;
+        private NamespacedKey tamerKey;
+        private final Map<UUID, UUID> tamedOwner = new HashMap<>();
+        private final Map<UUID, Hostile> ownerTargets = new HashMap<>();
+        private final Map<UUID, Long> tamedHitAt = new HashMap<>();
     
         // ---------- Helpers ----------
     
@@ -5798,6 +6990,7 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
                 owner.sendMessage(ChatColor.RED + "That creature could not be spawned.");
                 return;
             }
+            le.setInvulnerable(true);
             le.setCustomName(colored(def));
             le.setCustomNameVisible(true);
             le.setPersistent(true);
@@ -5807,8 +7000,8 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
             if (scale != null) scale.setBaseValue(MEDIUM_SCALE);
     
             AttributeInstance maxHp = le.getAttribute(Attribute.GENERIC_MAX_HEALTH);
-            if (maxHp != null) maxHp.setBaseValue(30);
-            le.setHealth(30);
+            if (maxHp != null) maxHp.setBaseValue(1000);
+            le.setHealth(1000);
     
             if (def.fast()) {
                 AttributeInstance speed = le.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED);
@@ -5822,7 +7015,7 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
         }
     
         private void damage(LivingEntity target, double amount, Player owner) {
-            target.damage(amount, owner);
+            target.damage(amount * CREATURE_DAMAGE_MULT, owner);
         }
     
         private void knock(LivingEntity target, Location from, double horizontal, double up) {
@@ -5986,6 +7179,9 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
             if (e.getEntity() instanceof Player victim && attacker != null && !attacker.equals(victim)) {
                 lastAttackers.put(victim.getUniqueId(), new Hostile(attacker.getUniqueId(), System.currentTimeMillis()));
             }
+            if (attacker != null && e.getEntity() instanceof LivingEntity tv && !(tv instanceof Player)) {
+                ownerTargets.put(attacker.getUniqueId(), new Hostile(tv.getUniqueId(), System.currentTimeMillis()));
+            }
             // Owners cannot hurt their own creature.
             String victimOwner = e.getEntity().getPersistentDataContainer().get(ownerKey, PersistentDataType.STRING);
             if (victimOwner != null && attacker != null && victimOwner.equals(attacker.getUniqueId().toString())) {
@@ -6001,6 +7197,7 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
     
         @EventHandler
         public void onCreatureDeath(EntityDeathEvent e) {
+            tamedOwner.remove(e.getEntity().getUniqueId());
             String ownerTag = e.getEntity().getPersistentDataContainer().get(ownerKey, PersistentDataType.STRING);
             if (ownerTag == null) return;
             e.getDrops().clear();
@@ -6069,6 +7266,202 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
             }
         }
     
+        // ===== Taming =====
+
+        private void registerTamerRecipe() {
+            try {
+                ItemStack tamer = new ItemStack(Material.NAME_TAG);
+                ItemMeta meta = tamer.getItemMeta();
+                meta.setDisplayName(ChatColor.LIGHT_PURPLE + "" + ChatColor.BOLD + "Creature Tamer");
+                meta.setLore(List.of(ChatColor.GRAY + "Right-click a creature to tame it.",
+                        ChatColor.GRAY + "Tamed creatures follow you and fight for you."));
+                meta.getPersistentDataContainer().set(tamerKey, PersistentDataType.BYTE, (byte) 1);
+                tamer.setItemMeta(meta);
+                ShapedRecipe r = new ShapedRecipe(new NamespacedKey(host, "creature-tamer-recipe"), tamer);
+                r.shape("DND", "NSN", "DND");
+                r.setIngredient('D', Material.DIAMOND);
+                r.setIngredient('N', Material.NETHERITE_INGOT);
+                r.setIngredient('S', Material.NETHER_STAR);
+                Bukkit.addRecipe(r);
+            } catch (IllegalStateException ex) {
+                host.getLogger().warning("Creature Tamer recipe is already registered.");
+            }
+        }
+
+        private boolean isTamer(ItemStack it) {
+            return it != null && it.hasItemMeta() && it.getItemMeta().getPersistentDataContainer().has(tamerKey, PersistentDataType.BYTE);
+        }
+
+        private boolean isCreatureType(EntityType t) {
+            for (Creature c : CREATURES) if (c.type() == t) return true;
+            return false;
+        }
+
+        /** A golden apple heals a creature by 250 health. */
+        @EventHandler(priority = EventPriority.HIGH)
+        public void onFeedCreature(PlayerInteractEntityEvent e) {
+            if (e.getHand() != EquipmentSlot.HAND) return;
+            Player p = e.getPlayer();
+            ItemStack hand = p.getInventory().getItemInMainHand();
+            if (hand == null || hand.getType() != Material.GOLDEN_APPLE) return;
+            if (!(e.getRightClicked() instanceof LivingEntity le) || le instanceof Player) return;
+            if (!isCreatureType(le.getType())) return;
+            e.setCancelled(true);
+            AttributeInstance max = le.getAttribute(Attribute.GENERIC_MAX_HEALTH);
+            double maxHp = max == null ? le.getHealth() : max.getValue();
+            if (le.getHealth() >= maxHp) {
+                p.sendMessage(ChatColor.GRAY + "That creature is already at full health.");
+                return;
+            }
+            le.setHealth(Math.min(maxHp, le.getHealth() + 250));
+            if (hand.getAmount() > 1) hand.setAmount(hand.getAmount() - 1);
+            else p.getInventory().setItemInMainHand(null);
+            p.sendMessage(ChatColor.GOLD + "Healed 250 health. Health: " + Math.round(le.getHealth()) + "/" + Math.round(maxHp));
+        }
+
+        @EventHandler(priority = EventPriority.HIGH)
+        public void onTame(PlayerInteractEntityEvent e) {
+            if (e.getHand() != EquipmentSlot.HAND) return;
+            Player p = e.getPlayer();
+            if (!isTamer(p.getInventory().getItemInMainHand())) return;
+            e.setCancelled(true);
+            if (!(e.getRightClicked() instanceof LivingEntity le) || le instanceof Player) return;
+            if (!isCreatureType(le.getType())) {
+                p.sendMessage(ChatColor.RED + "Only creatures can be tamed with the Creature Tamer.");
+                return;
+            }
+            String owner = le.getPersistentDataContainer().get(ownerKey, PersistentDataType.STRING);
+            if (owner != null) {
+                p.sendMessage(owner.equals(p.getUniqueId().toString()) ? ChatColor.GRAY + "That creature is already yours." : ChatColor.RED + "That creature is already tamed by someone else.");
+                return;
+            }
+            tame(le, p);
+        }
+
+        private void tame(LivingEntity le, Player p) {
+            le.getPersistentDataContainer().set(ownerKey, PersistentDataType.STRING, p.getUniqueId().toString());
+            le.setPersistent(true);
+            le.setInvulnerable(true);
+            if (le instanceof Mob m) m.setRemoveWhenFarAway(false);
+            tamedOwner.put(le.getUniqueId(), p.getUniqueId());
+            le.setCustomName(ChatColor.GREEN + "" + ChatColor.BOLD + "Tamed " + le.getType().name().toLowerCase(Locale.ROOT).replace('_', ' '));
+            le.setCustomNameVisible(true);
+            p.sendMessage(ChatColor.GREEN + "Tamed. It will follow you, attack whoever attacks you, and attack whoever you attack.");
+        }
+
+        private void spawnWild(Player p, Creature def) {
+            Location at = p.getLocation().clone().add(2, 0, 2);
+            Entity e = at.getWorld().spawnEntity(at, def.type());
+            if (!(e instanceof LivingEntity le)) { e.remove(); return; }
+            le.setInvulnerable(true);
+            le.setCustomName(colored(def));
+            le.setCustomNameVisible(true);
+            le.setPersistent(true);
+            if (le instanceof Mob m) m.setRemoveWhenFarAway(false);
+            AttributeInstance sc = le.getAttribute(Attribute.GENERIC_SCALE);
+            if (sc != null) sc.setBaseValue(MEDIUM_SCALE);
+            AttributeInstance hp = le.getAttribute(Attribute.GENERIC_MAX_HEALTH);
+            if (hp != null) hp.setBaseValue(1000);
+            le.setHealth(1000);
+            p.sendMessage(ChatColor.GREEN + "Spawned a wild " + def.name() + ". Right-click it with a Creature Tamer.");
+        }
+
+        /** Tamed creatures: follow the owner, then fight whoever attacked the owner, then whoever the owner attacked. */
+        private void tickTamed() {
+            for (Map.Entry<UUID, UUID> en : new ArrayList<>(tamedOwner.entrySet())) {
+                Entity ent = Bukkit.getEntity(en.getKey());
+                if (!(ent instanceof LivingEntity le) || !le.isValid() || le.isDead()) {
+                    tamedOwner.remove(en.getKey());
+                    continue;
+                }
+                Player owner = Bukkit.getPlayer(en.getValue());
+                if (owner == null || !owner.isOnline()) continue;
+                if (le.getWorld() != owner.getWorld() || le.getLocation().distance(owner.getLocation()) > 20) {
+                    le.teleport(owner.getLocation().clone().add(2, 0, 2));
+                    continue;
+                }
+                LivingEntity target = tamedTarget(owner, le);
+                if (target != null) {
+                    if (le instanceof Mob m) m.getPathfinder().moveTo(target.getLocation());
+                    long now = System.currentTimeMillis();
+                    if (le.getLocation().distance(target.getLocation()) <= 2.5 && now - tamedHitAt.getOrDefault(le.getUniqueId(), 0L) >= HIT_COOLDOWN_MS) {
+                        tamedHitAt.put(le.getUniqueId(), now);
+                        target.damage(8 * CREATURE_DAMAGE_MULT, owner);
+                    }
+                } else if (le instanceof Mob m && le.getLocation().distance(owner.getLocation()) > 4) {
+                    m.getPathfinder().moveTo(owner.getLocation());
+                }
+            }
+        }
+
+        private LivingEntity tamedTarget(Player owner, LivingEntity pet) {
+            long now = System.currentTimeMillis();
+            Hostile hit = lastAttackers.get(owner.getUniqueId());
+            if (hit != null && now - hit.time() < ATTACKER_MEMORY_MS) {
+                Player attacker = Bukkit.getPlayer(hit.attacker());
+                if (attacker != null && attacker.isOnline() && attacker.getWorld() == pet.getWorld()
+                        && attacker.getLocation().distance(owner.getLocation()) <= 30) return attacker;
+            }
+            Hostile mine = ownerTargets.get(owner.getUniqueId());
+            if (mine != null && now - mine.time() < ATTACKER_MEMORY_MS) {
+                Entity victim = Bukkit.getEntity(mine.attacker());
+                if (victim instanceof LivingEntity lv && lv.isValid() && !lv.isDead() && lv.getWorld() == pet.getWorld()
+                        && !tamedOwner.containsKey(lv.getUniqueId())) return lv;
+            }
+            LivingEntity best = null;
+            double bestD = 10;
+            for (Entity en : owner.getNearbyEntities(10, 4, 10)) {
+                if (!(en instanceof Monster mob)) continue;
+                double d = mob.getLocation().distance(owner.getLocation());
+                if (d < bestD) {
+                    bestD = d;
+                    best = mob;
+                }
+            }
+            return best;
+        }
+
+        // ===== Aura: every creature within 50 blocks of its owner gives the owner a passive =====
+
+        private PotionEffectType auraEffect(String ability) {
+            return switch (ability) {
+                case "LIGHTNING", "TIDAL", "PUSH" -> PotionEffectType.STRENGTH;
+                case "FIRE", "LAVA" -> PotionEffectType.FIRE_RESISTANCE;
+                case "FREEZE", "STUN" -> PotionEffectType.RESISTANCE;
+                case "POISON", "DRAIN", "HEAL_OWNER" -> PotionEffectType.REGENERATION;
+                case "KNOCK", "LEVITATE" -> PotionEffectType.JUMP_BOOST;
+                case "BLIND", "REVEAL" -> PotionEffectType.NIGHT_VISION;
+                case "WIND", "SPEED_OWNER" -> PotionEffectType.SPEED;
+                case "SHIELD_OWNER" -> PotionEffectType.ABSORPTION;
+                default -> PotionEffectType.LUCK;
+            };
+        }
+
+        private Creature defFor(EntityType t) {
+            for (Creature c : CREATURES) if (c.type() == t) return c;
+            return null;
+        }
+
+        private void tickAura() {
+            for (Companion c : new ArrayList<>(companions.values())) {
+                Player owner = Bukkit.getPlayer(c.owner);
+                Entity ent = Bukkit.getEntity(c.entityId);
+                if (owner == null || !owner.isOnline() || ent == null || !ent.isValid()) continue;
+                if (ent.getWorld() == owner.getWorld() && ent.getLocation().distance(owner.getLocation()) <= AURA_RANGE) {
+                    owner.addPotionEffect(new PotionEffect(auraEffect(c.def.ability()), 60, 0));
+                }
+            }
+            for (Map.Entry<UUID, UUID> en : new ArrayList<>(tamedOwner.entrySet())) {
+                Player owner = Bukkit.getPlayer(en.getValue());
+                Entity ent = Bukkit.getEntity(en.getKey());
+                if (owner == null || !owner.isOnline() || ent == null || !ent.isValid()) continue;
+                Creature def = defFor(ent.getType());
+                if (def != null && ent.getWorld() == owner.getWorld() && ent.getLocation().distance(owner.getLocation()) <= AURA_RANGE) {
+                    owner.addPotionEffect(new PotionEffect(auraEffect(def.ability()), 60, 0));
+                }
+            }
+        }
+
         @EventHandler
         public void onQuit(PlayerQuitEvent e) {
             dismiss(e.getPlayer().getUniqueId());
@@ -6088,6 +7481,15 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
                     if (!(sender instanceof Player mp)) { sender.sendMessage(ChatColor.RED + "Players only."); return true; }
                     if (!mp.hasPermission("stickmancreatures.use")) { mp.sendMessage(ChatColor.RED + "You cannot summon creatures."); return true; }
                     openMenu(mp);
+                }
+                case "spawnwild" -> {
+                    if (!sender.hasPermission("stickmancreatures.admin")) { sender.sendMessage(ChatColor.RED + "You do not have permission."); return true; }
+                    if (!(sender instanceof Player sp)) { sender.sendMessage(ChatColor.RED + "Players only."); return true; }
+                    if (args.length < 2) { sender.sendMessage(ChatColor.RED + "Usage: /stickmancreatures spawnwild <id>"); return true; }
+                    Creature wild = null;
+                    for (Creature c : CREATURES) if (c.id().equalsIgnoreCase(args[1])) wild = c;
+                    if (wild == null) { sender.sendMessage(ChatColor.RED + "Unknown creature: " + args[1]); return true; }
+                    spawnWild(sp, wild);
                 }
                 case "list" -> {
                     sender.sendMessage(ChatColor.GOLD + "" + ChatColor.BOLD + "StickmanCreatures (" + CREATURES.size() + ")");
