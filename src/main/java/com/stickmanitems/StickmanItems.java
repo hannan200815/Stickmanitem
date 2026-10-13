@@ -158,17 +158,22 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
             Map.entry("g_soldiers", "Summon Soldiers"), Map.entry("g_rally", "Rally"), Map.entry("g_curse", "Curse of Iron"),
             Map.entry("g_darklegion", "Dark Legion"));
 
-    private static final Map<String, List<String>> GEM_ABILITIES = Map.of(
-            "thunder", List.of("g_tstrike", "g_chain", "g_surge", "g_zeus"),
-            "wind", List.of("g_gust", "g_updraft", "g_tornado", "g_breeze"),
-            "inferno", List.of("g_meteor", "g_campfire", "g_charge", "g_blaze"),
-            "blizzard", List.of("g_lift", "g_barrier", "g_snow", "g_subzero"),
-            "nightmare", List.of("g_terror", "g_punish", "g_abyss", "g_creak"),
-            "undead", List.of("g_legion", "g_recall", "g_touch", "g_giant"),
-            "atomic", List.of("g_atomic", "g_cloud", "g_shield", "g_meltdown"),
-            "warden", List.of("g_sonic", "g_echo", "g_fist", "g_wardenult"),
-            "yinyang", List.of("g_yin", "g_yang", "g_balance", "g_taijitu"),
-            "eclipse", List.of("g_pulse", "g_step", "g_umbral", "g_eclipse"));
+    private static final Map<String, List<String>> GEM_ABILITIES = Map.ofEntries(
+            Map.entry("thunder", List.of("g_tstrike", "g_chain", "g_surge", "g_zeus")),
+            Map.entry("wind", List.of("g_gust", "g_updraft", "g_tornado", "g_breeze")),
+            Map.entry("inferno", List.of("g_meteor", "g_campfire", "g_charge", "g_blaze")),
+            Map.entry("blizzard", List.of("g_lift", "g_barrier", "g_snow", "g_subzero")),
+            Map.entry("nightmare", List.of("g_terror", "g_punish", "g_abyss", "g_creak")),
+            Map.entry("undead", List.of("g_legion", "g_recall", "g_touch", "g_giant")),
+            Map.entry("atomic", List.of("g_atomic", "g_cloud", "g_shield", "g_meltdown")),
+            Map.entry("warden", List.of("g_sonic", "g_echo", "g_fist", "g_wardenult")),
+            Map.entry("yinyang", List.of("g_yin", "g_yang", "g_balance", "g_taijitu")),
+            Map.entry("eclipse", List.of("g_pulse", "g_step", "g_umbral", "g_eclipse")),
+            Map.entry("tide", List.of("g_wave", "g_whirl", "g_riptide", "g_kraken")),
+            Map.entry("stonefist", List.of("g_quake", "g_armor", "g_boulder", "g_titan")),
+            Map.entry("spectral", List.of("g_haunt", "g_phase", "g_wail", "g_reaper")),
+            Map.entry("verdant", List.of("g_vine", "g_bloom", "g_thorn", "g_forest")),
+            Map.entry("gravity", List.of("g_pull", "g_crush", "g_float", "g_singularity")));
     private static final Set<EntityType> NO_SUMMON = EnumSet.of(
             EntityType.WARDEN, EntityType.WITHER, EntityType.ENDER_DRAGON,
             EntityType.ELDER_GUARDIAN, EntityType.GIANT, EntityType.IRON_GOLEM);
@@ -270,6 +275,36 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
         def("honeybomb", "Honey Bomb", Material.HONEY_BOTTLE, "#FFB300", "Right-click to throw a honey bomb. On impact enemies nearby are heavily slowed and take 4 damage. 6-second cooldown.");
         def("cloudbottle", "Cloud Bottle", Material.GLASS_BOTTLE, "#B3E5FC", "Right-click to conjure a cloud that lifts you about 8 blocks and lowers you gently back down. 20-second cooldown.");
         def("meteor", "Meteor", Material.DRAGON_BREATH, "#E040FB", "Right-click to call 10 to 20 dragon fireballs down on random spots around where you aim. 90-second cooldown.");
+        def("emberblade", "Ember Blade", Material.NETHERITE_SWORD, "#FF7043", "Ability 1 (right-click): Ember slash hits every enemy in a wide arc in front of you for 8 damage and sets them on fire for 4 seconds. 5-second cooldown.");
+        def("thornrapier", "Thorn Rapier", Material.NETHERITE_SWORD, "#66BB6A", "Ability 1 (right-click): Lunge forward and stab the first enemy you reach for 10 damage and 5 seconds of Poison. 6-second cooldown.");
+        def("moonsplitter", "Moonsplitter", Material.NETHERITE_SWORD, "#B39DDB", "Ability 1 (right-click): Crescent slash hits every enemy within 5 blocks for 9 damage and knocks them back. 7-second cooldown.");
+        def("frostfang", "Frostfang Greatsword", Material.NETHERITE_SWORD, "#81D4FA", "Ability 1 (right-click): Frost wave in a cone 8 blocks long deals 6 damage and slows enemies for 5 seconds. 9-second cooldown.");
+        def("hailstorm", "Hailstorm Crossbow", Material.CROSSBOW, "#B3E5FC", "Every shot also fires 4 spread ice bolts that deal 4 damage each. The extra bolts recharge every 4 seconds.");
+        def("sparkline", "Sparkline Crossbow", Material.CROSSBOW, "#FFF176", "Every bolt explodes on impact, dealing 6 damage in a 2.5 block radius without breaking blocks.");
+        def("ravenshot", "Ravenshot Crossbow", Material.CROSSBOW, "#37474F", "Bolts pierce up to 3 targets. The first enemy hit takes 10 damage and is slowed for 3 seconds.");
+        def("whirlwind", "Whirlwind Bow", Material.BOW, "#4DD0E1", "Arrows that hit a player spin them like a tornado for 3 seconds, lifting them and dealing 1 damage every half second.");
+        def("sunfall", "Sunfall Bow", Material.BOW, "#FFCA28", "Arrows that land rain 8 arrows down on the impact area.");
+        def("gravebow", "Gravebow", Material.BOW, "#6D4C41", "Arrows pull every enemy within 5 blocks of the impact point toward it.");
+        def("voidcutter", "Void Cutter", Material.NETHERITE_SWORD, "#7E57C2", "Ability 1 (right-click): Blink 6 blocks forward and slash everything within 2.5 blocks of where you land for 10 damage. 8-second cooldown.");
+        def("bloodletter", "Bloodletter", Material.NETHERITE_SWORD, "#B71C1C", "Ability 1 (right-click): Spend 2 hearts to deal 12 damage to every enemy within 3 blocks. You need more than 3 hearts to use it. 10-second cooldown.");
+        def("sunder", "Sunder Blade", Material.NETHERITE_SWORD, "#8D6E63", "Ability 1 (right-click): Slam the ground, dealing 7 damage to enemies within 4 blocks and knocking them back. 6-second cooldown.");
+        def("ironfang", "Ironfang Crossbow", Material.CROSSBOW, "#90A4AE", "Every bolt deals 5 damage and slows the target for 2 seconds.");
+        def("pyre", "Pyre Crossbow", Material.CROSSBOW, "#FF5722", "Every bolt deals 3 damage and sets the target on fire for 5 seconds.");
+        def("echo", "Echo Crossbow", Material.CROSSBOW, "#26C6DA", "Each bolt deals 6 damage, then bounces to the nearest other enemy within 6 blocks for another 6 damage.");
+        def("stormbow", "Stormbow", Material.BOW, "#FFEB3B", "Arrows call lightning where they land, dealing 6 damage to enemies within 2.5 blocks.");
+        def("chainshot", "Chainshot Bow", Material.BOW, "#78909C", "An arrow that hits an enemy pulls them toward you.");
+        def("ghostmark", "Ghostmark Bow", Material.BOW, "#E0E0E0", "An arrow that hits an enemy deals 3 damage and makes them glow for 8 seconds.");
+        def("dawnbow", "Dawnbow", Material.BOW, "#FFF59D", "An arrow that hits an enemy deals 4 damage and heals you for 2 hearts.");
+        def("soulreaver", "Soulreaver", Material.NETHERITE_SWORD, "#4A148C", "Ability 1 (right-click): Deals 6 hearts to every enemy within 4 blocks and heals you for half of the total, up to 6 hearts. 12-second cooldown.");
+        def("stormfang", "Stormfang", Material.NETHERITE_SWORD, "#29B6F6", "Ability 1 (right-click): Chain lightning strikes the 3 nearest enemies within 8 blocks for 6 damage each. 9-second cooldown.");
+        def("venomtooth", "Venomtooth", Material.NETHERITE_SWORD, "#7CB342", "Ability 1 (right-click): Releases a poison cloud around you for 6 seconds. Enemies within 3 blocks are poisoned and take damage each second. 14-second cooldown.");
+        def("bladestorm", "Bladestorm", Material.NETHERITE_SWORD, "#90A4AE", "Ability 1 (right-click): Spins twice, hitting every enemy within 3 blocks for 5 damage each time. 8-second cooldown.");
+        def("frostbolt", "Frostbite Crossbow", Material.CROSSBOW, "#80DEEA", "Every bolt deals 4 damage and slows the target for 3 seconds.");
+        def("thunderbolt", "Thunderbolt Crossbow", Material.CROSSBOW, "#FFF176", "Every bolt calls a lightning strike where it lands, dealing 5 damage to enemies within 2 blocks.");
+        def("rocketbolt", "Rocket Crossbow", Material.CROSSBOW, "#FF7043", "Every bolt explodes on impact, dealing 8 damage in a 3 block radius.");
+        def("vinebow", "Vinebow", Material.BOW, "#558B2F", "An arrow that hits an enemy deals 3 damage and roots them in place for 2 seconds.");
+        def("gale", "Gale Bow", Material.BOW, "#B2EBF2", "Arrows blast enemies within 3 blocks of the impact point away from it.");
+        def("ironbow", "Ironbow", Material.BOW, "#B0BEC5", "Arrows pierce up to 2 targets and deal 6 damage to each one they hit.");
         def("hexbone", "Hex Bone", Material.BONE, "#CFD8DC", "Right-click to curse the ground around you for 15 seconds. Enemies within 6 blocks take 3 damage a second and are slowed. 25-second cooldown.");
         def("cursedcoin", "Cursed Coin", Material.GOLD_NUGGET, "#FFB74D", "Right-click to flip a cursed coin. It can heal you, blind nearby enemies, or wail so loudly that nearby enemies are slowed. 15-second cooldown.");
         def("spectralquill", "Spectral Quill", Material.FEATHER, "#E1F5FE", "Right-click to write a curse on the nearest enemy within 15 blocks. It takes 12 damage and gains Wither and Darkness. 12-second cooldown.");
@@ -1132,6 +1167,156 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
                 skull.getPersistentDataContainer().set(projKey, PersistentDataType.STRING, "reaperskull");
                 w.playSound(p.getLocation(), Sound.ENTITY_WITHER_SHOOT, 1f, 1.2f);
             }
+            case "emberblade" -> {
+                Vector fwd = p.getLocation().getDirection().setY(0);
+                if (fwd.lengthSquared() < 0.01) return;
+                fwd = fwd.normalize();
+                if (!ready(p, id, 5000)) return;
+                for (Entity en : p.getWorld().getNearbyEntities(p.getLocation(), 6, 3, 6)) {
+                    if (!(en instanceof LivingEntity le) || en.equals(p) || isFriendlyTo(p, le)) continue;
+                    Vector to = le.getLocation().toVector().subtract(p.getLocation().toVector()).setY(0);
+                    if (to.lengthSquared() == 0 || to.clone().normalize().dot(fwd) < 0.5) continue;
+                    hit(le, 8, p);
+                    le.setFireTicks(80);
+                }
+                p.getWorld().spawnParticle(Particle.FLAME, p.getLocation().add(fwd.clone().multiply(2)).add(0, 1, 0), 30, 1.5, 0.5, 1.5, 0.05);
+                p.getWorld().playSound(p.getLocation(), Sound.ITEM_FIRECHARGE_USE, 1f, 1f);
+            }
+            case "thornrapier" -> {
+                if (!ready(p, id, 6000)) return;
+                final Player lp = p;
+                Vector dir = p.getLocation().getDirection().normalize();
+                p.setVelocity(dir.multiply(1.2).setY(0.1));
+                Bukkit.getScheduler().runTaskLater(this, () -> {
+                    for (Entity en : lp.getWorld().getNearbyEntities(lp.getLocation(), 2.5, 2.5, 2.5)) {
+                        if (!(en instanceof LivingEntity le) || en.equals(lp) || isFriendlyTo(lp, le)) continue;
+                        hit(le, 10, lp);
+                        le.addPotionEffect(new PotionEffect(PotionEffectType.POISON, 100, 0));
+                        break;
+                    }
+                }, 6L);
+            }
+            case "moonsplitter" -> {
+                if (!ready(p, id, 7000)) return;
+                for (Entity en : p.getWorld().getNearbyEntities(p.getLocation(), 5, 3, 5)) {
+                    if (!(en instanceof LivingEntity le) || en.equals(p) || isFriendlyTo(p, le)) continue;
+                    hit(le, 9, p);
+                    Vector out = le.getLocation().toVector().subtract(p.getLocation().toVector()).setY(0.4);
+                    if (out.lengthSquared() > 0) le.setVelocity(out.normalize().multiply(0.9));
+                }
+                p.getWorld().spawnParticle(Particle.SWEEP_ATTACK, p.getLocation().add(0, 1, 0), 20, 3, 0.5, 3, 0);
+                p.getWorld().playSound(p.getLocation(), Sound.ENTITY_PLAYER_ATTACK_SWEEP, 1f, 0.8f);
+            }
+            case "frostfang" -> {
+                Vector fwd = p.getLocation().getDirection().setY(0);
+                if (fwd.lengthSquared() < 0.01) return;
+                fwd = fwd.normalize();
+                if (!ready(p, id, 9000)) return;
+                for (Entity en : p.getWorld().getNearbyEntities(p.getLocation(), 8, 3, 8)) {
+                    if (!(en instanceof LivingEntity le) || en.equals(p) || isFriendlyTo(p, le)) continue;
+                    Vector to = le.getLocation().toVector().subtract(p.getLocation().toVector()).setY(0);
+                    if (to.lengthSquared() == 0 || to.clone().normalize().dot(fwd) < 0.6) continue;
+                    hit(le, 6, p);
+                    le.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 100, 2));
+                }
+                p.getWorld().spawnParticle(Particle.SNOWFLAKE, p.getLocation().add(fwd.clone().multiply(4)).add(0, 1, 0), 60, 2.5, 0.8, 2.5, 0.05);
+                p.getWorld().playSound(p.getLocation(), Sound.BLOCK_GLASS_BREAK, 1f, 0.6f);
+            }
+            case "voidcutter" -> {
+                if (!ready(p, id, 8000)) return;
+                Vector fwd = p.getLocation().getDirection().normalize();
+                Location start = p.getLocation().clone();
+                Location dest = start.clone().add(fwd.clone().multiply(6));
+                if (!isClear(dest)) dest = start;
+                p.getWorld().spawnParticle(Particle.PORTAL, start.clone().add(0, 1, 0), 40, 0.5, 1, 0.5, 0.5);
+                p.teleport(dest);
+                for (Entity en : p.getWorld().getNearbyEntities(dest, 2.5, 2.5, 2.5)) {
+                    if (!(en instanceof LivingEntity le) || en.equals(p) || isFriendlyTo(p, le)) continue;
+                    hit(le, 10, p);
+                }
+                p.getWorld().playSound(dest, Sound.ENTITY_ENDERMAN_TELEPORT, 1f, 0.8f);
+            }
+            case "bloodletter" -> {
+                if (p.getHealth() <= 6) {
+                    p.sendMessage(ChatColor.RED + "You need more than 3 hearts to use Bloodletter.");
+                    return;
+                }
+                if (!ready(p, id, 10000)) return;
+                p.setHealth(p.getHealth() - 4);
+                for (Entity en : p.getWorld().getNearbyEntities(p.getLocation(), 3, 2, 3)) {
+                    if (!(en instanceof LivingEntity le) || en.equals(p) || isFriendlyTo(p, le)) continue;
+                    hit(le, 12, p);
+                }
+                p.getWorld().spawnParticle(Particle.DAMAGE_INDICATOR, p.getLocation().add(0, 1, 0), 20, 1, 0.8, 1, 0.1);
+                p.getWorld().playSound(p.getLocation(), Sound.ENTITY_PLAYER_HURT, 1f, 0.7f);
+            }
+            case "sunder" -> {
+                if (!ready(p, id, 6000)) return;
+                Location c = p.getLocation().clone();
+                for (Entity en : p.getWorld().getNearbyEntities(c, 4, 2, 4)) {
+                    if (!(en instanceof LivingEntity le) || en.equals(p) || isFriendlyTo(p, le)) continue;
+                    hit(le, 7, p);
+                    Vector out = le.getLocation().toVector().subtract(c.toVector()).setY(0.6);
+                    if (out.lengthSquared() > 0) le.setVelocity(out.normalize().multiply(0.7).setY(0.6));
+                }
+                p.getWorld().spawnParticle(Particle.EXPLOSION, c, 3, 1, 0.2, 1, 0);
+                p.getWorld().playSound(c, Sound.ENTITY_GENERIC_EXPLODE, 1f, 0.7f);
+            }
+            case "soulreaver" -> {
+                if (!ready(p, id, 12000)) return;
+                int drained = 0;
+                for (Entity en : p.getWorld().getNearbyEntities(p.getLocation(), 4, 3, 4)) {
+                    if (!(en instanceof LivingEntity le) || en.equals(p) || isFriendlyTo(p, le)) continue;
+                    hit(le, 12, p);
+                    drained++;
+                }
+                if (drained > 0) p.setHealth(Math.min(p.getMaxHealth(), p.getHealth() + Math.min(12, drained * 6)));
+                p.getWorld().spawnParticle(Particle.SOUL, p.getLocation().add(0, 1, 0), 40, 2, 1, 2, 0.05);
+                p.getWorld().playSound(p.getLocation(), Sound.ENTITY_WITHER_AMBIENT, 1f, 1.2f);
+            }
+            case "stormfang" -> {
+                if (!ready(p, id, 9000)) return;
+                java.util.List<LivingEntity> foes = new java.util.ArrayList<>();
+                for (Entity en : p.getWorld().getNearbyEntities(p.getLocation(), 8, 4, 8)) {
+                    if (en instanceof LivingEntity le && !en.equals(p) && !isFriendlyTo(p, le)) foes.add(le);
+                }
+                foes.sort(java.util.Comparator.comparingDouble(le -> le.getLocation().distanceSquared(p.getLocation())));
+                for (int i = 0; i < Math.min(3, foes.size()); i++) {
+                    LivingEntity target = foes.get(i);
+                    target.getWorld().strikeLightningEffect(target.getLocation());
+                    hit(target, 6, p);
+                }
+            }
+            case "venomtooth" -> {
+                if (!ready(p, id, 14000)) return;
+                final Player vp = p;
+                final Location cloud = p.getLocation().clone();
+                for (int t = 0; t < 6; t++) {
+                    Bukkit.getScheduler().runTaskLater(this, () -> {
+                        for (Entity en : cloud.getWorld().getNearbyEntities(cloud, 3, 2, 3)) {
+                            if (!(en instanceof LivingEntity le) || en.equals(vp) || isFriendlyTo(vp, le)) continue;
+                            le.addPotionEffect(new PotionEffect(PotionEffectType.POISON, 40, 0));
+                            hit(le, 1, vp);
+                        }
+                        cloud.getWorld().spawnParticle(Particle.SPORE_BLOSSOM_AIR, cloud.clone().add(0, 0.5, 0), 25, 2.5, 0.4, 2.5, 0.01);
+                    }, t * 20L);
+                }
+                p.getWorld().playSound(p.getLocation(), Sound.ENTITY_WITCH_AMBIENT, 1f, 0.8f);
+            }
+            case "bladestorm" -> {
+                if (!ready(p, id, 8000)) return;
+                final Player bp = p;
+                for (int pulse = 0; pulse < 2; pulse++) {
+                    Bukkit.getScheduler().runTaskLater(this, () -> {
+                        for (Entity en : bp.getWorld().getNearbyEntities(bp.getLocation(), 3, 2, 3)) {
+                            if (!(en instanceof LivingEntity le) || en.equals(bp) || isFriendlyTo(bp, le)) continue;
+                            hit(le, 5, bp);
+                        }
+                        bp.getWorld().spawnParticle(Particle.SWEEP_ATTACK, bp.getLocation().add(0, 1, 0), 15, 2, 0.5, 2, 0);
+                    }, pulse * 10L);
+                }
+                p.getWorld().playSound(p.getLocation(), Sound.ENTITY_PLAYER_ATTACK_SWEEP, 1f, 0.9f);
+            }
             case "arccaster" -> {
                 if (!ready(p, id, 6000)) return;
                 List<LivingEntity> chain = new ArrayList<>();
@@ -1652,6 +1837,22 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
             e.getProjectile().getPersistentDataContainer().set(projKey, PersistentDataType.STRING, id);
             return;
         }
+        if (id != null && SHOT_TAGS.containsKey(id)) {
+            e.getProjectile().getPersistentDataContainer().set(projKey, PersistentDataType.STRING, SHOT_TAGS.get(id));
+            if (id.equals("ravenshot") && e.getProjectile() instanceof org.bukkit.entity.AbstractArrow aa) aa.setPierceLevel(3);
+            if (id.equals("ironbow") && e.getProjectile() instanceof org.bukkit.entity.AbstractArrow ib) ib.setPierceLevel(2);
+            if (id.equals("hailstorm") && ready(shooterP, id, 4000)) {
+                Vector base = e.getProjectile().getVelocity();
+                double speed = Math.max(2.0, base.length());
+                Vector dir = base.lengthSquared() > 0 ? base.clone().normalize() : shooterP.getLocation().getDirection();
+                for (int i = 0; i < 4; i++) {
+                    org.bukkit.entity.Arrow extra = shooterP.getWorld().spawnArrow(shooterP.getEyeLocation(), dir, (float) speed, 12f);
+                    extra.setShooter(shooterP);
+                    extra.getPersistentDataContainer().set(projKey, PersistentDataType.STRING, "hailbolt");
+                }
+            }
+            return;
+        }
         if (holdsItem(shooterP, "blizzard") && rnd.nextDouble() < 0.30) {
             e.getProjectile().getPersistentDataContainer().set(projKey, PersistentDataType.STRING, "frozen");
         }
@@ -1669,6 +1870,104 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
         Entity shooter = src instanceof Entity en ? en : null;
 
         switch (tag) {
+            case "hailbolt" -> {
+                if (e.getHitEntity() instanceof LivingEntity hb && shooter instanceof Player hp && !isFriendlyTo(hp, hb)) hit(hb, 4, hp);
+            }
+            case "sparkbolt" -> boom(loc, 2.5, 6, shooter);
+            case "frostbolt" -> {
+                if (e.getHitEntity() instanceof LivingEntity fb && shooter instanceof Player fp && !isFriendlyTo(fp, fb)) {
+                    hit(fb, 4, fp);
+                    fb.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 60, 1));
+                }
+            }
+            case "crossthunder" -> {
+                loc.getWorld().strikeLightningEffect(loc);
+                damageArea(loc, 2, 5, shooter);
+            }
+            case "rocketbolt" -> boom(loc, 3, 8, shooter);
+            case "vinebow" -> {
+                if (e.getHitEntity() instanceof LivingEntity vb && shooter instanceof Player vp2 && !isFriendlyTo(vp2, vb)) {
+                    hit(vb, 3, vp2);
+                    vb.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 40, 9));
+                }
+            }
+            case "gale" -> {
+                for (Entity en : loc.getWorld().getNearbyEntities(loc, 3, 3, 3)) {
+                    if (!(en instanceof LivingEntity ge) || en.equals(shooter)) continue;
+                    Vector out = ge.getLocation().toVector().subtract(loc.toVector()).setY(0.3);
+                    if (out.lengthSquared() > 0) ge.setVelocity(out.normalize().multiply(1.5));
+                }
+            }
+            case "ironbow" -> {
+                if (e.getHitEntity() instanceof LivingEntity ib2 && shooter instanceof Player ip2 && !isFriendlyTo(ip2, ib2)) hit(ib2, 6, ip2);
+            }
+            case "ironbolt" -> {
+                if (e.getHitEntity() instanceof LivingEntity ib && shooter instanceof Player ip && !isFriendlyTo(ip, ib)) {
+                    hit(ib, 5, ip);
+                    ib.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 40, 1));
+                }
+            }
+            case "pyrebolt" -> {
+                if (e.getHitEntity() instanceof LivingEntity pb && shooter instanceof Player pp && !isFriendlyTo(pp, pb)) {
+                    hit(pb, 3, pp);
+                    pb.setFireTicks(100);
+                }
+            }
+            case "echobolt" -> {
+                if (e.getHitEntity() instanceof LivingEntity eb && shooter instanceof Player ep && !isFriendlyTo(ep, eb)) {
+                    hit(eb, 6, ep);
+                    for (Entity en : eb.getWorld().getNearbyEntities(eb.getLocation(), 6, 3, 6)) {
+                        if (!(en instanceof LivingEntity el) || en.equals(eb) || en.equals(ep) || isFriendlyTo(ep, el)) continue;
+                        hit(el, 6, ep);
+                        break;
+                    }
+                }
+            }
+            case "stormbolt" -> {
+                loc.getWorld().strikeLightningEffect(loc);
+                damageArea(loc, 2.5, 6, shooter);
+            }
+            case "chainbolt" -> {
+                if (e.getHitEntity() instanceof LivingEntity cb && shooter instanceof Player cp && !isFriendlyTo(cp, cb)) {
+                    Vector pull = cp.getLocation().toVector().subtract(cb.getLocation().toVector());
+                    if (pull.lengthSquared() > 0) cb.setVelocity(pull.normalize().multiply(1.1).setY(0.3));
+                }
+            }
+            case "ghostmark" -> {
+                if (e.getHitEntity() instanceof LivingEntity gm && shooter instanceof Player gp && !isFriendlyTo(gp, gm)) {
+                    hit(gm, 3, gp);
+                    gm.addPotionEffect(new PotionEffect(PotionEffectType.GLOWING, 160, 0));
+                }
+            }
+            case "dawnbolt" -> {
+                if (e.getHitEntity() instanceof LivingEntity db && shooter instanceof Player dp2 && !isFriendlyTo(dp2, db)) {
+                    hit(db, 4, dp2);
+                    dp2.setHealth(Math.min(dp2.getMaxHealth(), dp2.getHealth() + 4));
+                }
+            }
+            case "ravenbolt" -> {
+                if (e.getHitEntity() instanceof LivingEntity rb && shooter instanceof Player rp && !isFriendlyTo(rp, rb)) {
+                    hit(rb, 10, rp);
+                    rb.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 60, 1));
+                }
+            }
+            case "whirl" -> {
+                if (e.getHitEntity() instanceof Player victim && shooter instanceof Player wp && !isFriendlyTo(wp, victim)) startTornado(victim);
+            }
+            case "sunfall" -> {
+                for (int i = 0; i < 8; i++) {
+                    Location top = loc.clone().add(rand(-3, 3), 12, rand(-3, 3));
+                    org.bukkit.entity.Arrow rain = w.spawnArrow(top, new Vector(0, -1, 0), 1.6f, 0f);
+                    if (shooter instanceof Player sp) rain.setShooter(sp);
+                }
+            }
+            case "gravepull" -> {
+                for (Entity en : w.getNearbyEntities(loc, 5, 5, 5)) {
+                    if (!(en instanceof LivingEntity gl) || en.equals(shooter)) continue;
+                    Vector pull = loc.toVector().subtract(gl.getLocation().toVector()).setY(0.2);
+                    if (pull.lengthSquared() > 0) gl.setVelocity(pull.normalize().multiply(0.9));
+                }
+            }
             case "kaboom" -> boom(loc, 4, 12, shooter);
             case "grenade" -> boom(loc, 3.5, 12, shooter);
             case "thunderbolt" -> {
@@ -1827,6 +2126,11 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
         gemDef("eclipse", "Solar Eclipse Gem", Material.AMETHYST_SHARD, "#4A148C", "Right-click: Eclipse Pulse (12 damage, blind, slow and weaken nearby). Shift+right-click: Shadow Lunge (teleport behind the nearest enemy, 15 damage). F: Eclipse Ward (10 hearts of absorption, attackers blinded, 25% of their damage reflected). Shift+F: Total Eclipse (ultimate, 30 seconds of darkness, invisibility and Strength II). Passives: blocks darkness and blindness, takes 15% less damage at night, dark aura. The Light Before the Dark: below 5 hearts you get Resistance, a black campfire aura and slow healing.");
         gemDef("undead", "Undead Legion Gem", Material.AMETHYST_SHARD, "#A5D6A7",
                 "Right-click: Wither Legion. Shift+right-click: Fallen Recall. F: Wither Touch. Shift+F: Giant Wither Skeleton (ultimate). Passives: heal and extra damage vs undead.");
+        gemDef("tide", "Tidal Gem", Material.AMETHYST_SHARD, "#0097A7", "Right-click: Tidal Wave (8 damage and a push in a cone). Shift+right-click: Whirlpool (pulls and slows nearby foes). F: Riptide Dash (dash forward and hit the first foe for 6). Shift+F: Kraken Call (3 lightning strikes for 10 damage each).");
+        gemDef("stonefist", "Stone Fist Gem", Material.AMETHYST_SHARD, "#8D6E63", "Right-click: Quake Stomp (6 damage and a knock-up around you). Shift+right-click: Stone Armor (4 hearts of absorption). F: Boulder Throw (10 damage to the first foe you look at). Shift+F: Titan Form (20 hearts of absorption and Strength II).");
+        gemDef("spectral", "Spectral Gem", Material.AMETHYST_SHARD, "#B39DDB", "Right-click: Haunt Pulse (5 damage and glowing around you). Shift+right-click: Phase Walk (invisible and fast). F: Banshee Wail (blindness and nausea nearby). Shift+F: Reaper's Harvest (10 damage to up to 5 foes, healing you 1 heart per hit).");
+        gemDef("verdant", "Verdant Gem", Material.AMETHYST_SHARD, "#66BB6A", "Right-click: Vine Snare (4 damage and roots foes in front). Shift+right-click: Bloom Heal (4 hearts and regeneration). F: Thorn Burst (6 damage to foes within 4 blocks). Shift+F: Living Forest (regeneration, absorption and speed).");
+        gemDef("gravity", "Gravity Gem", Material.AMETHYST_SHARD, "#5C6BC0", "Right-click: Gravity Pull (drags foes within 8 blocks toward you). Shift+right-click: Gravity Crush (8 damage and slow within 4 blocks). F: Feather Float (slow falling). Shift+F: Singularity (pulls and damages foes within 10 blocks for 3 seconds).");
     }
 
     private void gemDef(String id, String name, Material mat, String hex, String lore) {
@@ -1953,6 +2257,26 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
                 if (shift) yangStrike(p);
                 else yinStrike(p);
             }
+            case "tide" -> {
+                if (shift) whirlpool(p);
+                else tidalWave(p);
+            }
+            case "stonefist" -> {
+                if (shift) stoneArmor(p);
+                else quakeStomp(p);
+            }
+            case "spectral" -> {
+                if (shift) phaseWalk(p);
+                else hauntPulse(p);
+            }
+            case "verdant" -> {
+                if (shift) bloomHeal(p);
+                else vineSnare(p);
+            }
+            case "gravity" -> {
+                if (shift) gravityCrush(p);
+                else gravityPull(p);
+            }
             case "atomic" -> {
                 if (shift) radiationCloud(p);
                 else atomicBlast(p);
@@ -2012,6 +2336,11 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
                 case "eclipse" -> totalEclipse(p);
                 case "warden" -> wardenMonster(p);
                 case "yinyang" -> taijitu(p);
+                case "tide" -> krakenCall(p);
+                case "stonefist" -> titanForm(p);
+                case "spectral" -> reaperHarvest(p);
+                case "verdant" -> livingForest(p);
+                case "gravity" -> singularity(p);
                 case "atomic" -> meltdown(p);
                 default -> { }
             }
@@ -2031,9 +2360,268 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
             case "eclipse" -> umbralShield(p);
             case "warden" -> wardenFist(p);
             case "yinyang" -> balance(p);
+            case "tide" -> riptide(p);
+            case "stonefist" -> boulderThrow(p);
+            case "spectral" -> bansheeWail(p);
+            case "verdant" -> thornBurst(p);
+            case "gravity" -> featherFloat(p);
             case "atomic" -> falloutShield(p);
             default -> { }
         }
+    }
+
+    // ----- Tide -----
+
+    private void tidalWave(Player p) {
+        if (!ready(p, "g_wave", 4000)) return;
+        Vector fwd = p.getLocation().getDirection().setY(0);
+        if (fwd.lengthSquared() < 0.01) return;
+        fwd = fwd.normalize();
+        for (Entity en : p.getWorld().getNearbyEntities(p.getLocation(), 8, 3, 8)) {
+            if (!(en instanceof LivingEntity le) || en.equals(p) || isFriendlyTo(p, le)) continue;
+            Vector to = le.getLocation().toVector().subtract(p.getLocation().toVector()).setY(0);
+            if (to.lengthSquared() == 0 || to.clone().normalize().dot(fwd) < 0.5) continue;
+            hit(le, 8, p);
+            le.setVelocity(fwd.clone().multiply(0.8).setY(0.3));
+        }
+        p.getWorld().spawnParticle(Particle.SPLASH, p.getLocation().add(fwd.clone().multiply(3)).add(0, 1, 0), 60, 2, 1, 2, 0.1);
+        p.getWorld().playSound(p.getLocation(), Sound.ENTITY_PLAYER_SPLASH, 1f, 0.8f);
+    }
+
+    private void whirlpool(Player p) {
+        if (!ready(p, "g_whirl", 8000)) return;
+        for (Entity en : p.getWorld().getNearbyEntities(p.getLocation(), 6, 3, 6)) {
+            if (!(en instanceof LivingEntity le) || en.equals(p) || isFriendlyTo(p, le)) continue;
+            Vector pull = p.getLocation().toVector().subtract(le.getLocation().toVector()).setY(0.2);
+            if (pull.lengthSquared() > 0) le.setVelocity(pull.normalize().multiply(1.0));
+            le.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 60, 1));
+        }
+        p.getWorld().spawnParticle(Particle.BUBBLE_POP, p.getLocation().add(0, 1, 0), 50, 3, 1, 3, 0.2);
+        p.getWorld().playSound(p.getLocation(), Sound.ENTITY_GENERIC_SWIM, 1f, 0.8f);
+    }
+
+    private void riptide(Player p) {
+        if (!ready(p, "g_riptide", 6000)) return;
+        Vector dir = p.getLocation().getDirection().normalize();
+        p.setVelocity(dir.clone().multiply(1.6).setY(0.1));
+        final Player rp = p;
+        Bukkit.getScheduler().runTaskLater(this, () -> {
+            for (Entity en : rp.getWorld().getNearbyEntities(rp.getLocation(), 2.5, 2.5, 2.5)) {
+                if (!(en instanceof LivingEntity le) || en.equals(rp) || isFriendlyTo(rp, le)) continue;
+                hit(le, 6, rp);
+                break;
+            }
+        }, 8L);
+    }
+
+    private void krakenCall(Player p) {
+        if (!ready(p, "g_kraken", 180000)) return;
+        List<LivingEntity> foes = new ArrayList<>();
+        for (Entity en : p.getWorld().getNearbyEntities(p.getLocation(), 12, 6, 12)) {
+            if (en instanceof LivingEntity le && !en.equals(p) && !isFriendlyTo(p, le)) foes.add(le);
+        }
+        Collections.shuffle(foes);
+        int strikes = Math.min(3, foes.size());
+        for (int i = 0; i < strikes; i++) {
+            LivingEntity t = foes.get(i);
+            t.getWorld().strikeLightningEffect(t.getLocation());
+            hit(t, 10, p);
+        }
+        p.getWorld().playSound(p.getLocation(), Sound.ENTITY_ELDER_GUARDIAN_CURSE, 1.5f, 0.8f);
+        p.sendMessage(ChatColor.AQUA + "Kraken Call: " + strikes + " strike(s).");
+    }
+
+    // ----- Stone Fist -----
+
+    private void quakeStomp(Player p) {
+        if (!ready(p, "g_quake", 6000)) return;
+        Location c = p.getLocation().clone();
+        for (Entity en : c.getWorld().getNearbyEntities(c, 4, 2, 4)) {
+            if (!(en instanceof LivingEntity le) || en.equals(p) || isFriendlyTo(p, le)) continue;
+            hit(le, 6, p);
+            le.setVelocity(new Vector(0, 0.7, 0));
+        }
+        c.getWorld().spawnParticle(Particle.EXPLOSION, c, 3, 1, 0.2, 1, 0);
+        c.getWorld().playSound(c, Sound.ENTITY_IRON_GOLEM_STEP, 1.5f, 0.6f);
+    }
+
+    private void stoneArmor(Player p) {
+        if (!ready(p, "g_armor", 15000)) return;
+        p.addPotionEffect(new PotionEffect(PotionEffectType.ABSORPTION, 200, 1));
+        p.getWorld().playSound(p.getLocation(), Sound.BLOCK_STONE_PLACE, 1.5f, 0.6f);
+        p.sendMessage(ChatColor.GRAY + "Stone Armor: 4 hearts of absorption for 10 seconds.");
+    }
+
+    private void boulderThrow(Player p) {
+        if (!ready(p, "g_boulder", 7000)) return;
+        Location eye = p.getEyeLocation();
+        Vector dir = eye.getDirection().normalize();
+        for (double d = 1; d <= 12; d += 0.5) {
+            Location point = eye.clone().add(dir.clone().multiply(d));
+            boolean done = false;
+            for (Entity en : point.getWorld().getNearbyEntities(point, 0.8, 0.8, 0.8)) {
+                if (!(en instanceof LivingEntity le) || en.equals(p) || isFriendlyTo(p, le)) continue;
+                hit(le, 10, p);
+                done = true;
+                break;
+            }
+            if (done) break;
+        }
+        p.getWorld().spawnParticle(Particle.CRIT, eye.clone().add(dir.clone().multiply(4)), 20, 0.5, 0.5, 0.5, 0.1);
+        p.getWorld().playSound(p.getLocation(), Sound.BLOCK_STONE_BREAK, 1f, 0.7f);
+    }
+
+    private void titanForm(Player p) {
+        if (!ready(p, "g_titan", 120000)) return;
+        p.addPotionEffect(new PotionEffect(PotionEffectType.ABSORPTION, 300, 9));
+        p.addPotionEffect(new PotionEffect(PotionEffectType.STRENGTH, 300, 1));
+        p.getWorld().playSound(p.getLocation(), Sound.ENTITY_RAVAGER_ROAR, 2f, 0.7f);
+        p.sendMessage(ChatColor.GOLD + "Titan Form: 20 hearts of absorption and Strength II for 15 seconds.");
+    }
+
+    // ----- Spectral -----
+
+    private void hauntPulse(Player p) {
+        if (!ready(p, "g_haunt", 5000)) return;
+        for (Entity en : p.getWorld().getNearbyEntities(p.getLocation(), 5, 3, 5)) {
+            if (!(en instanceof LivingEntity le) || en.equals(p) || isFriendlyTo(p, le)) continue;
+            hit(le, 5, p);
+            le.addPotionEffect(new PotionEffect(PotionEffectType.GLOWING, 100, 0));
+        }
+        p.getWorld().spawnParticle(Particle.SOUL, p.getLocation().add(0, 1, 0), 40, 2.5, 1, 2.5, 0.05);
+        p.getWorld().playSound(p.getLocation(), Sound.ENTITY_PHANTOM_AMBIENT, 1f, 0.8f);
+    }
+
+    private void phaseWalk(Player p) {
+        if (!ready(p, "g_phase", 12000)) return;
+        p.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 80, 0));
+        p.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 80, 1));
+        p.getWorld().spawnParticle(Particle.PORTAL, p.getLocation().add(0, 1, 0), 30, 0.5, 1, 0.5, 0.5);
+        p.sendMessage(ChatColor.DARK_GRAY + "Phase Walk: invisible and fast for 4 seconds.");
+    }
+
+    private void bansheeWail(Player p) {
+        if (!ready(p, "g_wail", 10000)) return;
+        for (Entity en : p.getWorld().getNearbyEntities(p.getLocation(), 8, 4, 8)) {
+            if (!(en instanceof LivingEntity le) || en.equals(p) || isFriendlyTo(p, le)) continue;
+            le.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 60, 0));
+            le.addPotionEffect(new PotionEffect(PotionEffectType.NAUSEA, 80, 0));
+        }
+        p.getWorld().playSound(p.getLocation(), Sound.ENTITY_GHAST_SCREAM, 1f, 0.7f);
+    }
+
+    private void reaperHarvest(Player p) {
+        if (!ready(p, "g_reaper", 60000)) return;
+        int hits = 0;
+        for (Entity en : p.getWorld().getNearbyEntities(p.getLocation(), 6, 3, 6)) {
+            if (hits >= 5) break;
+            if (!(en instanceof LivingEntity le) || en.equals(p) || isFriendlyTo(p, le)) continue;
+            hit(le, 10, p);
+            p.setHealth(Math.min(p.getMaxHealth(), p.getHealth() + 2));
+            hits++;
+        }
+        p.getWorld().playSound(p.getLocation(), Sound.ENTITY_WITHER_SHOOT, 1f, 1.2f);
+        p.sendMessage(ChatColor.DARK_PURPLE + "Reaper's Harvest: " + hits + " foe(s).");
+    }
+
+    // ----- Verdant -----
+
+    private void vineSnare(Player p) {
+        if (!ready(p, "g_vine", 8000)) return;
+        Vector fwd = p.getLocation().getDirection().setY(0);
+        if (fwd.lengthSquared() < 0.01) return;
+        fwd = fwd.normalize();
+        for (Entity en : p.getWorld().getNearbyEntities(p.getLocation(), 6, 3, 6)) {
+            if (!(en instanceof LivingEntity le) || en.equals(p) || isFriendlyTo(p, le)) continue;
+            Vector to = le.getLocation().toVector().subtract(p.getLocation().toVector()).setY(0);
+            if (to.lengthSquared() == 0 || to.clone().normalize().dot(fwd) < 0.6) continue;
+            hit(le, 4, p);
+            le.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 40, 9));
+        }
+        p.getWorld().spawnParticle(Particle.HAPPY_VILLAGER, p.getLocation().add(fwd.clone().multiply(3)).add(0, 1, 0), 30, 2, 1, 2, 0.05);
+        p.getWorld().playSound(p.getLocation(), Sound.BLOCK_GRASS_BREAK, 1f, 0.8f);
+    }
+
+    private void bloomHeal(Player p) {
+        if (!ready(p, "g_bloom", 15000)) return;
+        p.setHealth(Math.min(p.getMaxHealth(), p.getHealth() + 8));
+        p.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, 100, 1));
+        p.getWorld().spawnParticle(Particle.HAPPY_VILLAGER, p.getLocation().add(0, 1, 0), 40, 1, 1, 1, 0.1);
+        p.getWorld().playSound(p.getLocation(), Sound.BLOCK_GRASS_BREAK, 1f, 1.2f);
+    }
+
+    private void thornBurst(Player p) {
+        if (!ready(p, "g_thorn", 8000)) return;
+        for (Entity en : p.getWorld().getNearbyEntities(p.getLocation(), 4, 2, 4)) {
+            if (!(en instanceof LivingEntity le) || en.equals(p) || isFriendlyTo(p, le)) continue;
+            hit(le, 6, p);
+        }
+        p.getWorld().spawnParticle(Particle.CRIT, p.getLocation().add(0, 1, 0), 40, 2, 1, 2, 0.1);
+        p.getWorld().playSound(p.getLocation(), Sound.BLOCK_BAMBOO_BREAK, 1f, 0.8f);
+    }
+
+    private void livingForest(Player p) {
+        if (!ready(p, "g_forest", 150000)) return;
+        p.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, 300, 2));
+        p.addPotionEffect(new PotionEffect(PotionEffectType.ABSORPTION, 300, 2));
+        p.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 300, 1));
+        p.getWorld().playSound(p.getLocation(), Sound.BLOCK_GRASS_BREAK, 2f, 0.6f);
+        p.sendMessage(ChatColor.GREEN + "Living Forest: regeneration, absorption and speed for 15 seconds.");
+    }
+
+    // ----- Gravity -----
+
+    private void gravityPull(Player p) {
+        if (!ready(p, "g_pull", 6000)) return;
+        Location c = p.getLocation().clone();
+        for (Entity en : c.getWorld().getNearbyEntities(c, 8, 4, 8)) {
+            if (!(en instanceof LivingEntity le) || en.equals(p) || isFriendlyTo(p, le)) continue;
+            Vector pull = c.toVector().subtract(le.getLocation().toVector()).setY(0.2);
+            if (pull.lengthSquared() > 0) le.setVelocity(pull.normalize().multiply(1.2));
+        }
+        c.getWorld().spawnParticle(Particle.PORTAL, c.clone().add(0, 1, 0), 60, 3, 1, 3, 0.4);
+        c.getWorld().playSound(c, Sound.ENTITY_ENDERMAN_TELEPORT, 1f, 0.5f);
+    }
+
+    private void gravityCrush(Player p) {
+        if (!ready(p, "g_crush", 9000)) return;
+        Location c = p.getLocation().clone();
+        for (Entity en : c.getWorld().getNearbyEntities(c, 4, 2, 4)) {
+            if (!(en instanceof LivingEntity le) || en.equals(p) || isFriendlyTo(p, le)) continue;
+            hit(le, 8, p);
+            le.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 60, 2));
+        }
+        c.getWorld().spawnParticle(Particle.EXPLOSION, c, 2, 1, 0.2, 1, 0);
+        c.getWorld().playSound(c, Sound.ENTITY_GENERIC_EXPLODE, 1f, 1.4f);
+    }
+
+    private void featherFloat(Player p) {
+        if (!ready(p, "g_float", 15000)) return;
+        p.addPotionEffect(new PotionEffect(PotionEffectType.SLOW_FALLING, 200, 0));
+        p.getWorld().spawnParticle(Particle.CLOUD, p.getLocation().add(0, 1, 0), 30, 0.6, 0.3, 0.6, 0.02);
+        p.sendMessage(ChatColor.GRAY + "Feather Float: slow falling for 10 seconds.");
+    }
+
+    private void singularity(Player p) {
+        if (!ready(p, "g_singularity", 150000)) return;
+        final Location c = p.getLocation().clone();
+        final int[] ticks = {0};
+        final BukkitTask[] holder = new BukkitTask[1];
+        holder[0] = Bukkit.getScheduler().runTaskTimer(this, () -> {
+            ticks[0]++;
+            if (ticks[0] > 60 || !p.isOnline()) {
+                holder[0].cancel();
+                return;
+            }
+            for (Entity en : c.getWorld().getNearbyEntities(c, 10, 6, 10)) {
+                if (!(en instanceof LivingEntity le) || en.equals(p) || isFriendlyTo(p, le)) continue;
+                Vector pull = c.toVector().subtract(le.getLocation().toVector());
+                if (pull.lengthSquared() > 0.5) le.setVelocity(pull.normalize().multiply(0.5));
+                if (ticks[0] % 10 == 0) hit(le, 2, p);
+            }
+            c.getWorld().spawnParticle(Particle.PORTAL, c.clone().add(0, 1, 0), 30, 2, 1, 2, 0.5);
+        }, 0L, 1L);
+        p.sendMessage(ChatColor.DARK_PURPLE + "Singularity: pulling foes in for 3 seconds.");
     }
 
     // ----- Blizzard -----
@@ -2852,6 +3440,44 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
     // ===================== INFERNO =====================
 
     private final Map<UUID, Long> meteorOwners = new HashMap<>();
+
+    /** Which projectile tag each crossbow or bow gives its shots. */
+    private static final Map<String, String> SHOT_TAGS = Map.ofEntries(
+                Map.entry("hailstorm", "hailbolt"),
+                Map.entry("sparkline", "sparkbolt"),
+                Map.entry("ravenshot", "ravenbolt"),
+                Map.entry("whirlwind", "whirl"),
+                Map.entry("sunfall", "sunfall"),
+                Map.entry("gravebow", "gravepull"),
+                Map.entry("ironfang", "ironbolt"),
+                Map.entry("pyre", "pyrebolt"),
+                Map.entry("echo", "echobolt"),
+                Map.entry("stormbow", "stormbolt"),
+                Map.entry("chainshot", "chainbolt"),
+                Map.entry("ghostmark", "ghostmark"),
+                Map.entry("dawnbow", "dawnbolt"),
+                Map.entry("frostbolt", "frostbolt"),
+                Map.entry("thunderbolt", "crossthunder"),
+                Map.entry("rocketbolt", "rocketbolt"),
+                Map.entry("vinebow", "vinebow"),
+                Map.entry("gale", "gale"),
+                Map.entry("ironbow", "ironbow"));
+
+    /** Spins a player like a tornado for 3 seconds: they rotate, lift and take light damage. */
+    private void startTornado(Player victim) {
+        final int[] ticks = {0};
+        Bukkit.getScheduler().runTaskTimer(this, task -> {
+            ticks[0]++;
+            if (!victim.isOnline() || ticks[0] > 60) {
+                task.cancel();
+                return;
+            }
+            victim.setRotation(victim.getLocation().getYaw() + 35f, 0f);
+            if (ticks[0] <= 25) victim.setVelocity(new Vector(0, 0.35, 0));
+            if (ticks[0] % 10 == 0) victim.damage(1.0);
+            victim.getWorld().spawnParticle(Particle.CLOUD, victim.getLocation().add(0, 1, 0), 6, 0.4, 0.5, 0.4, 0.02);
+        }, 0L, 1L);
+    }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onMeteorSelfHarm(EntityDamageEvent e) {
