@@ -1,0 +1,25 @@
+name: StickmanItems
+version: 4.0.0
+main: com.stickmanitems.StickmanItems
+api-version: '1.21'
+author: StickmanSMP
+description: Native Paper special items and gems. Operator-only commands.
+commands:
+  stickmancreatures:
+    description: Creature commands and menu
+    usage: /stickmancreatures menu
+    aliases: [creature, creatures]
+    permission: stickmancreatures.use
+  stickmanitems:
+    description: Manage Stickman items (operators only)
+    usage: /stickmanitems help
+  stickman:
+    description: Manage Stickman gems, trust and gem cooldowns (operators only)
+    usage: /stickman help
+permissions:
+  stickmancreatures.use:
+    description: Summon your own creature
+    default: true
+  stickmancreatures.admin:
+    description: Summon creatures for other players
+    default: op
