@@ -233,8 +233,6 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
     }
 
     private void registerItems() {
-        def("kaboom", "Kaboom Kachow", Material.BOW, "#FF3D00", "Every arrow shot from this bow explodes on impact.");
-        def("shakalaka", "Shakalaka Bow", Material.BOW, "#00FF9C", "Each arrow that lands triggers 3 random effects: lightning, explosion or fireball.");
         def("thunderstick", "Thunderstick", Material.NETHERITE_SWORD, "#FFEA00", "Hits strike lightning. Right-click to call lightning where you look.");
         def("vampirefang", "Vampire Fang", Material.NETHERITE_SWORD, "#FF1744", "Heals you for 40% of melee damage. Right-click for a 4-heart heal.");
         def("frostbite", "Frostbite", Material.NETHERITE_SWORD, "#00E5FF", "Hits slow targets and add extra damage. Right-click for a frost nova.");
@@ -259,7 +257,6 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
         def("glacier", "Phoenix Call", Material.MACE, "#FF6E40", "Right-click to leap, then slam with fire and ice. The higher you fall, the harder it hits.");
         def("tidal", "Tidal Sword", Material.NETHERITE_SWORD, "#0091EA", "Right-click to fire a water orb that blasts everything near its impact.");
         def("reapersigil", "Reaper's Sigil", Material.WITHER_SKELETON_SKULL, "#2962FF", "Right-click: Blue Wither Skull, a blue skull that withers and damages whatever it hits. Shift + right-click: Soul Drain, 8 damage to nearby enemies and heals you per hit. Sprint + right-click: Death Mark, marks the nearest enemy for 10 seconds for +50% damage. Offhand: lifesteal, you heal the damage you deal to players.");
-        def("arccaster", "Arc Caster", Material.BOW, "#E1BEE7", "A bow. Arrows stun or freeze whatever they hit.");
         def("shadowdagger", "Shadow Dagger", Material.NETHERITE_SWORD, "#7E57C2", "Right-click to teleport behind the nearest enemy and strike for 10 damage.");
         def("solarlance", "Solar Lance", Material.NETHERITE_SWORD, "#FFD180", "Right-click for an instant beam that hits everything in a 25-block line for 14 damage.");
         def("gravitywell", "Gravity Well", Material.MAGMA_CREAM, "#AB47BC", "Right-click to place a gravity well for 6 seconds. It pulls and damages nearby mobs.");
@@ -279,32 +276,48 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
         def("thornrapier", "Thorn Rapier", Material.NETHERITE_SWORD, "#66BB6A", "Ability 1 (right-click): Lunge forward and stab the first enemy you reach for 10 damage and 5 seconds of Poison. 6-second cooldown.");
         def("moonsplitter", "Moonsplitter", Material.NETHERITE_SWORD, "#B39DDB", "Ability 1 (right-click): Crescent slash hits every enemy within 5 blocks for 9 damage and knocks them back. 7-second cooldown.");
         def("frostfang", "Frostfang Greatsword", Material.NETHERITE_SWORD, "#81D4FA", "Ability 1 (right-click): Frost wave in a cone 8 blocks long deals 6 damage and slows enemies for 5 seconds. 9-second cooldown.");
-        def("hailstorm", "Hailstorm Crossbow", Material.CROSSBOW, "#B3E5FC", "Every shot also fires 4 spread ice bolts that deal 4 damage each. The extra bolts recharge every 4 seconds.");
-        def("sparkline", "Sparkline Crossbow", Material.CROSSBOW, "#FFF176", "Every bolt explodes on impact, dealing 6 damage in a 2.5 block radius without breaking blocks.");
-        def("ravenshot", "Ravenshot Crossbow", Material.CROSSBOW, "#37474F", "Bolts pierce up to 3 targets. The first enemy hit takes 10 damage and is slowed for 3 seconds.");
-        def("whirlwind", "Whirlwind Bow", Material.BOW, "#4DD0E1", "Arrows that hit a player spin them like a tornado for 3 seconds, lifting them and dealing 1 damage every half second.");
-        def("sunfall", "Sunfall Bow", Material.BOW, "#FFCA28", "Arrows that land rain 8 arrows down on the impact area.");
-        def("gravebow", "Gravebow", Material.BOW, "#6D4C41", "Arrows pull every enemy within 5 blocks of the impact point toward it.");
         def("voidcutter", "Void Cutter", Material.NETHERITE_SWORD, "#7E57C2", "Ability 1 (right-click): Blink 6 blocks forward and slash everything within 2.5 blocks of where you land for 10 damage. 8-second cooldown.");
         def("bloodletter", "Bloodletter", Material.NETHERITE_SWORD, "#B71C1C", "Ability 1 (right-click): Spend 2 hearts to deal 12 damage to every enemy within 3 blocks. You need more than 3 hearts to use it. 10-second cooldown.");
         def("sunder", "Sunder Blade", Material.NETHERITE_SWORD, "#8D6E63", "Ability 1 (right-click): Slam the ground, dealing 7 damage to enemies within 4 blocks and knocking them back. 6-second cooldown.");
-        def("ironfang", "Ironfang Crossbow", Material.CROSSBOW, "#90A4AE", "Every bolt deals 5 damage and slows the target for 2 seconds.");
-        def("pyre", "Pyre Crossbow", Material.CROSSBOW, "#FF5722", "Every bolt deals 3 damage and sets the target on fire for 5 seconds.");
-        def("echo", "Echo Crossbow", Material.CROSSBOW, "#26C6DA", "Each bolt deals 6 damage, then bounces to the nearest other enemy within 6 blocks for another 6 damage.");
-        def("stormbow", "Stormbow", Material.BOW, "#FFEB3B", "Arrows call lightning where they land, dealing 6 damage to enemies within 2.5 blocks.");
-        def("chainshot", "Chainshot Bow", Material.BOW, "#78909C", "An arrow that hits an enemy pulls them toward you.");
-        def("ghostmark", "Ghostmark Bow", Material.BOW, "#E0E0E0", "An arrow that hits an enemy deals 3 damage and makes them glow for 8 seconds.");
-        def("dawnbow", "Dawnbow", Material.BOW, "#FFF59D", "An arrow that hits an enemy deals 4 damage and heals you for 2 hearts.");
         def("soulreaver", "Soulreaver", Material.NETHERITE_SWORD, "#4A148C", "Ability 1 (right-click): Deals 6 hearts to every enemy within 4 blocks and heals you for half of the total, up to 6 hearts. 12-second cooldown.");
         def("stormfang", "Stormfang", Material.NETHERITE_SWORD, "#29B6F6", "Ability 1 (right-click): Chain lightning strikes the 3 nearest enemies within 8 blocks for 6 damage each. 9-second cooldown.");
         def("venomtooth", "Venomtooth", Material.NETHERITE_SWORD, "#7CB342", "Ability 1 (right-click): Releases a poison cloud around you for 6 seconds. Enemies within 3 blocks are poisoned and take damage each second. 14-second cooldown.");
         def("bladestorm", "Bladestorm", Material.NETHERITE_SWORD, "#90A4AE", "Ability 1 (right-click): Spins twice, hitting every enemy within 3 blocks for 5 damage each time. 8-second cooldown.");
-        def("frostbolt", "Frostbite Crossbow", Material.CROSSBOW, "#80DEEA", "Every bolt deals 4 damage and slows the target for 3 seconds.");
-        def("thunderbolt", "Thunderbolt Crossbow", Material.CROSSBOW, "#FFF176", "Every bolt calls a lightning strike where it lands, dealing 5 damage to enemies within 2 blocks.");
-        def("rocketbolt", "Rocket Crossbow", Material.CROSSBOW, "#FF7043", "Every bolt explodes on impact, dealing 8 damage in a 3 block radius.");
-        def("vinebow", "Vinebow", Material.BOW, "#558B2F", "An arrow that hits an enemy deals 3 damage and roots them in place for 2 seconds.");
-        def("gale", "Gale Bow", Material.BOW, "#B2EBF2", "Arrows blast enemies within 3 blocks of the impact point away from it.");
-        def("ironbow", "Ironbow", Material.BOW, "#B0BEC5", "Arrows pierce up to 2 targets and deal 6 damage to each one they hit.");
+        def("kaboom", "Kaboom Kachow", Material.BOW, "#FF3D00", "Every arrow shot from this bow explodes on impact.");
+        def("shakalaka", "Shakalaka Bow", Material.BOW, "#00FF9C", "Each arrow that lands triggers 3 random effects: lightning, explosion or fireball.");
+        def("arccaster", "Arc Caster", Material.BOW, "#E1BEE7", "A bow. Arrows stun or freeze whatever they hit.");
+        def("boomhammer", "Boom Hammer", Material.IRON_SHOVEL, "#795548", "Ability 1 (right-click): Slams the ground, hitting foes within 4 blocks for 10 damage and knocking them back. 6-second cooldown.");
+        def("spearlance", "Spear of Dawn", Material.STICK, "#FFCA28", "Ability 1 (right-click): Lunges forward and hits the first foe you reach for 8 damage. 5-second cooldown.");
+        def("duskscythe", "Dusk Scythe", Material.DIAMOND_HOE, "#6A1B9A", "Ability 1 (right-click): Sweeps a cone in front of you for 9 damage and slows everything it hits for 3 seconds. 6-second cooldown.");
+        def("thornwhip", "Thornwhip", Material.STRING, "#2E7D32", "Ability 1 (right-click): Whips a cone of foes in front of you for 5 damage and slows them for 4 seconds. 7-second cooldown.");
+        def("frostglaive", "Frost Glaive", Material.GOLDEN_HOE, "#B3E5FC", "Ability 1 (right-click): Sweeps a cone for 7 damage and freezes foes for 4 seconds. 7-second cooldown.");
+        def("ironhalberd", "Iron Halberd", Material.IRON_AXE, "#90A4AE", "Ability 1 (right-click): Hits everything within 3 blocks for 9 damage. 5-second cooldown.");
+        def("tidecaller", "Tidecaller Spear", Material.PRISMARINE_SHARD, "#26C6DA", "Ability 1 (right-click): Calls lightning onto the nearest foe within 12 blocks for 8 damage. 8-second cooldown.");
+        def("bloodsickle", "Blood Sickle", Material.BONE, "#B71C1C", "Ability 1 (right-click): Hits everything within 3 blocks for 6 damage. 7-second cooldown.");
+        def("nagina", "Shadow Naginata", Material.NETHERITE_SHOVEL, "#263238", "Ability 1 (right-click): Long cone strike, 12 damage to foes up to 4 blocks away. 8-second cooldown.");
+        def("chainflail", "Chain Flail", Material.NETHERITE_SCRAP, "#78909C", "Ability 1 (right-click): Swings in a wide ring, hitting everything within 5 blocks for 8 damage and knocking it back hard. 9-second cooldown.");
+        def("lanternstaff", "Lantern Staff", Material.BLAZE_ROD, "#FFB300", "Ability 1 (right-click): Blinds everything within 5 blocks for 3 seconds and deals 4 damage. 12-second cooldown.");
+        def("stonepike", "Stone Pike", Material.STONE_SWORD, "#9E9E9E", "Ability 1 (right-click): Lunges forward and hits the first foe for 6 damage. 4-second cooldown.");
+        def("cleaver", "Obsidian Cleaver", Material.NETHERITE_AXE, "#311B92", "Ability 1 (right-click): Heavy swing hitting everything within 3.5 blocks for 11 damage. 7-second cooldown.");
+        def("wardenclaw", "Warden's Claw", Material.IRON_SWORD, "#0D47A1", "Ability 1 (right-click): Lightning chains to the 3 nearest foes within 8 blocks for 6 damage each. 10-second cooldown.");
+        def("frostlance", "Frost Lance", Material.STONE_SHOVEL, "#81D4FA", "Ability 1 (right-click): Chills everything within 4 blocks for 3 damage and slows it for 4 seconds. 9-second cooldown.");
+        def("emberpike", "Ember Pike", Material.GOLDEN_SWORD, "#FF6D00", "Ability 1 (right-click): Cone thrust for 9 damage. 6.5-second cooldown.");
+        def("stormhalberd", "Storm Halberd", Material.DIAMOND_AXE, "#FFEB3B", "Ability 1 (right-click): Lightning strikes the 2 nearest foes within 10 blocks for 9 damage each. 9-second cooldown.");
+        def("hexscythe", "Hexed Scythe", Material.WOODEN_HOE, "#4A148C", "Ability 1 (right-click): Withers everything within 5 blocks for 3 damage over 3 seconds. 14-second cooldown.");
+        def("windpike", "Wind Pike", Material.WOODEN_SWORD, "#E0F7FA", "Ability 1 (right-click): Gust dash forward, hitting the first foe for 5 damage. 5-second cooldown.");
+        def("ironmaul", "Ironbound Maul", Material.GOLDEN_SHOVEL, "#BCAAA4", "Ability 1 (right-click): Crushing blow hitting everything within 4 blocks for 13 damage. 10-second cooldown.");
+        def("ghostglaive", "Ghost Glaive", Material.STONE_HOE, "#EEEEEE", "Ability 1 (right-click): Marks everything within 4 blocks, making it glow for 5 seconds, and deals 4 damage. 7-second cooldown.");
+        def("dawnhalberd", "Dawn Halberd", Material.IRON_HOE, "#FFF59D", "Ability 1 (right-click): Restores 4 hearts and gives regeneration for 5 seconds. 12-second cooldown.");
+        def("tidallance", "Tidal Lance", Material.STICK, "#0097A7", "Ability 1 (right-click): Lunges forward and hits the first foe for 7 damage. 6-second cooldown.");
+        def("bloomstaff", "Bloom Staff", Material.STICK, "#66BB6A", "Ability 1 (right-click): Restores 3 hearts and gives regeneration for 10 seconds. 9-second cooldown.");
+        def("moonblade", "Moonlit Blade", Material.IRON_SWORD, "#9FA8DA", "Ability 1 (right-click): Gives you Speed II for 5 seconds. 12-second cooldown.");
+        def("echohammer", "Echo Warhammer", Material.MACE, "#8E24AA", "Ability 1 (right-click): Shockwave hitting everything within 3.5 blocks for 9 damage. 7-second cooldown.");
+        def("gravelglaive", "Gravel Glaive", Material.GOLDEN_HOE, "#616161", "Ability 1 (right-click): Pulls everything within 7 blocks toward you. 9-second cooldown.");
+        def("eclipsescythe", "Eclipse Scythe", Material.NETHERITE_HOE, "#311B92", "Ability 1 (right-click): Blinds everything within 3 blocks for 3 seconds and deals 3 damage. 12-second cooldown.");
+        def("stormstaff", "Storm Staff", Material.STONE_AXE, "#FFD600", "Ability 1 (right-click): Lightning strikes the nearest foe within 14 blocks for 10 damage. 9-second cooldown.");
+        def("soulsickle", "Soul Sickle", Material.BONE, "#7E57C2", "Ability 1 (right-click): Soul ward giving damage resistance for 5 seconds. 15-second cooldown.");
+        def("emberglaive", "Ember Glaive", Material.BLAZE_POWDER, "#FF3D00", "Ability 1 (right-click): Fiery cone for 10 damage. 7-second cooldown.");
+        def("wardenspear", "Warden's Spear", Material.IRON_SHOVEL, "#1A237E", "Ability 1 (right-click): Lightning chains to the 3 nearest foes within 9 blocks for 7 damage each. 11-second cooldown.");
         def("hexbone", "Hex Bone", Material.BONE, "#CFD8DC", "Right-click to curse the ground around you for 15 seconds. Enemies within 6 blocks take 3 damage a second and are slowed. 25-second cooldown.");
         def("cursedcoin", "Cursed Coin", Material.GOLD_NUGGET, "#FFB74D", "Right-click to flip a cursed coin. It can heal you, blind nearby enemies, or wail so loudly that nearby enemies are slowed. 15-second cooldown.");
         def("spectralquill", "Spectral Quill", Material.FEATHER, "#E1F5FE", "Right-click to write a curse on the nearest enemy within 15 blocks. It takes 12 damage and gains Wither and Darkness. 12-second cooldown.");
@@ -522,6 +535,7 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
             Map.entry("winddash", "No fall damage from the dash."));
 
     private static final Set<String> BOWS = Set.of("kaboom", "shakalaka", "arccaster");
+
 
     private String keybindName(String label) {
         return switch (label) {
@@ -1262,6 +1276,61 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
                 p.getWorld().spawnParticle(Particle.EXPLOSION, c, 3, 1, 0.2, 1, 0);
                 p.getWorld().playSound(c, Sound.ENTITY_GENERIC_EXPLODE, 1f, 0.7f);
             }
+            case "boomhammer" -> gearBurst(p, "boomhammer", 4, 10, 1.2, 6000);
+            case "spearlance" -> gearDash(p, "spearlance", 1.6, 8, 5000);
+            case "duskscythe" -> gearCone(p, "duskscythe", 5, 9, 60, 6000);
+            case "thornwhip" -> gearCone(p, "thornwhip", 6, 5, 80, 7000);
+            case "frostglaive" -> gearCone(p, "frostglaive", 6, 7, 80, 7000);
+            case "ironhalberd" -> gearBurst(p, "ironhalberd", 3, 9, 0.8, 5000);
+            case "tidecaller" -> gearChain(p, "tidecaller", 1, 12, 8, 8000);
+            case "bloodsickle" -> gearBurst(p, "bloodsickle", 3, 6, 0.4, 7000);
+            case "nagina" -> gearCone(p, "nagina", 4, 12, 0, 8000);
+            case "chainflail" -> gearBurst(p, "chainflail", 5, 8, 1.5, 9000);
+            case "lanternstaff" -> gearAoe(p, "lanternstaff", 5, PotionEffectType.BLINDNESS, 60, 0, 4, 12000);
+            case "stonepike" -> gearDash(p, "stonepike", 1.2, 6, 4000);
+            case "cleaver" -> gearBurst(p, "cleaver", 3.5, 11, 0.6, 7000);
+            case "wardenclaw" -> gearChain(p, "wardenclaw", 3, 8, 6, 10000);
+            case "frostlance" -> gearAoe(p, "frostlance", 4, PotionEffectType.SLOWNESS, 80, 2, 3, 9000);
+            case "emberpike" -> gearCone(p, "emberpike", 6, 9, 0, 6500);
+            case "stormhalberd" -> gearChain(p, "stormhalberd", 2, 10, 9, 9000);
+            case "hexscythe" -> gearAoe(p, "hexscythe", 5, PotionEffectType.WITHER, 60, 0, 3, 14000);
+            case "windpike" -> gearDash(p, "windpike", 1.8, 5, 5000);
+            case "ironmaul" -> gearBurst(p, "ironmaul", 4, 13, 1.0, 10000);
+            case "ghostglaive" -> gearAoe(p, "ghostglaive", 4, PotionEffectType.GLOWING, 100, 0, 4, 7000);
+            case "dawnhalberd" -> gearMend(p, "dawnhalberd", 4, 100, 12000);
+            case "tidallance" -> gearDash(p, "tidallance", 1.4, 7, 6000);
+            case "bloomstaff" -> gearMend(p, "bloomstaff", 3, 200, 9000);
+            case "moonblade" -> gearBuff(p, "moonblade", PotionEffectType.SPEED, 100, 1, 12000);
+            case "echohammer" -> gearBurst(p, "echohammer", 3.5, 9, 1.1, 7000);
+            case "gravelglaive" -> gearPull(p, "gravelglaive", 7, 1.1, 9000);
+            case "eclipsescythe" -> gearAoe(p, "eclipsescythe", 3, PotionEffectType.BLINDNESS, 60, 0, 3, 12000);
+            case "stormstaff" -> gearChain(p, "stormstaff", 1, 14, 10, 9000);
+            case "soulsickle" -> gearBuff(p, "soulsickle", PotionEffectType.DAMAGE_RESISTANCE, 100, 0, 15000);
+            case "emberglaive" -> gearCone(p, "emberglaive", 6, 10, 0, 7000);
+            case "wardenspear" -> gearChain(p, "wardenspear", 3, 9, 7, 11000);
+            case "arccaster" -> {
+                if (!ready(p, id, 6000)) return;
+                List<LivingEntity> chain = new ArrayList<>();
+                LivingEntity cur = nearestEnemy(p.getLocation(), 12, p);
+                while (cur != null && chain.size() < 4) {
+                    chain.add(cur);
+                    cur = nextChain(cur, chain);
+                }
+                for (int i = 0; i < chain.size(); i++) {
+                    final LivingEntity target = chain.get(i);
+                    final Location from = (i == 0) ? p.getEyeLocation() : chain.get(i - 1).getLocation().add(0, 1, 0);
+                    Bukkit.getScheduler().runTaskLater(host, () -> {
+                        if (!target.isValid()) return;
+                        Vector span = target.getLocation().add(0, 1, 0).toVector().subtract(from.toVector());
+                        for (int s = 1; s <= 6; s++) {
+                            Location pt = from.clone().add(span.clone().multiply(s / 6.0));
+                            w.spawnParticle(Particle.CRIT, pt, 3, 0.1, 0.1, 0.1, 0);
+                        }
+                        w.strikeLightningEffect(target.getLocation());
+                        hit(target, 10, p);
+                    }, i * 4L);
+                }
+            }
             case "soulreaver" -> {
                 if (!ready(p, id, 12000)) return;
                 int drained = 0;
@@ -1316,29 +1385,6 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
                     }, pulse * 10L);
                 }
                 p.getWorld().playSound(p.getLocation(), Sound.ENTITY_PLAYER_ATTACK_SWEEP, 1f, 0.9f);
-            }
-            case "arccaster" -> {
-                if (!ready(p, id, 6000)) return;
-                List<LivingEntity> chain = new ArrayList<>();
-                LivingEntity cur = nearestEnemy(p.getLocation(), 12, p);
-                while (cur != null && chain.size() < 4) {
-                    chain.add(cur);
-                    cur = nextChain(cur, chain);
-                }
-                for (int i = 0; i < chain.size(); i++) {
-                    final LivingEntity target = chain.get(i);
-                    final Location from = (i == 0) ? p.getEyeLocation() : chain.get(i - 1).getLocation().add(0, 1, 0);
-                    Bukkit.getScheduler().runTaskLater(this, () -> {
-                        if (!target.isValid()) return;
-                        Vector span = target.getLocation().add(0, 1, 0).toVector().subtract(from.toVector());
-                        for (int s = 1; s <= 6; s++) {
-                            Location pt = from.clone().add(span.clone().multiply(s / 6.0));
-                            w.spawnParticle(Particle.CRIT, pt, 3, 0.1, 0.1, 0.1, 0);
-                        }
-                        w.strikeLightningEffect(target.getLocation());
-                        hit(target, 10, p);
-                    }, i * 4L);
-                }
             }
             case "gauntlet" -> {
                 if (holds.containsKey(p.getUniqueId())) {
@@ -1837,22 +1883,6 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
             e.getProjectile().getPersistentDataContainer().set(projKey, PersistentDataType.STRING, id);
             return;
         }
-        if (id != null && SHOT_TAGS.containsKey(id)) {
-            e.getProjectile().getPersistentDataContainer().set(projKey, PersistentDataType.STRING, SHOT_TAGS.get(id));
-            if (id.equals("ravenshot") && e.getProjectile() instanceof org.bukkit.entity.AbstractArrow aa) aa.setPierceLevel(3);
-            if (id.equals("ironbow") && e.getProjectile() instanceof org.bukkit.entity.AbstractArrow ib) ib.setPierceLevel(2);
-            if (id.equals("hailstorm") && ready(shooterP, id, 4000)) {
-                Vector base = e.getProjectile().getVelocity();
-                double speed = Math.max(2.0, base.length());
-                Vector dir = base.lengthSquared() > 0 ? base.clone().normalize() : shooterP.getLocation().getDirection();
-                for (int i = 0; i < 4; i++) {
-                    org.bukkit.entity.Arrow extra = shooterP.getWorld().spawnArrow(shooterP.getEyeLocation(), dir, (float) speed, 12f);
-                    extra.setShooter(shooterP);
-                    extra.getPersistentDataContainer().set(projKey, PersistentDataType.STRING, "hailbolt");
-                }
-            }
-            return;
-        }
         if (holdsItem(shooterP, "blizzard") && rnd.nextDouble() < 0.30) {
             e.getProjectile().getPersistentDataContainer().set(projKey, PersistentDataType.STRING, "frozen");
         }
@@ -1870,114 +1900,22 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
         Entity shooter = src instanceof Entity en ? en : null;
 
         switch (tag) {
-            case "hailbolt" -> {
-                if (e.getHitEntity() instanceof LivingEntity hb && shooter instanceof Player hp && !isFriendlyTo(hp, hb)) hit(hb, 4, hp);
-            }
-            case "sparkbolt" -> boom(loc, 2.5, 6, shooter);
-            case "frostbolt" -> {
-                if (e.getHitEntity() instanceof LivingEntity fb && shooter instanceof Player fp && !isFriendlyTo(fp, fb)) {
-                    hit(fb, 4, fp);
-                    fb.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 60, 1));
-                }
-            }
-            case "crossthunder" -> {
-                loc.getWorld().strikeLightningEffect(loc);
-                damageArea(loc, 2, 5, shooter);
-            }
-            case "rocketbolt" -> boom(loc, 3, 8, shooter);
-            case "vinebow" -> {
-                if (e.getHitEntity() instanceof LivingEntity vb && shooter instanceof Player vp2 && !isFriendlyTo(vp2, vb)) {
-                    hit(vb, 3, vp2);
-                    vb.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 40, 9));
-                }
-            }
-            case "gale" -> {
-                for (Entity en : loc.getWorld().getNearbyEntities(loc, 3, 3, 3)) {
-                    if (!(en instanceof LivingEntity ge) || en.equals(shooter)) continue;
-                    Vector out = ge.getLocation().toVector().subtract(loc.toVector()).setY(0.3);
-                    if (out.lengthSquared() > 0) ge.setVelocity(out.normalize().multiply(1.5));
-                }
-            }
-            case "ironbow" -> {
-                if (e.getHitEntity() instanceof LivingEntity ib2 && shooter instanceof Player ip2 && !isFriendlyTo(ip2, ib2)) hit(ib2, 6, ip2);
-            }
-            case "ironbolt" -> {
-                if (e.getHitEntity() instanceof LivingEntity ib && shooter instanceof Player ip && !isFriendlyTo(ip, ib)) {
-                    hit(ib, 5, ip);
-                    ib.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 40, 1));
-                }
-            }
-            case "pyrebolt" -> {
-                if (e.getHitEntity() instanceof LivingEntity pb && shooter instanceof Player pp && !isFriendlyTo(pp, pb)) {
-                    hit(pb, 3, pp);
-                    pb.setFireTicks(100);
-                }
-            }
-            case "echobolt" -> {
-                if (e.getHitEntity() instanceof LivingEntity eb && shooter instanceof Player ep && !isFriendlyTo(ep, eb)) {
-                    hit(eb, 6, ep);
-                    for (Entity en : eb.getWorld().getNearbyEntities(eb.getLocation(), 6, 3, 6)) {
-                        if (!(en instanceof LivingEntity el) || en.equals(eb) || en.equals(ep) || isFriendlyTo(ep, el)) continue;
-                        hit(el, 6, ep);
-                        break;
-                    }
-                }
-            }
-            case "stormbolt" -> {
-                loc.getWorld().strikeLightningEffect(loc);
-                damageArea(loc, 2.5, 6, shooter);
-            }
-            case "chainbolt" -> {
-                if (e.getHitEntity() instanceof LivingEntity cb && shooter instanceof Player cp && !isFriendlyTo(cp, cb)) {
-                    Vector pull = cp.getLocation().toVector().subtract(cb.getLocation().toVector());
-                    if (pull.lengthSquared() > 0) cb.setVelocity(pull.normalize().multiply(1.1).setY(0.3));
-                }
-            }
-            case "ghostmark" -> {
-                if (e.getHitEntity() instanceof LivingEntity gm && shooter instanceof Player gp && !isFriendlyTo(gp, gm)) {
-                    hit(gm, 3, gp);
-                    gm.addPotionEffect(new PotionEffect(PotionEffectType.GLOWING, 160, 0));
-                }
-            }
-            case "dawnbolt" -> {
-                if (e.getHitEntity() instanceof LivingEntity db && shooter instanceof Player dp2 && !isFriendlyTo(dp2, db)) {
-                    hit(db, 4, dp2);
-                    dp2.setHealth(Math.min(dp2.getMaxHealth(), dp2.getHealth() + 4));
-                }
-            }
-            case "ravenbolt" -> {
-                if (e.getHitEntity() instanceof LivingEntity rb && shooter instanceof Player rp && !isFriendlyTo(rp, rb)) {
-                    hit(rb, 10, rp);
-                    rb.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 60, 1));
-                }
-            }
-            case "whirl" -> {
-                if (e.getHitEntity() instanceof Player victim && shooter instanceof Player wp && !isFriendlyTo(wp, victim)) startTornado(victim);
-            }
-            case "sunfall" -> {
-                for (int i = 0; i < 8; i++) {
-                    Location top = loc.clone().add(rand(-3, 3), 12, rand(-3, 3));
-                    org.bukkit.entity.Arrow rain = w.spawnArrow(top, new Vector(0, -1, 0), 1.6f, 0f);
-                    if (shooter instanceof Player sp) rain.setShooter(sp);
-                }
-            }
-            case "gravepull" -> {
-                for (Entity en : w.getNearbyEntities(loc, 5, 5, 5)) {
-                    if (!(en instanceof LivingEntity gl) || en.equals(shooter)) continue;
-                    Vector pull = loc.toVector().subtract(gl.getLocation().toVector()).setY(0.2);
-                    if (pull.lengthSquared() > 0) gl.setVelocity(pull.normalize().multiply(0.9));
-                }
-            }
-            case "kaboom" -> boom(loc, 4, 12, shooter);
             case "grenade" -> boom(loc, 3.5, 12, shooter);
-            case "thunderbolt" -> {
-                if (shooter instanceof Player tp) {
-                    if (e.getHitEntity() instanceof LivingEntity stunned && !isFriendlyTo(tp, stunned)) {
-                        stun(tp, stunned);
+            case "kaboom" -> boom(loc, 4, 12, shooter);
+            case "arccaster" -> {
+                if (shooter instanceof Player ap && e.getHitEntity() instanceof LivingEntity arcHit && !isFriendlyTo(ap, arcHit)) {
+                    if (rnd.nextBoolean()) {
+                        stun(ap, arcHit);
                     } else {
-                        w.strikeLightningEffect(loc);
-                        damageArea(loc, 2, 6, tp);
+                        arcHit.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 80, 9));
+                        ap.sendMessage(ChatColor.AQUA + "Frozen!");
                     }
+                }
+            }
+            case "shakalaka" -> {
+                for (int i = 0; i < 3; i++) {
+                    Location spot = loc.clone().add(rand(-2, 2), 0, rand(-2, 2));
+                    shakalakaRoll(spot, shooter);
                 }
             }
             case "meteor" -> boom(loc, 3, 10, shooter);
@@ -2021,16 +1959,6 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
                 knockArea(loc, 3, 0.7, shooter);
                 particleRing(loc.clone().add(0, 0.5, 0), 2.0, Particle.CLOUD);
             }
-            case "arccaster" -> {
-                if (shooter instanceof Player ap && e.getHitEntity() instanceof LivingEntity arcHit && !isFriendlyTo(ap, arcHit)) {
-                    if (rnd.nextBoolean()) {
-                        stun(ap, arcHit);
-                    } else {
-                        arcHit.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 80, 9));
-                        ap.sendMessage(ChatColor.AQUA + "Frozen!");
-                    }
-                }
-            }
             case "frozen" -> {
                 if (e.getHitEntity() instanceof LivingEntity frozenMob && !isFriendlyTo(shooter, frozenMob)) {
                     frozenMob.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 60, 9));
@@ -2065,12 +1993,6 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
                 boom(loc, 3, 12, shooter);
                 w.spawnParticle(Particle.SPLASH, loc, 60, 1.5, 0.5, 1.5, 0.1);
                 knockArea(loc, 3, 0.8, shooter);
-            }
-            case "shakalaka" -> {
-                for (int i = 0; i < 3; i++) {
-                    Location spot = loc.clone().add(rand(-2, 2), 0, rand(-2, 2));
-                    shakalakaRoll(spot, shooter);
-                }
             }
             default -> { }
         }
@@ -2622,6 +2544,107 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
             c.getWorld().spawnParticle(Particle.PORTAL, c.clone().add(0, 1, 0), 30, 2, 1, 2, 0.5);
         }, 0L, 1L);
         p.sendMessage(ChatColor.DARK_PURPLE + "Singularity: pulling foes in for 3 seconds.");
+    }
+
+    // ----- Melee and staff abilities (no bows or crossbows) -----
+
+    private void gearBurst(Player p, String id, double radius, double dmg, double kb, long cd) {
+        if (!ready(p, id, cd)) return;
+        Location c = p.getLocation().clone();
+        for (Entity en : c.getWorld().getNearbyEntities(c, radius, 2.5, radius)) {
+            if (!(en instanceof LivingEntity le) || en.equals(p) || isFriendlyTo(p, le)) continue;
+            hit(le, dmg, p);
+            Vector out = le.getLocation().toVector().subtract(c.toVector()).setY(0.4);
+            if (out.lengthSquared() > 0) le.setVelocity(out.normalize().multiply(kb));
+        }
+        c.getWorld().spawnParticle(Particle.CRIT, c.clone().add(0, 1, 0), 40, radius / 2, 0.5, radius / 2, 0.1);
+        c.getWorld().playSound(c, Sound.ENTITY_GENERIC_EXPLODE, 0.8f, 1.2f);
+    }
+
+    private void gearCone(Player p, String id, double range, double dmg, int slowTicks, long cd) {
+        if (!ready(p, id, cd)) return;
+        Vector fwd = p.getLocation().getDirection().setY(0);
+        if (fwd.lengthSquared() < 0.01) return;
+        fwd = fwd.normalize();
+        for (Entity en : p.getWorld().getNearbyEntities(p.getLocation(), range, 3, range)) {
+            if (!(en instanceof LivingEntity le) || en.equals(p) || isFriendlyTo(p, le)) continue;
+            Vector to = le.getLocation().toVector().subtract(p.getLocation().toVector()).setY(0);
+            if (to.lengthSquared() == 0 || to.clone().normalize().dot(fwd) < 0.55) continue;
+            hit(le, dmg, p);
+            if (slowTicks > 0) le.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, slowTicks, 1));
+        }
+        p.getWorld().spawnParticle(Particle.SWEEP_ATTACK, p.getLocation().add(fwd.clone().multiply(2)).add(0, 1, 0), 12, 1.5, 0.5, 1.5, 0);
+        p.getWorld().playSound(p.getLocation(), Sound.ENTITY_PLAYER_ATTACK_SWEEP, 1f, 1f);
+    }
+
+    private void gearDash(Player p, String id, double speed, double dmg, long cd) {
+        if (!ready(p, id, cd)) return;
+        Vector dir = p.getLocation().getDirection().normalize();
+        p.setVelocity(dir.clone().multiply(speed).setY(0.1));
+        final Player dp = p;
+        Bukkit.getScheduler().runTaskLater(this, () -> {
+            for (Entity en : dp.getWorld().getNearbyEntities(dp.getLocation(), 2.5, 2.5, 2.5)) {
+                if (!(en instanceof LivingEntity le) || en.equals(dp) || isFriendlyTo(dp, le)) continue;
+                hit(le, dmg, dp);
+                break;
+            }
+        }, 6L);
+        p.getWorld().playSound(p.getLocation(), Sound.ENTITY_BREEZE_WIND_BURST, 1f, 1.2f);
+    }
+
+    private void gearAoe(Player p, String id, double radius, PotionEffectType type, int ticks, int amp, double dmg, long cd) {
+        if (!ready(p, id, cd)) return;
+        Location c = p.getLocation().clone();
+        for (Entity en : c.getWorld().getNearbyEntities(c, radius, 3, radius)) {
+            if (!(en instanceof LivingEntity le) || en.equals(p) || isFriendlyTo(p, le)) continue;
+            if (dmg > 0) hit(le, dmg, p);
+            if (type != null) le.addPotionEffect(new PotionEffect(type, ticks, amp));
+        }
+        c.getWorld().spawnParticle(Particle.WITCH, c.clone().add(0, 1, 0), 40, radius / 2, 0.5, radius / 2, 0.02);
+        c.getWorld().playSound(c, Sound.ENTITY_WITCH_AMBIENT, 1f, 0.9f);
+    }
+
+    private void gearChain(Player p, String id, int count, double range, double dmg, long cd) {
+        if (!ready(p, id, cd)) return;
+        List<LivingEntity> foes = new ArrayList<>();
+        for (Entity en : p.getWorld().getNearbyEntities(p.getLocation(), range, 4, range)) {
+            if (en instanceof LivingEntity le && !en.equals(p) && !isFriendlyTo(p, le)) foes.add(le);
+        }
+        foes.sort(java.util.Comparator.comparingDouble(le -> le.getLocation().distanceSquared(p.getLocation())));
+        int n = Math.min(count, foes.size());
+        for (int i = 0; i < n; i++) {
+            LivingEntity t = foes.get(i);
+            t.getWorld().strikeLightningEffect(t.getLocation());
+            hit(t, dmg, p);
+        }
+        if (n == 0) p.sendMessage(ChatColor.GRAY + "No foe in range.");
+    }
+
+    private void gearPull(Player p, String id, double radius, double strength, long cd) {
+        if (!ready(p, id, cd)) return;
+        Location c = p.getLocation().clone();
+        for (Entity en : c.getWorld().getNearbyEntities(c, radius, 4, radius)) {
+            if (!(en instanceof LivingEntity le) || en.equals(p) || isFriendlyTo(p, le)) continue;
+            Vector pull = c.toVector().subtract(le.getLocation().toVector()).setY(0.2);
+            if (pull.lengthSquared() > 0) le.setVelocity(pull.normalize().multiply(strength));
+        }
+        c.getWorld().spawnParticle(Particle.PORTAL, c.clone().add(0, 1, 0), 60, 3, 1, 3, 0.4);
+        c.getWorld().playSound(c, Sound.ENTITY_ENDERMAN_TELEPORT, 1f, 0.5f);
+    }
+
+    private void gearBuff(Player p, String id, PotionEffectType type, int ticks, int amp, long cd) {
+        if (!ready(p, id, cd)) return;
+        p.addPotionEffect(new PotionEffect(type, ticks, amp));
+        p.getWorld().spawnParticle(Particle.ENCHANT, p.getLocation().add(0, 1, 0), 30, 0.5, 1, 0.5, 0.5);
+        p.getWorld().playSound(p.getLocation(), Sound.BLOCK_BEACON_ACTIVATE, 1f, 1.4f);
+    }
+
+    private void gearMend(Player p, String id, double hearts, int regenTicks, long cd) {
+        if (!ready(p, id, cd)) return;
+        p.setHealth(Math.min(p.getMaxHealth(), p.getHealth() + hearts * 2));
+        if (regenTicks > 0) p.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, regenTicks, 1));
+        p.getWorld().spawnParticle(Particle.HEART, p.getLocation().add(0, 1.5, 0), 10, 0.5, 0.5, 0.5, 0);
+        p.getWorld().playSound(p.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1f, 1.5f);
     }
 
     // ----- Blizzard -----
@@ -3442,42 +3465,7 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
     private final Map<UUID, Long> meteorOwners = new HashMap<>();
 
     /** Which projectile tag each crossbow or bow gives its shots. */
-    private static final Map<String, String> SHOT_TAGS = Map.ofEntries(
-                Map.entry("hailstorm", "hailbolt"),
-                Map.entry("sparkline", "sparkbolt"),
-                Map.entry("ravenshot", "ravenbolt"),
-                Map.entry("whirlwind", "whirl"),
-                Map.entry("sunfall", "sunfall"),
-                Map.entry("gravebow", "gravepull"),
-                Map.entry("ironfang", "ironbolt"),
-                Map.entry("pyre", "pyrebolt"),
-                Map.entry("echo", "echobolt"),
-                Map.entry("stormbow", "stormbolt"),
-                Map.entry("chainshot", "chainbolt"),
-                Map.entry("ghostmark", "ghostmark"),
-                Map.entry("dawnbow", "dawnbolt"),
-                Map.entry("frostbolt", "frostbolt"),
-                Map.entry("thunderbolt", "crossthunder"),
-                Map.entry("rocketbolt", "rocketbolt"),
-                Map.entry("vinebow", "vinebow"),
-                Map.entry("gale", "gale"),
-                Map.entry("ironbow", "ironbow"));
 
-    /** Spins a player like a tornado for 3 seconds: they rotate, lift and take light damage. */
-    private void startTornado(Player victim) {
-        final int[] ticks = {0};
-        Bukkit.getScheduler().runTaskTimer(this, task -> {
-            ticks[0]++;
-            if (!victim.isOnline() || ticks[0] > 60) {
-                task.cancel();
-                return;
-            }
-            victim.setRotation(victim.getLocation().getYaw() + 35f, 0f);
-            if (ticks[0] <= 25) victim.setVelocity(new Vector(0, 0.35, 0));
-            if (ticks[0] % 10 == 0) victim.damage(1.0);
-            victim.getWorld().spawnParticle(Particle.CLOUD, victim.getLocation().add(0, 1, 0), 6, 0.4, 0.5, 0.4, 0.02);
-        }, 0L, 1L);
-    }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onMeteorSelfHarm(EntityDamageEvent e) {
