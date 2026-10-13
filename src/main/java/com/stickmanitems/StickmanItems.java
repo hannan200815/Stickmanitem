@@ -5771,12 +5771,6 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
         private final Map<UUID, Hostile> lastAttackers = new HashMap<>();
         private NamespacedKey ownerKey;
     
-        @Override
-        
-    
-        @Override
-        
-    
         // ---------- Helpers ----------
     
         private Creature find(String id) {
