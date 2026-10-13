@@ -1,5 +1,6 @@
 package com.stickmanitems;
 
+import org.bukkit.entity.Monster;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.FluidCollisionMode;
@@ -98,6 +99,7 @@ import org.bukkit.util.Vector;
 import java.util.*;
 
 public class StickmanItems extends JavaPlugin implements Listener, CommandExecutor, TabCompleter {
+    private CreaturesModule creatures;
 
     private static final String VERSION = "4.0.0";
 
@@ -198,6 +200,8 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
 
     @Override
     public void onEnable() {
+        creatures = new CreaturesModule();
+        creatures.start(this);
         itemKey = new NamespacedKey(this, "item");
         projKey = new NamespacedKey(this, "proj");
         ownerKey = new NamespacedKey(this, "owner");
@@ -286,38 +290,38 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
         def("kaboom", "Kaboom Kachow", Material.BOW, "#FF3D00", "Every arrow shot from this bow explodes on impact.");
         def("shakalaka", "Shakalaka Bow", Material.BOW, "#00FF9C", "Each arrow that lands triggers 3 random effects: lightning, explosion or fireball.");
         def("arccaster", "Arc Caster", Material.BOW, "#E1BEE7", "A bow. Arrows stun or freeze whatever they hit.");
-        def("boomhammer", "Boom Hammer", Material.IRON_SHOVEL, "#795548", "Ability 1 (right-click): Slams the ground, hitting foes within 4 blocks for 10 damage and knocking them back. 6-second cooldown.");
+        def("boomhammer", "Boom Hammer", Material.MACE, "#795548", "Ability 1 (right-click): Slams the ground, hitting foes within 4 blocks for 10 damage and knocking them back. 6-second cooldown.");
         def("spearlance", "Spear of Dawn", Material.STICK, "#FFCA28", "Ability 1 (right-click): Lunges forward and hits the first foe you reach for 8 damage. 5-second cooldown.");
-        def("duskscythe", "Dusk Scythe", Material.DIAMOND_HOE, "#6A1B9A", "Ability 1 (right-click): Sweeps a cone in front of you for 9 damage and slows everything it hits for 3 seconds. 6-second cooldown.");
-        def("thornwhip", "Thornwhip", Material.STRING, "#2E7D32", "Ability 1 (right-click): Whips a cone of foes in front of you for 5 damage and slows them for 4 seconds. 7-second cooldown.");
-        def("frostglaive", "Frost Glaive", Material.GOLDEN_HOE, "#B3E5FC", "Ability 1 (right-click): Sweeps a cone for 7 damage and freezes foes for 4 seconds. 7-second cooldown.");
-        def("ironhalberd", "Iron Halberd", Material.IRON_AXE, "#90A4AE", "Ability 1 (right-click): Hits everything within 3 blocks for 9 damage. 5-second cooldown.");
-        def("tidecaller", "Tidecaller Spear", Material.PRISMARINE_SHARD, "#26C6DA", "Ability 1 (right-click): Calls lightning onto the nearest foe within 12 blocks for 8 damage. 8-second cooldown.");
-        def("bloodsickle", "Blood Sickle", Material.BONE, "#B71C1C", "Ability 1 (right-click): Hits everything within 3 blocks for 6 damage. 7-second cooldown.");
-        def("nagina", "Shadow Naginata", Material.NETHERITE_SHOVEL, "#263238", "Ability 1 (right-click): Long cone strike, 12 damage to foes up to 4 blocks away. 8-second cooldown.");
-        def("chainflail", "Chain Flail", Material.NETHERITE_SCRAP, "#78909C", "Ability 1 (right-click): Swings in a wide ring, hitting everything within 5 blocks for 8 damage and knocking it back hard. 9-second cooldown.");
-        def("lanternstaff", "Lantern Staff", Material.BLAZE_ROD, "#FFB300", "Ability 1 (right-click): Blinds everything within 5 blocks for 3 seconds and deals 4 damage. 12-second cooldown.");
-        def("stonepike", "Stone Pike", Material.STONE_SWORD, "#9E9E9E", "Ability 1 (right-click): Lunges forward and hits the first foe for 6 damage. 4-second cooldown.");
+        def("duskscythe", "Dusk Scythe", Material.NETHERITE_SWORD, "#6A1B9A", "Ability 1 (right-click): Sweeps a cone in front of you for 9 damage and slows everything it hits for 3 seconds. 6-second cooldown.");
+        def("thornwhip", "Thornwhip", Material.NETHERITE_SWORD, "#2E7D32", "Ability 1 (right-click): Whips a cone of foes in front of you for 5 damage and slows them for 4 seconds. 7-second cooldown.");
+        def("frostglaive", "Frost Glaive", Material.NETHERITE_SWORD, "#B3E5FC", "Ability 1 (right-click): Sweeps a cone for 7 damage and freezes foes for 4 seconds. 7-second cooldown.");
+        def("ironhalberd", "Iron Halberd", Material.NETHERITE_AXE, "#90A4AE", "Ability 1 (right-click): Hits everything within 3 blocks for 9 damage. 5-second cooldown.");
+        def("tidecaller", "Tidecaller Spear", Material.STICK, "#26C6DA", "Ability 1 (right-click): Calls lightning onto the nearest foe within 12 blocks for 8 damage. 8-second cooldown.");
+        def("bloodsickle", "Blood Sickle", Material.NETHERITE_SWORD, "#B71C1C", "Ability 1 (right-click): Hits everything within 3 blocks for 6 damage. 7-second cooldown.");
+        def("nagina", "Shadow Naginata", Material.NETHERITE_SWORD, "#263238", "Ability 1 (right-click): Long cone strike, 12 damage to foes up to 4 blocks away. 8-second cooldown.");
+        def("chainflail", "Chain Flail", Material.NETHERITE_SWORD, "#78909C", "Ability 1 (right-click): Swings in a wide ring, hitting everything within 5 blocks for 8 damage and knocking it back hard. 9-second cooldown.");
+        def("lanternstaff", "Lantern Staff", Material.BLAZE_ROD, "#FFB300", "Ability 1 (right-click): Fires a beam of light along your aim that deals 9 damage to the first foe it hits. 4-second cooldown.");
+        def("stonepike", "Stone Pike", Material.NETHERITE_SWORD, "#9E9E9E", "Ability 1 (right-click): Lunges forward and hits the first foe for 6 damage. 4-second cooldown.");
         def("cleaver", "Obsidian Cleaver", Material.NETHERITE_AXE, "#311B92", "Ability 1 (right-click): Heavy swing hitting everything within 3.5 blocks for 11 damage. 7-second cooldown.");
-        def("wardenclaw", "Warden's Claw", Material.IRON_SWORD, "#0D47A1", "Ability 1 (right-click): Lightning chains to the 3 nearest foes within 8 blocks for 6 damage each. 10-second cooldown.");
-        def("frostlance", "Frost Lance", Material.STONE_SHOVEL, "#81D4FA", "Ability 1 (right-click): Chills everything within 4 blocks for 3 damage and slows it for 4 seconds. 9-second cooldown.");
-        def("emberpike", "Ember Pike", Material.GOLDEN_SWORD, "#FF6D00", "Ability 1 (right-click): Cone thrust for 9 damage. 6.5-second cooldown.");
-        def("stormhalberd", "Storm Halberd", Material.DIAMOND_AXE, "#FFEB3B", "Ability 1 (right-click): Lightning strikes the 2 nearest foes within 10 blocks for 9 damage each. 9-second cooldown.");
-        def("hexscythe", "Hexed Scythe", Material.WOODEN_HOE, "#4A148C", "Ability 1 (right-click): Withers everything within 5 blocks for 3 damage over 3 seconds. 14-second cooldown.");
-        def("windpike", "Wind Pike", Material.WOODEN_SWORD, "#E0F7FA", "Ability 1 (right-click): Gust dash forward, hitting the first foe for 5 damage. 5-second cooldown.");
-        def("ironmaul", "Ironbound Maul", Material.GOLDEN_SHOVEL, "#BCAAA4", "Ability 1 (right-click): Crushing blow hitting everything within 4 blocks for 13 damage. 10-second cooldown.");
-        def("ghostglaive", "Ghost Glaive", Material.STONE_HOE, "#EEEEEE", "Ability 1 (right-click): Marks everything within 4 blocks, making it glow for 5 seconds, and deals 4 damage. 7-second cooldown.");
-        def("dawnhalberd", "Dawn Halberd", Material.IRON_HOE, "#FFF59D", "Ability 1 (right-click): Restores 4 hearts and gives regeneration for 5 seconds. 12-second cooldown.");
+        def("wardenclaw", "Warden's Claw", Material.NETHERITE_SWORD, "#0D47A1", "Ability 1 (right-click): Lightning chains to the 3 nearest foes within 8 blocks for 6 damage each. 10-second cooldown.");
+        def("frostlance", "Frost Lance", Material.NETHERITE_SWORD, "#81D4FA", "Ability 1 (right-click): Chills everything within 4 blocks for 3 damage and slows it for 4 seconds. 9-second cooldown.");
+        def("emberpike", "Ember Pike", Material.STICK, "#FF6D00", "Ability 1 (right-click): Cone thrust for 9 damage. 6.5-second cooldown.");
+        def("stormhalberd", "Storm Halberd", Material.NETHERITE_AXE, "#FFEB3B", "Ability 1 (right-click): Lightning strikes the 2 nearest foes within 10 blocks for 9 damage each. 9-second cooldown.");
+        def("hexscythe", "Hexed Scythe", Material.NETHERITE_SWORD, "#4A148C", "Ability 1 (right-click): Withers everything within 5 blocks for 3 damage over 3 seconds. 14-second cooldown.");
+        def("windpike", "Wind Pike", Material.STICK, "#E0F7FA", "Ability 1 (right-click): Gust dash forward, hitting the first foe for 5 damage. 5-second cooldown.");
+        def("ironmaul", "Ironbound Maul", Material.NETHERITE_AXE, "#BCAAA4", "Ability 1 (right-click): Crushing blow hitting everything within 4 blocks for 13 damage. 10-second cooldown.");
+        def("ghostglaive", "Ghost Glaive", Material.NETHERITE_SWORD, "#EEEEEE", "Ability 1 (right-click): Marks everything within 4 blocks, making it glow for 5 seconds, and deals 4 damage. 7-second cooldown.");
+        def("dawnhalberd", "Dawn Halberd", Material.NETHERITE_SWORD, "#FFF59D", "Ability 1 (right-click): Restores 4 hearts and gives regeneration for 5 seconds. 12-second cooldown.");
         def("tidallance", "Tidal Lance", Material.STICK, "#0097A7", "Ability 1 (right-click): Lunges forward and hits the first foe for 7 damage. 6-second cooldown.");
         def("bloomstaff", "Bloom Staff", Material.STICK, "#66BB6A", "Ability 1 (right-click): Restores 3 hearts and gives regeneration for 10 seconds. 9-second cooldown.");
-        def("moonblade", "Moonlit Blade", Material.IRON_SWORD, "#9FA8DA", "Ability 1 (right-click): Gives you Speed II for 5 seconds. 12-second cooldown.");
+        def("moonblade", "Moonlit Blade", Material.NETHERITE_SWORD, "#9FA8DA", "Ability 1 (right-click): Gives you Speed II for 5 seconds. 12-second cooldown.");
         def("echohammer", "Echo Warhammer", Material.MACE, "#8E24AA", "Ability 1 (right-click): Shockwave hitting everything within 3.5 blocks for 9 damage. 7-second cooldown.");
-        def("gravelglaive", "Gravel Glaive", Material.GOLDEN_HOE, "#616161", "Ability 1 (right-click): Pulls everything within 7 blocks toward you. 9-second cooldown.");
-        def("eclipsescythe", "Eclipse Scythe", Material.NETHERITE_HOE, "#311B92", "Ability 1 (right-click): Blinds everything within 3 blocks for 3 seconds and deals 3 damage. 12-second cooldown.");
-        def("stormstaff", "Storm Staff", Material.STONE_AXE, "#FFD600", "Ability 1 (right-click): Lightning strikes the nearest foe within 14 blocks for 10 damage. 9-second cooldown.");
-        def("soulsickle", "Soul Sickle", Material.BONE, "#7E57C2", "Ability 1 (right-click): Soul ward giving damage resistance for 5 seconds. 15-second cooldown.");
-        def("emberglaive", "Ember Glaive", Material.BLAZE_POWDER, "#FF3D00", "Ability 1 (right-click): Fiery cone for 10 damage. 7-second cooldown.");
-        def("wardenspear", "Warden's Spear", Material.IRON_SHOVEL, "#1A237E", "Ability 1 (right-click): Lightning chains to the 3 nearest foes within 9 blocks for 7 damage each. 11-second cooldown.");
+        def("gravelglaive", "Gravel Glaive", Material.NETHERITE_SWORD, "#616161", "Ability 1 (right-click): Pulls everything within 7 blocks toward you. 9-second cooldown.");
+        def("eclipsescythe", "Eclipse Scythe", Material.NETHERITE_SWORD, "#311B92", "Ability 1 (right-click): Blinds everything within 3 blocks for 3 seconds and deals 3 damage. 12-second cooldown.");
+        def("stormstaff", "Storm Staff", Material.BLAZE_ROD, "#FFD600", "Ability 1 (right-click): Lightning strikes the nearest foe within 14 blocks for 10 damage. 9-second cooldown.");
+        def("soulsickle", "Soul Sickle", Material.NETHERITE_SWORD, "#7E57C2", "Ability 1 (right-click): Soul ward giving damage resistance for 5 seconds. 15-second cooldown.");
+        def("emberglaive", "Ember Glaive", Material.NETHERITE_AXE, "#FF3D00", "Ability 1 (right-click): Fiery cone for 10 damage. 7-second cooldown.");
+        def("wardenspear", "Warden's Spear", Material.STICK, "#1A237E", "Ability 1 (right-click): Lightning chains to the 3 nearest foes within 9 blocks for 7 damage each. 11-second cooldown.");
         def("hexbone", "Hex Bone", Material.BONE, "#CFD8DC", "Right-click to curse the ground around you for 15 seconds. Enemies within 6 blocks take 3 damage a second and are slowed. 25-second cooldown.");
         def("cursedcoin", "Cursed Coin", Material.GOLD_NUGGET, "#FFB74D", "Right-click to flip a cursed coin. It can heal you, blind nearby enemies, or wail so loudly that nearby enemies are slowed. 15-second cooldown.");
         def("spectralquill", "Spectral Quill", Material.FEATHER, "#E1F5FE", "Right-click to write a curse on the nearest enemy within 15 blocks. It takes 12 damage and gains Wither and Darkness. 12-second cooldown.");
@@ -1286,7 +1290,7 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
             case "bloodsickle" -> gearBurst(p, "bloodsickle", 3, 6, 0.4, 7000);
             case "nagina" -> gearCone(p, "nagina", 4, 12, 0, 8000);
             case "chainflail" -> gearBurst(p, "chainflail", 5, 8, 1.5, 9000);
-            case "lanternstaff" -> gearAoe(p, "lanternstaff", 5, PotionEffectType.BLINDNESS, 60, 0, 4, 12000);
+            case "lanternstaff" -> gearBeam(p, "lanternstaff", 25, 9, 4000);
             case "stonepike" -> gearDash(p, "stonepike", 1.2, 6, 4000);
             case "cleaver" -> gearBurst(p, "cleaver", 3.5, 11, 0.6, 7000);
             case "wardenclaw" -> gearChain(p, "wardenclaw", 3, 8, 6, 10000);
@@ -2645,6 +2649,30 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
         if (regenTicks > 0) p.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, regenTicks, 1));
         p.getWorld().spawnParticle(Particle.HEART, p.getLocation().add(0, 1.5, 0), 10, 0.5, 0.5, 0.5, 0);
         p.getWorld().playSound(p.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1f, 1.5f);
+    }
+
+    private void gearBeam(Player p, String id, double range, double dmg, long cd) {
+        if (!ready(p, id, cd)) return;
+        Location eye = p.getEyeLocation();
+        Vector dir = eye.getDirection().normalize();
+        LivingEntity target = null;
+        double reach = range;
+        for (double d = 1; d <= range && target == null; d += 0.5) {
+            Location point = eye.clone().add(dir.clone().multiply(d));
+            for (Entity en : point.getWorld().getNearbyEntities(point, 0.7, 0.7, 0.7)) {
+                if (en instanceof LivingEntity le && !en.equals(p) && !isFriendlyTo(p, le)) {
+                    target = le;
+                    reach = d;
+                    break;
+                }
+            }
+        }
+        for (double d = 0.5; d <= reach; d += 0.5) {
+            p.getWorld().spawnParticle(Particle.END_ROD, eye.clone().add(dir.clone().multiply(d)), 1, 0, 0, 0, 0);
+        }
+        if (target != null) hit(target, dmg, p);
+        else p.sendMessage(ChatColor.GRAY + "The beam found no foe.");
+        p.getWorld().playSound(p.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1f, 0.6f);
     }
 
     // ----- Blizzard -----
@@ -5181,6 +5209,7 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
 
     @Override
     public void onDisable() {
+        if (creatures != null) creatures.stop();
         saveConfig();
         for (BarrierState bs : barriers) restoreRing(bs);
         saveShrines();
@@ -5646,5 +5675,490 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
         if (sender instanceof Player self) return self;
         sender.sendMessage(ChatColor.RED + "Console must specify an online player.");
         return null;
+    }
+
+    // ===== Creatures module (formerly StickmanCreatures) =====
+    public static class CreaturesModule implements Listener, CommandExecutor, TabCompleter {
+        private StickmanItems host;
+        void start(StickmanItems h) {
+            host = h;
+            ownerKey = new NamespacedKey(host, "creature-owner");
+            host.getServer().getPluginManager().registerEvents(this, host);
+            host.getCommand("stickmancreatures").setExecutor(this);
+            host.getCommand("stickmancreatures").setTabCompleter(this);
+            Bukkit.getScheduler().runTaskTimer(host, this::tick, 10L, 10L);
+            host.getLogger().info("StickmanCreatures loaded " + CREATURES.size() + " creatures.");
+        }
+        void stop() {
+            for (UUID owner : new ArrayList<>(companions.keySet())) dismiss(owner);
+        }
+
+    
+        static final long HIT_COOLDOWN_MS = 1500L;
+        static final long ATTACKER_MEMORY_MS = 10000L;
+        static final double MEDIUM_SCALE = 1.4;
+    
+        record Creature(String id, String name, EntityType type, String color, String ability, boolean fast) {}
+    
+        record Hostile(UUID attacker, long time) {}
+    
+        static final class Companion {
+            final UUID owner;
+            final Creature def;
+            final UUID entityId;
+            long lastHit;
+    
+            Companion(UUID owner, Creature def, UUID entityId) {
+                this.owner = owner;
+                this.def = def;
+                this.entityId = entityId;
+            }
+        }
+    
+        static final List<Creature> CREATURES = List.of(
+                new Creature("sparkit", "Sparkit", EntityType.AXOLOTL, "#FFEB3B", "LIGHTNING", true),
+                new Creature("cindermutt", "Cindermutt", EntityType.WOLF, "#FF6D00", "FIRE", false),
+                new Creature("frostlet", "Frostlet", EntityType.FOX, "#81D4FA", "FREEZE", false),
+                new Creature("stingle", "Stingle", EntityType.BEE, "#FDD835", "POISON", false),
+                new Creature("thornhop", "Thornhop", EntityType.RABBIT, "#66BB6A", "KNOCK", true),
+                new Creature("gusty", "Gusty", EntityType.PARROT, "#4DB6AC", "LEVITATE", false),
+                new Creature("boulder", "Boulder", EntityType.PANDA, "#8D6E63", "STUN", false),
+                new Creature("shellfin", "Shellfin", EntityType.TURTLE, "#A5D6A7", "SHIELD_OWNER", false),
+                new Creature("lunar", "Lunar", EntityType.CAT, "#B39DDB", "BLIND", true),
+                new Creature("glimmer", "Glimmer", EntityType.ALLAY, "#80DEEA", "HEAL_OWNER", false),
+                new Creature("dune", "Dune", EntityType.CAMEL, "#D7CCC8", "BLIND", false),
+                new Creature("cobalt", "Cobalt", EntityType.DOLPHIN, "#42A5F5", "TIDAL", true),
+                new Creature("hush", "Hush", EntityType.SNIFFER, "#A1887F", "REVEAL", false),
+                new Creature("emberail", "Emberail", EntityType.STRIDER, "#FF3D00", "LAVA", false),
+                new Creature("tumbleroll", "Tumbleroll", EntityType.ARMADILLO, "#BCAAA4", "KNOCK", false),
+                new Creature("gustwisp", "Gustwisp", EntityType.BREEZE, "#B2EBF2", "WIND", false),
+                new Creature("hornback", "Hornback", EntityType.GOAT, "#EEEEEE", "STUN", false),
+                new Creature("fleecebolt", "Fleecebolt", EntityType.SHEEP, "#FFF59D", "LIGHTNING", false),
+                new Creature("peckbrood", "Peckbrood", EntityType.CHICKEN, "#FFCC80", "WIND", false),
+                new Creature("hogrush", "Hogrush", EntityType.PIG, "#F48FB1", "SPEED_OWNER", true),
+                new Creature("spitback", "Spitback", EntityType.LLAMA, "#CE93D8", "NAUSEA", false),
+                new Creature("hopper", "Hopper", EntityType.FROG, "#9CCC65", "LEVITATE", true),
+                new Creature("shadowpaw", "Shadowpaw", EntityType.OCELOT, "#616161", "POISON", false),
+                new Creature("mooncow", "Mooncow", EntityType.COW, "#E1F5FE", "HEAL_OWNER", false),
+                new Creature("gigglepaw", "Gigglepaw", EntityType.PANDA, "#FFAB91", "NAUSEA", false),
+                new Creature("honeyscorch", "Honeyscorch", EntityType.BEE, "#FFB300", "DRAIN", false),
+                new Creature("wavebolt", "Wavebolt", EntityType.DOLPHIN, "#26C6DA", "PUSH", true),
+                new Creature("ghostpup", "Ghostpup", EntityType.WOLF, "#E0E0E0", "REVEAL", false),
+                new Creature("frostpaw", "Frostpaw", EntityType.CAT, "#B3E5FC", "FREEZE", false),
+                new Creature("dustroller", "Dustroller", EntityType.CAMEL, "#E6AE6B", "DRAIN", false));
+    
+        static final Map<String, String> ABILITY_TEXT = Map.ofEntries(
+                Map.entry("LIGHTNING", "Calls a lightning strike onto the target for 6 damage."),
+                Map.entry("FIRE", "Sets the target on fire for 5 seconds and deals 4 damage."),
+                Map.entry("LAVA", "Sets the target on fire for 8 seconds and deals 4 damage."),
+                Map.entry("FREEZE", "Slows the target for 4 seconds and deals 3 damage."),
+                Map.entry("POISON", "Poisons the target for 6 seconds and deals 2 damage."),
+                Map.entry("KNOCK", "Knocks the target back and deals 3 damage."),
+                Map.entry("TIDAL", "Sweeps the target away with a wave and deals 4 damage."),
+                Map.entry("PUSH", "Shoves the target hard away and deals 2 damage."),
+                Map.entry("LEVITATE", "Lifts the target into the air for 1 second and deals 3 damage."),
+                Map.entry("STUN", "Heavily slows the target for 1.5 seconds and deals 5 damage."),
+                Map.entry("BLIND", "Blinds the target for 3 seconds and deals 2 damage."),
+                Map.entry("NAUSEA", "Makes the target nauseous for 4 seconds and deals 2 damage."),
+                Map.entry("REVEAL", "Makes the target glow for 6 seconds and deals 3 damage."),
+                Map.entry("WIND", "Blasts everything near the target with a gust for 2 damage."),
+                Map.entry("DRAIN", "Deals 4 damage and heals you for 2 hearts."),
+                Map.entry("HEAL_OWNER", "Deals 2 damage and heals you for 2 hearts."),
+                Map.entry("SHIELD_OWNER", "Deals 2 damage and gives you 2 hearts of absorption for 10 seconds."),
+                Map.entry("SPEED_OWNER", "Deals 2 damage and gives you Speed II for 3 seconds."));
+    
+        private final Map<UUID, Companion> companions = new HashMap<>();
+        private final Map<UUID, Hostile> lastAttackers = new HashMap<>();
+        private NamespacedKey ownerKey;
+    
+        @Override
+        
+    
+        @Override
+        
+    
+        // ---------- Helpers ----------
+    
+        private Creature find(String id) {
+            for (Creature c : CREATURES) if (c.id().equalsIgnoreCase(id)) return c;
+            return null;
+        }
+    
+        private String colored(Creature c) {
+            return net.md_5.bungee.api.ChatColor.of(c.color()) + "" + ChatColor.BOLD + c.name();
+        }
+    
+        private void dismiss(UUID owner) {
+            Companion c = companions.remove(owner);
+            if (c == null) return;
+            Entity e = Bukkit.getEntity(c.entityId);
+            if (e != null && e.isValid()) e.remove();
+        }
+    
+        private void summon(Player owner, Creature def) {
+            dismiss(owner.getUniqueId());
+            Location spawn = owner.getLocation().clone().add(2, 0, 2);
+            Entity e = spawn.getWorld().spawnEntity(spawn, def.type());
+            if (!(e instanceof LivingEntity le)) {
+                e.remove();
+                owner.sendMessage(ChatColor.RED + "That creature could not be spawned.");
+                return;
+            }
+            le.setCustomName(colored(def));
+            le.setCustomNameVisible(true);
+            le.setPersistent(true);
+            if (le instanceof Mob m) m.setRemoveWhenFarAway(false);
+    
+            AttributeInstance scale = le.getAttribute(Attribute.GENERIC_SCALE);
+            if (scale != null) scale.setBaseValue(MEDIUM_SCALE);
+    
+            AttributeInstance maxHp = le.getAttribute(Attribute.GENERIC_MAX_HEALTH);
+            if (maxHp != null) maxHp.setBaseValue(30);
+            le.setHealth(30);
+    
+            if (def.fast()) {
+                AttributeInstance speed = le.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED);
+                if (speed != null) speed.setBaseValue(speed.getBaseValue() * 1.35);
+            }
+    
+            le.getPersistentDataContainer().set(ownerKey, PersistentDataType.STRING, owner.getUniqueId().toString());
+            companions.put(owner.getUniqueId(), new Companion(owner.getUniqueId(), def, le.getUniqueId()));
+            owner.sendMessage(ChatColor.GREEN + "" + ChatColor.BOLD + "Summoned " + ChatColor.RESET + colored(def)
+                    + ChatColor.GREEN + ". " + ChatColor.GRAY + ABILITY_TEXT.get(def.ability()));
+        }
+    
+        private void damage(LivingEntity target, double amount, Player owner) {
+            target.damage(amount, owner);
+        }
+    
+        private void knock(LivingEntity target, Location from, double horizontal, double up) {
+            Vector out = target.getLocation().toVector().subtract(from.toVector()).setY(0);
+            if (out.lengthSquared() < 0.01) out = new Vector(0.01, 0, 0);
+            target.setVelocity(out.normalize().multiply(horizontal).setY(up));
+        }
+    
+        private void healOwner(Player owner, double hearts) {
+            owner.setHealth(Math.min(owner.getMaxHealth(), owner.getHealth() + hearts));
+        }
+    
+        /** Each creature's single ability, fired when it lands a hit. */
+        private void useAbility(String ability, LivingEntity target, Player owner) {
+            Location at = target.getLocation();
+            switch (ability) {
+                case "LIGHTNING" -> {
+                    at.getWorld().strikeLightningEffect(at);
+                    damage(target, 6, owner);
+                }
+                case "FIRE" -> {
+                    target.setFireTicks(100);
+                    damage(target, 4, owner);
+                }
+                case "LAVA" -> {
+                    target.setFireTicks(160);
+                    damage(target, 4, owner);
+                }
+                case "FREEZE" -> {
+                    target.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 80, 2));
+                    damage(target, 3, owner);
+                }
+                case "POISON" -> {
+                    target.addPotionEffect(new PotionEffect(PotionEffectType.POISON, 120, 0));
+                    damage(target, 2, owner);
+                }
+                case "KNOCK" -> {
+                    damage(target, 3, owner);
+                    knock(target, owner.getLocation(), 0.9, 0.5);
+                }
+                case "TIDAL" -> {
+                    damage(target, 4, owner);
+                    knock(target, owner.getLocation(), 1.4, 0.2);
+                }
+                case "PUSH" -> {
+                    damage(target, 2, owner);
+                    knock(target, owner.getLocation(), 1.8, 0.4);
+                }
+                case "LEVITATE" -> {
+                    target.addPotionEffect(new PotionEffect(PotionEffectType.LEVITATION, 20, 0));
+                    damage(target, 3, owner);
+                }
+                case "STUN" -> {
+                    target.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 30, 4));
+                    damage(target, 5, owner);
+                }
+                case "BLIND" -> {
+                    target.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 60, 0));
+                    damage(target, 2, owner);
+                }
+                case "NAUSEA" -> {
+                    target.addPotionEffect(new PotionEffect(PotionEffectType.NAUSEA, 80, 0));
+                    damage(target, 2, owner);
+                }
+                case "REVEAL" -> {
+                    target.addPotionEffect(new PotionEffect(PotionEffectType.GLOWING, 120, 0));
+                    damage(target, 3, owner);
+                }
+                case "WIND" -> {
+                    for (Entity en : at.getWorld().getNearbyEntities(at, 3, 2, 3)) {
+                        if (!(en instanceof LivingEntity le) || en.equals(owner)) continue;
+                        damage(le, 2, owner);
+                        knock(le, at, 1.0, 0.3);
+                    }
+                }
+                case "DRAIN" -> {
+                    damage(target, 4, owner);
+                    healOwner(owner, 2);
+                }
+                case "HEAL_OWNER" -> {
+                    damage(target, 2, owner);
+                    healOwner(owner, 2);
+                }
+                case "SHIELD_OWNER" -> {
+                    damage(target, 2, owner);
+                    owner.addPotionEffect(new PotionEffect(PotionEffectType.ABSORPTION, 200, 1));
+                }
+                case "SPEED_OWNER" -> {
+                    damage(target, 2, owner);
+                    owner.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 60, 1));
+                }
+                default -> damage(target, 3, owner);
+            }
+            target.getWorld().spawnParticle(Particle.CRIT, target.getLocation().add(0, 1, 0), 15, 0.4, 0.5, 0.4, 0.1);
+        }
+    
+        private LivingEntity findTarget(Player owner) {
+            Hostile h = lastAttackers.get(owner.getUniqueId());
+            if (h != null && System.currentTimeMillis() - h.time() < ATTACKER_MEMORY_MS) {
+                Player attacker = Bukkit.getPlayer(h.attacker());
+                if (attacker != null && attacker.isOnline() && attacker.getWorld() == owner.getWorld()
+                        && attacker.getLocation().distance(owner.getLocation()) <= 16) {
+                    return attacker;
+                }
+            }
+            LivingEntity best = null;
+            double bestDist = 10;
+            for (Entity en : owner.getNearbyEntities(10, 4, 10)) {
+                if (!(en instanceof Monster m)) continue;
+                double d = m.getLocation().distance(owner.getLocation());
+                if (d < bestDist) {
+                    bestDist = d;
+                    best = m;
+                }
+            }
+            return best;
+        }
+    
+        // ---------- Companion loop ----------
+    
+        private void tick() {
+            for (Companion c : new ArrayList<>(companions.values())) {
+                Player owner = Bukkit.getPlayer(c.owner);
+                if (owner == null || !owner.isOnline()) {
+                    dismiss(c.owner);
+                    continue;
+                }
+                Entity ent = Bukkit.getEntity(c.entityId);
+                if (!(ent instanceof LivingEntity le) || !le.isValid() || le.isDead()) {
+                    companions.remove(c.owner);
+                    continue;
+                }
+                if (le.getWorld() != owner.getWorld() || le.getLocation().distance(owner.getLocation()) > 20) {
+                    le.teleport(owner.getLocation().clone().add(2, 0, 2));
+                    continue;
+                }
+                LivingEntity target = findTarget(owner);
+                if (target == null) {
+                    if (le instanceof Mob m && le.getLocation().distance(owner.getLocation()) > 4) {
+                        m.getPathfinder().moveTo(owner.getLocation());
+                    }
+                    continue;
+                }
+                if (le instanceof Mob m) m.getPathfinder().moveTo(target.getLocation());
+                if (le.getLocation().distance(target.getLocation()) <= 2.5
+                        && System.currentTimeMillis() - c.lastHit >= HIT_COOLDOWN_MS) {
+                    c.lastHit = System.currentTimeMillis();
+                    useAbility(c.def.ability(), target, owner);
+                }
+            }
+        }
+    
+        // ---------- Events ----------
+    
+        @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+        public void onDamage(EntityDamageByEntityEvent e) {
+            Player attacker = null;
+            if (e.getDamager() instanceof Player dp) attacker = dp;
+            else if (e.getDamager() instanceof Projectile pr && pr.getShooter() instanceof Player sp) attacker = sp;
+    
+            if (e.getEntity() instanceof Player victim && attacker != null && !attacker.equals(victim)) {
+                lastAttackers.put(victim.getUniqueId(), new Hostile(attacker.getUniqueId(), System.currentTimeMillis()));
+            }
+            // Owners cannot hurt their own creature.
+            String victimOwner = e.getEntity().getPersistentDataContainer().get(ownerKey, PersistentDataType.STRING);
+            if (victimOwner != null && attacker != null && victimOwner.equals(attacker.getUniqueId().toString())) {
+                e.setCancelled(true);
+                return;
+            }
+            // A creature cannot hurt its own owner.
+            String attackerOwner = e.getDamager().getPersistentDataContainer().get(ownerKey, PersistentDataType.STRING);
+            if (attackerOwner != null && e.getEntity() instanceof Player v && attackerOwner.equals(v.getUniqueId().toString())) {
+                e.setCancelled(true);
+            }
+        }
+    
+        @EventHandler
+        public void onCreatureDeath(EntityDeathEvent e) {
+            String ownerTag = e.getEntity().getPersistentDataContainer().get(ownerKey, PersistentDataType.STRING);
+            if (ownerTag == null) return;
+            e.getDrops().clear();
+            e.setDroppedExp(0);
+            UUID ownerId = UUID.fromString(ownerTag);
+            companions.remove(ownerId);
+            Player owner = Bukkit.getPlayer(ownerId);
+            if (owner != null) owner.sendMessage(ChatColor.RED + "Your creature fainted. Summon it again with /creature summon.");
+        }
+    
+        // ===== Creature menu =====
+    
+        static final class MenuHolder implements InventoryHolder {
+            Inventory inv;
+    
+            @Override
+            public Inventory getInventory() {
+                return inv;
+            }
+        }
+    
+        private void openMenu(Player p) {
+            MenuHolder holder = new MenuHolder();
+            Inventory inv = Bukkit.createInventory(holder, 54, ChatColor.DARK_PURPLE + "" + ChatColor.BOLD + "Creatures");
+            holder.inv = inv;
+            for (int i = 0; i < CREATURES.size() && i < 45; i++) {
+                Creature c = CREATURES.get(i);
+                Material icon = Material.matchMaterial(c.type().name() + "_SPAWN_EGG");
+                ItemStack it = new ItemStack(icon == null ? Material.BARRIER : icon);
+                ItemMeta meta = it.getItemMeta();
+                meta.setDisplayName(net.md_5.bungee.api.ChatColor.of(c.color()) + "" + ChatColor.BOLD + c.name());
+                List<String> lore = new ArrayList<>();
+                lore.add(ChatColor.GRAY + "Medium size" + (c.fast() ? ", fast" : ""));
+                lore.add(ChatColor.GRAY + "Ability: " + ChatColor.WHITE + ABILITY_TEXT.getOrDefault(c.ability(), c.ability()));
+                lore.add(ChatColor.GREEN + "Click to summon");
+                meta.setLore(lore);
+                it.setItemMeta(meta);
+                inv.setItem(i, it);
+            }
+            ItemStack dismiss = new ItemStack(Material.BARRIER);
+            ItemMeta dm = dismiss.getItemMeta();
+            dm.setDisplayName(ChatColor.RED + "" + ChatColor.BOLD + "Dismiss your creature");
+            dismiss.setItemMeta(dm);
+            inv.setItem(49, dismiss);
+            p.openInventory(inv);
+        }
+    
+        @EventHandler(priority = EventPriority.HIGH)
+        public void onMenuClick(InventoryClickEvent e) {
+            if (!(e.getView().getTopInventory().getHolder() instanceof MenuHolder)) return;
+            e.setCancelled(true);
+            if (!(e.getWhoClicked() instanceof Player p)) return;
+            if (!p.hasPermission("stickmancreatures.use")) {
+                p.closeInventory();
+                return;
+            }
+            int slot = e.getRawSlot();
+            if (slot < 0 || slot >= 54) return;
+            if (slot < CREATURES.size() && slot < 45) {
+                summon(p, CREATURES.get(slot));
+                p.closeInventory();
+            } else if (slot == 49) {
+                dismiss(p.getUniqueId());
+                p.sendMessage(ChatColor.GRAY + "Your creature was returned.");
+                p.closeInventory();
+            }
+        }
+    
+        @EventHandler
+        public void onQuit(PlayerQuitEvent e) {
+            dismiss(e.getPlayer().getUniqueId());
+        }
+    
+        // ---------- Commands ----------
+    
+        @Override
+        public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
+            if (args.length == 0) {
+                help(sender);
+                return true;
+            }
+            switch (args[0].toLowerCase(Locale.ROOT)) {
+                case "help" -> help(sender);
+                case "menu" -> {
+                    if (!(sender instanceof Player mp)) { sender.sendMessage(ChatColor.RED + "Players only."); return true; }
+                    if (!mp.hasPermission("stickmancreatures.use")) { mp.sendMessage(ChatColor.RED + "You cannot summon creatures."); return true; }
+                    openMenu(mp);
+                }
+                case "list" -> {
+                    sender.sendMessage(ChatColor.GOLD + "" + ChatColor.BOLD + "StickmanCreatures (" + CREATURES.size() + ")");
+                    for (Creature c : CREATURES) {
+                        sender.sendMessage(ChatColor.GRAY + " - " + colored(c) + ChatColor.GRAY + " (" + c.id() + ") "
+                                + (c.fast() ? "fast" : ""));
+                    }
+                }
+                case "info" -> {
+                    if (args.length < 2) { sender.sendMessage(ChatColor.RED + "Usage: /creature info <id>"); return true; }
+                    Creature c = find(args[1]);
+                    if (c == null) { sender.sendMessage(ChatColor.RED + "Unknown creature."); return true; }
+                    sender.sendMessage(colored(c) + ChatColor.GRAY + " is a medium " + c.type().name().toLowerCase(Locale.ROOT)
+                            + (c.fast() ? ", fast," : ",") + " with one ability:");
+                    sender.sendMessage(ChatColor.YELLOW + ABILITY_TEXT.get(c.ability()));
+                }
+                case "summon" -> {
+                    if (args.length < 2) { sender.sendMessage(ChatColor.RED + "Usage: /creature summon <id> [player]"); return true; }
+                    Creature c = find(args[1]);
+                    if (c == null) { sender.sendMessage(ChatColor.RED + "Unknown creature."); return true; }
+                    Player target;
+                    if (args.length >= 3) {
+                        if (!sender.hasPermission("stickmancreatures.admin")) { sender.sendMessage(ChatColor.RED + "You cannot summon for other players."); return true; }
+                        target = Bukkit.getPlayerExact(args[2]);
+                        if (target == null) { sender.sendMessage(ChatColor.RED + "That player is not online."); return true; }
+                    } else if (sender instanceof Player p) {
+                        if (!p.hasPermission("stickmancreatures.use")) { p.sendMessage(ChatColor.RED + "You cannot summon creatures."); return true; }
+                        target = p;
+                    } else {
+                        sender.sendMessage(ChatColor.RED + "Give a player name from the console.");
+                        return true;
+                    }
+                    summon(target, c);
+                }
+                case "dismiss" -> {
+                    if (!(sender instanceof Player p)) { sender.sendMessage(ChatColor.RED + "Players only."); return true; }
+                    dismiss(p.getUniqueId());
+                    p.sendMessage(ChatColor.GRAY + "Your creature was returned.");
+                }
+                default -> sender.sendMessage(ChatColor.RED + "Unknown subcommand. Try /creature help");
+            }
+            return true;
+        }
+    
+        private void help(CommandSender s) {
+            s.sendMessage(ChatColor.GOLD + "StickmanCreatures");
+            s.sendMessage(ChatColor.YELLOW + "/stickmancreatures menu" + ChatColor.GRAY + " - open the creature menu");
+            s.sendMessage(ChatColor.YELLOW + "/creature list" + ChatColor.GRAY + " - all 30 creatures");
+            s.sendMessage(ChatColor.YELLOW + "/creature info <id>" + ChatColor.GRAY + " - ability and details");
+            s.sendMessage(ChatColor.YELLOW + "/creature summon <id> [player]" + ChatColor.GRAY + " - bring a creature out");
+            s.sendMessage(ChatColor.YELLOW + "/creature dismiss" + ChatColor.GRAY + " - send your creature away");
+        }
+    
+        @Override
+        public List<String> onTabComplete(CommandSender sender, Command cmd, String alias, String[] args) {
+            if (args.length == 1) {
+                return List.of("list", "info", "summon", "dismiss", "help").stream()
+                        .filter(s -> s.startsWith(args[0].toLowerCase(Locale.ROOT))).toList();
+            }
+            if (args.length == 2 && (args[0].equalsIgnoreCase("info") || args[0].equalsIgnoreCase("summon"))) {
+                return CREATURES.stream().map(Creature::id)
+                        .filter(s -> s.startsWith(args[1].toLowerCase(Locale.ROOT))).toList();
+            }
+            return List.of();
+        }
+    
     }
 }
