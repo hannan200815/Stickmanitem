@@ -1305,7 +1305,7 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
             case "gravelglaive" -> gearPull(p, "gravelglaive", 7, 1.1, 9000);
             case "eclipsescythe" -> gearAoe(p, "eclipsescythe", 3, PotionEffectType.BLINDNESS, 60, 0, 3, 12000);
             case "stormstaff" -> gearChain(p, "stormstaff", 1, 14, 10, 9000);
-            case "soulsickle" -> gearBuff(p, "soulsickle", PotionEffectType.DAMAGE_RESISTANCE, 100, 0, 15000);
+            case "soulsickle" -> gearBuff(p, "soulsickle", PotionEffectType.RESISTANCE, 100, 0, 15000);
             case "emberglaive" -> gearCone(p, "emberglaive", 6, 10, 0, 7000);
             case "wardenspear" -> gearChain(p, "wardenspear", 3, 9, 7, 11000);
             case "arccaster" -> {
@@ -1319,7 +1319,7 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
                 for (int i = 0; i < chain.size(); i++) {
                     final LivingEntity target = chain.get(i);
                     final Location from = (i == 0) ? p.getEyeLocation() : chain.get(i - 1).getLocation().add(0, 1, 0);
-                    Bukkit.getScheduler().runTaskLater(host, () -> {
+                    Bukkit.getScheduler().runTaskLater(this, () -> {
                         if (!target.isValid()) return;
                         Vector span = target.getLocation().add(0, 1, 0).toVector().subtract(from.toVector());
                         for (int s = 1; s <= 6; s++) {
