@@ -5,6 +5,9 @@ api-version: '1.21'
 author: StickmanSMP
 description: Native Paper special items and gems. Operator-only commands.
 commands:
+  stickcooldowns:
+    description: Set a cooldown on any Minecraft item
+    usage: /stickcooldowns <item> <seconds>
   stickmancreatures:
     description: Creature commands and menu
     usage: /stickmancreatures menu
@@ -17,6 +20,12 @@ commands:
     description: Manage Stickman gems, trust and gem cooldowns (operators only)
     usage: /stickman help
 permissions:
+  stickcooldowns.admin:
+    description: Set item cooldowns
+    default: op
+  stickcooldowns.bypass:
+    description: Ignore item cooldowns
+    default: op
   stickmancreatures.use:
     description: Summon your own creature
     default: true
