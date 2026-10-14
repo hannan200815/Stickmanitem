@@ -208,6 +208,7 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
                 return true;
             });
         }
+        startGambleTimer();
         creatures = new CreaturesModule();
         creatures.start(this);
         itemKey = new NamespacedKey(this, "item");
@@ -260,7 +261,7 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
         def("phoenixblade", "Phoenix Blade", Material.MACE, "#FF2D75", "Right-click to leap into the air, then dive and smash. Harder falls hit harder. Passive: Rebirth: heals you 1 heart on hit while below half health.");
         def("gauntlet", "Control Orb", Material.PRISMARINE_SHARD, "#7C4DFF", "Right-click a mob or player to take control of it. Right-click again to hurl it forward. Passive: Orb Control: 1 extra damage and a 1-second slow on hit.");
         def("grenade", "Grenade", Material.EGG, "#76FF03", "Ability 1 (right-click): Throw a grenade. It explodes on impact, then explodes again one second later, both at half a TNT minecart's power. Passive: Pin Pull. Each melee hit deals 1 extra damage and gives the target 1 second of nausea.");
-        def("magnetrod", "Magnet Rod", Material.IRON_NUGGET, "#D500F9", "Right-click to pull nearby mobs toward you, hard. Passive: Magnetism: pulls the target a block toward you on hit.");
+        def("magnetrod", "Magnet Rod", Material.MACE, "#D500F9", "Right-click to pull nearby mobs toward you, hard. Passive: Magnetism: pulls the target a block toward you on hit.");
         def("blizzardorb", "Blizzard Orb", Material.SNOWBALL, "#18FFFF", "Right-click to freeze everything nearby and slow it hard. Passive: Blizzard Chill: slows the target for 2 seconds on hit.");
         def("healingcharm", "Healing Charm", Material.GHAST_TEAR, "#FF4081", "Right-click to heal 8 hearts, gain regeneration and remove negative effects. Passive: Charm Heal: heals you half a heart on hit.");
         def("shadowcloak", "Shadow Cloak", Material.PHANTOM_MEMBRANE, "#6200EA", "Right-click for 20 seconds of invisibility and Speed II. Passive: Shroud: 1 second of invisibility on hit.");
@@ -306,20 +307,21 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
         def("arccaster", "Arc Caster", Material.BOW, "#E1BEE7", "A bow. Arrows stun or freeze whatever they hit. Passive: Arc Charge: 15% chance on hit to strike lightning for 3 damage.");
         def("hyperion", "Hyperion Blade", Material.NETHERITE_SWORD, "#00E5FF", "Ability 1 (right-click): Hyperion Burst. Hits everything within 4 blocks for 9 damage. 8-second cooldown. Passive: Life Ward. Each melee hit gives you 2 hearts of absorption.");
         def("mistral", "Mistral Spear", "NETHERITE_SPEAR", "#B2DFDB", "Ability 1 (right-click): Mistral Lunge. Dash forward and hit the first foe for 9 damage. 6-second cooldown. Passive: Wind Cut. Each melee hit deals 1 extra damage.");
-        def("obsidianfist", "Obsidian Fist", Material.NETHERITE_SHOVEL, "#3E2723", "Ability 1 (right-click): Obsidian Quake. Everything within 4 blocks takes 4 damage and is slowed for 2 seconds. 9-second cooldown. Passive: Hardened. Each melee hit slows the target for 1 second.");
+        def("obsidianfist", "Obsidian Fist", Material.MACE, "#3E2723", "Ability 1 (right-click): Obsidian Quake. Everything within 4 blocks takes 4 damage and is slowed for 2 seconds. 9-second cooldown. Passive: Hardened. Each melee hit slows the target for 1 second.");
         def("starshard", "Starshard Scepter", Material.GLOWSTONE_DUST, "#FFF176", "Ability 1 (right-click): Star Mark. Marks everything within 10 blocks, making it glow for 5 seconds, and deals 3 damage to foes within 3 blocks. 8-second cooldown. Passive: Constellation. 10% chance on hit to deal 5 extra damage.");
         def("cryptbone", "Crypt Bone", Material.BONE_MEAL, "#CFD8DC", "Ability 1 (right-click): Bone Burst. Hits everything within 3 blocks for 6 damage. 7-second cooldown. Passive: Bone Shatter. Each melee hit deals 2 extra damage.");
         def("tempesthalberd", "Tempest Halberd", Material.NETHERITE_AXE, "#00838F", "Ability 1 (right-click): Tempest Spin. Hits everything within 4 blocks for 6 damage and launches it. 8-second cooldown. Passive: Storm Edge. 10% chance on hit to call lightning for 2 damage.");
-        def("bloodmoon", "Bloodmoon Scythe", Material.NETHERITE_HOE, "#B71C1C", "Ability 1 (right-click): Blood Moon. Restores 2 hearts and gives regeneration for 10 seconds. 10-second cooldown. Passive: Blood Thirst. At night, each melee hit heals you 1 heart.");
+        def("bloodmoon", "Bloodmoon Scythe", Material.NETHERITE_SWORD, "#B71C1C", "Ability 1 (right-click): Blood Moon. Restores 2 hearts and gives regeneration for 10 seconds. 10-second cooldown. Passive: Blood Thirst. At night, each melee hit heals you 1 heart.");
         def("prismblade", "Prism Blade", Material.DIAMOND_SWORD, "#E040FB", "Ability 1 (right-click): Prism Beam. A beam 10 blocks long deals 6 damage to the first foe it hits. 6-second cooldown. Passive: Refraction. 15% chance on hit to deal 3 extra damage.");
         def("voidfang", "Voidfang Dagger", Material.NETHERITE_SWORD, "#311B92", "Ability 1 (right-click): Void Lunge. Dash forward and hit the first foe for 8 damage. 5-second cooldown. Passive: Void Bite. Each melee hit deals 1 extra damage.");
         def("solstice", "Solstice Hammer", Material.MACE, "#FFB300", "Ability 1 (right-click): Solstice Slam. Hits everything within 4.5 blocks for 11 damage and launches it. 9-second cooldown. Passive: Sunburst. Each melee hit sets the target on fire for 2 seconds.");
         def("glacierhalberd", "Glacier Halberd", Material.NETHERITE_AXE, "#B3E5FC", "Ability 1 (right-click): Glacier Nova. Everything within 5 blocks takes 4 damage and is heavily slowed for 3 seconds. 10-second cooldown. Passive: Permafrost. Each melee hit slows the target for 1 second.");
         def("embershort", "Ember Shortspear", "NETHERITE_SPEAR", "#FF5722", "Ability 1 (right-click): Ember Stab. A cone 5 blocks long deals 8 damage. 6-second cooldown. Passive: Smoulder Pierce. Each melee hit sets the target on fire for 2 seconds.");
-        def("runescythe", "Rune Scythe", Material.NETHERITE_HOE, "#7B1FA2", "Ability 1 (right-click): Rune Sweep. A cone 6 blocks long deals 7 damage and slows everything in it for 4 seconds. 7-second cooldown. Passive: Rune Mark. Each melee hit makes the target glow for 2 seconds.");
+        def("runescythe", "Rune Scythe", Material.NETHERITE_SWORD, "#7B1FA2", "Ability 1 (right-click): Rune Sweep. A cone 6 blocks long deals 7 damage and slows everything in it for 4 seconds. 7-second cooldown. Passive: Rune Mark. Each melee hit makes the target glow for 2 seconds.");
         def("thundercudgel", "Thunder Cudgel", Material.GOLDEN_AXE, "#FFEB3B", "Ability 1 (right-click): Thunder Chain. Lightning strikes the 2 nearest foes within 10 blocks for 7 damage each. 8-second cooldown. Passive: Thunder Hammer. 10% chance on hit to call lightning for 3 damage.");
         def("duskblade", "Dusk Blade", Material.NETHERITE_SWORD, "#37474F", "Ability 1 (right-click): Dusk Veil. Everything within 4 blocks takes 4 damage and gets Darkness for 3 seconds. 9-second cooldown. Passive: Dusk Edge. At night, each melee hit deals 1 extra damage.");
-        def("ironbulwark", "Iron Bulwark", Material.IRON_SWORD, "#CFD8DC", "Ability 1 (right-click): Bulwark Mend. Restores 3 hearts. 11-second cooldown. Passive: Bulwark. Each melee hit gives you 1 heart of absorption.");
+        def("ironbulwark", "Iron Bulwark", Material.NETHERITE_SWORD, "#CFD8DC", "Ability 1 (right-click): Bulwark Mend. Restores 3 hearts. 11-second cooldown. Passive: Bulwark. Each melee hit gives you 1 heart of absorption.");
+        def("gamblersfavourite", "Gambler's Favourite", Material.EMERALD, "#FFD700", "Right-click to receive a random ability item for 3 minutes. Single use.");
         def("crazyrolls", "CrazyRolls", Material.NETHER_STAR, "#FF00FF", "Ability 1 (right-click): Fires one random ability from every single-ability weapon and every gem. Passive: Everything. Each melee hit triggers a random weapon passive and a random gem passive.");
         def("boomhammer", "Boom Hammer", Material.MACE, "#795548", "Ability 1 (right-click): Thunder Slam. Leap upward, then crash down after 1 second, hitting everything within 5 blocks for 14 damage and launching it. 9-second cooldown. Passive: 25% chance on a melee hit to launch the target into the air.");
         def("spearlance", "Spear of Dawn", "NETHERITE_SPEAR", "#FFCA28", "Ability 1 (right-click): Sunlance. A line of light 8 blocks long strikes every foe along it for 6 damage and makes them glow. 8-second cooldown. Passive: Bleed. Each melee hit makes the target bleed 1 damage a second for 3 seconds.");
@@ -706,6 +708,51 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
         return it;
     }
 
+    // ---------- Gambler's Favourite ----------
+
+    private record GambleGrant(String id, long expires) {}
+    private final Map<UUID, List<GambleGrant>> gambleGrants = new HashMap<>();
+
+    private void gamble(Player p) {
+        ItemStack hand = p.getInventory().getItemInMainHand();
+        if (hand.getAmount() > 1) hand.setAmount(hand.getAmount() - 1);
+        else p.getInventory().setItemInMainHand(null);
+        String pick = ABILITY_ITEM_IDS[rnd.nextInt(ABILITY_ITEM_IDS.length)];
+        ItemDef d = items.get(pick);
+        if (d == null) return;
+        for (ItemStack left : p.getInventory().addItem(make(d)).values()) {
+            p.getWorld().dropItemNaturally(p.getLocation(), left);
+        }
+        gambleGrants.computeIfAbsent(p.getUniqueId(), k -> new ArrayList<>())
+                .add(new GambleGrant(pick, System.currentTimeMillis() + 180_000L));
+        p.sendMessage(ChatColor.GOLD + "You got " + d.name() + " for 3 minutes.");
+    }
+
+    private void startGambleTimer() {
+        Bukkit.getScheduler().runTaskTimer(this, () -> {
+            long now = System.currentTimeMillis();
+            for (Map.Entry<UUID, List<GambleGrant>> en : gambleGrants.entrySet()) {
+                Player p = Bukkit.getPlayer(en.getKey());
+                if (p == null) continue;
+                en.getValue().removeIf(g -> {
+                    if (now < g.expires()) return false;
+                    ItemStack[] contents = p.getInventory().getContents();
+                    for (int i = 0; i < contents.length; i++) {
+                        if (g.id().equals(idOf(contents[i]))) p.getInventory().setItem(i, null);
+                    }
+                    return true;
+                });
+            }
+        }, 20L, 20L);
+    }
+
+    /** True while an ability item is cooling down, so the item can be used normally (for example a spear). */
+    private boolean abilityCoolingDown(Player p, String id) {
+        if (noCooldown.contains(p.getUniqueId())) return false;
+        Long expiry = cooldowns.get(p.getUniqueId() + ":" + id);
+        return expiry != null && System.currentTimeMillis() < expiry;
+    }
+
     private boolean ready(Player p, String id, long ms) {
         if (noCooldown.contains(p.getUniqueId()) || (id.startsWith("g_") && gemNoCd.contains(p.getUniqueId()))) return true;
         String path = "cooldowns." + id;
@@ -849,6 +896,7 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
         // Bows must still be drawable with right-click
         if (id.equals("kaboom") || id.equals("shakalaka") || id.equals("arccaster")) return;
 
+        if (!gems.containsKey(id) && abilityCoolingDown(p, id)) return;
         e.setUseItemInHand(Event.Result.DENY);
         if (a == Action.RIGHT_CLICK_BLOCK) e.setUseInteractedBlock(Event.Result.DENY);
 
@@ -1327,6 +1375,7 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
                 p.getWorld().playSound(c, Sound.ENTITY_GENERIC_EXPLODE, 1f, 0.7f);
             }
             case "crazyrolls" -> crazyRolls(p);
+            case "gamblersfavourite" -> gamble(p);
             case "voidfang" -> gearDash(p, "voidfang", 2.0, 8, 5000);
             case "solstice" -> gearBurst(p, "solstice", 4.5, 11, 1.3, 9000);
             case "glacierhalberd" -> gearAoe(p, "glacierhalberd", 5, PotionEffectType.SLOWNESS, 60, 3, 4, 10000);
@@ -3012,7 +3061,7 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onWeaponPassive(EntityDamageByEntityEvent e) {
-        if (inPassive || e.getCause() != EntityDamageEvent.DamageCause.ENTITY_ATTACK) return;
+        if (inPassive || (e.getCause() != EntityDamageEvent.DamageCause.ENTITY_ATTACK && e.getCause() != EntityDamageEvent.DamageCause.ENTITY_SWEEP_ATTACK)) return;
         if (!(e.getDamager() instanceof Player p) || !(e.getEntity() instanceof LivingEntity le)) return;
         if (le.equals(p) || isFriendlyTo(p, le)) return;
         String id = idOf(p.getInventory().getItemInMainHand());
@@ -5598,7 +5647,7 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
         button(h, 16, Material.HORSE_SPAWN_EGG, ChatColor.GOLD + "Summon giant horse", "stickman summon giantmob horse");
         button(h, 17, Material.GHAST_SPAWN_EGG, ChatColor.GOLD + "Summon giant ghast", "stickman summon giantmob ghast");
         button(h, 18, Material.WRITABLE_BOOK, ChatColor.WHITE + "Trust list", "stickman trustlist");
-        button(h, 19, Material.IRON_SWORD, ChatColor.WHITE + "Follower count", "stickman followers");
+        button(h, 19, Material.NETHERITE_SWORD, ChatColor.WHITE + "Follower count", "stickman followers");
         button(h, 20, Material.BELL, ChatColor.YELLOW + "Reload config.yml", "stickman reload");
         button(h, 21, Material.DIAMOND, ChatColor.AQUA + "Gem cooldowns OFF", "stickman nocooldowngem true");
         button(h, 22, Material.COAL, ChatColor.GRAY + "Gem cooldowns ON", "stickman nocooldowngem false");
@@ -6862,6 +6911,7 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
             host = h;
             ownerKey = new NamespacedKey(host, "creature-owner");
             tamerKey = new NamespacedKey(host, "creature-tamer");
+            creatureKey = new NamespacedKey(host, "creature-type");
             registerTamerRecipe();
             host.getServer().getPluginManager().registerEvents(this, host);
             if (host.getCommand("stickmancreatures") != null) {
@@ -6959,6 +7009,7 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
         private final Map<UUID, Hostile> lastAttackers = new HashMap<>();
         private NamespacedKey ownerKey;
         private NamespacedKey tamerKey;
+        private NamespacedKey creatureKey;
         private final Map<UUID, UUID> tamedOwner = new HashMap<>();
         private final Map<UUID, Hostile> ownerTargets = new HashMap<>();
         private final Map<UUID, Long> tamedHitAt = new HashMap<>();
@@ -6990,6 +7041,8 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
                 owner.sendMessage(ChatColor.RED + "That creature could not be spawned.");
                 return;
             }
+            le.getPersistentDataContainer().set(creatureKey, PersistentDataType.STRING, def.id());
+            applyVariant(le, def.id());
             le.setInvulnerable(true);
             le.setCustomName(colored(def));
             le.setCustomNameVisible(true);
@@ -7288,6 +7341,16 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
             }
         }
 
+        private void applyVariant(LivingEntity le, String creatureId) {
+            if ("sparkit".equals(creatureId) && le instanceof Axolotl ax) ax.setVariant(Axolotl.Variant.CYAN);
+        }
+
+        private Creature creatureOf(LivingEntity le) {
+            String cid = le.getPersistentDataContainer().get(creatureKey, PersistentDataType.STRING);
+            if (cid != null) for (Creature c : CREATURES) if (c.id().equals(cid)) return c;
+            return defFor(le.getType());
+        }
+
         private boolean isTamer(ItemStack it) {
             return it != null && it.hasItemMeta() && it.getItemMeta().getPersistentDataContainer().has(tamerKey, PersistentDataType.BYTE);
         }
@@ -7344,7 +7407,12 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
             le.setInvulnerable(true);
             if (le instanceof Mob m) m.setRemoveWhenFarAway(false);
             tamedOwner.put(le.getUniqueId(), p.getUniqueId());
-            le.setCustomName(ChatColor.GREEN + "" + ChatColor.BOLD + "Tamed " + le.getType().name().toLowerCase(Locale.ROOT).replace('_', ' '));
+            Creature td = creatureOf(le);
+            if (td != null) {
+                le.getPersistentDataContainer().set(creatureKey, PersistentDataType.STRING, td.id());
+                applyVariant(le, td.id());
+                le.setCustomName(colored(td));
+            }
             le.setCustomNameVisible(true);
             p.sendMessage(ChatColor.GREEN + "Tamed. It will follow you, attack whoever attacks you, and attack whoever you attack.");
         }
@@ -7353,6 +7421,8 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
             Location at = p.getLocation().clone().add(2, 0, 2);
             Entity e = at.getWorld().spawnEntity(at, def.type());
             if (!(e instanceof LivingEntity le)) { e.remove(); return; }
+            le.getPersistentDataContainer().set(creatureKey, PersistentDataType.STRING, def.id());
+            applyVariant(le, def.id());
             le.setInvulnerable(true);
             le.setCustomName(colored(def));
             le.setCustomNameVisible(true);
@@ -7366,7 +7436,7 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
             p.sendMessage(ChatColor.GREEN + "Spawned a wild " + def.name() + ". Right-click it with a Creature Tamer.");
         }
 
-        /** Tamed creatures: follow the owner, then fight whoever attacked the owner, then whoever the owner attacked. */
+        /** Tamed creatures behave exactly like summoned ones: follow the owner, fight what attacks the owner, and use their ability. */
         private void tickTamed() {
             for (Map.Entry<UUID, UUID> en : new ArrayList<>(tamedOwner.entrySet())) {
                 Entity ent = Bukkit.getEntity(en.getKey());
@@ -7380,16 +7450,20 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
                     le.teleport(owner.getLocation().clone().add(2, 0, 2));
                     continue;
                 }
-                LivingEntity target = tamedTarget(owner, le);
-                if (target != null) {
-                    if (le instanceof Mob m) m.getPathfinder().moveTo(target.getLocation());
-                    long now = System.currentTimeMillis();
-                    if (le.getLocation().distance(target.getLocation()) <= 2.5 && now - tamedHitAt.getOrDefault(le.getUniqueId(), 0L) >= HIT_COOLDOWN_MS) {
-                        tamedHitAt.put(le.getUniqueId(), now);
-                        target.damage(8 * CREATURE_DAMAGE_MULT, owner);
+                LivingEntity target = findTarget(owner);
+                if (target == null) {
+                    if (le instanceof Mob m && le.getLocation().distance(owner.getLocation()) > 4) {
+                        m.getPathfinder().moveTo(owner.getLocation());
                     }
-                } else if (le instanceof Mob m && le.getLocation().distance(owner.getLocation()) > 4) {
-                    m.getPathfinder().moveTo(owner.getLocation());
+                    continue;
+                }
+                if (le instanceof Mob m) m.getPathfinder().moveTo(target.getLocation());
+                Creature def = creatureOf(le);
+                long now = System.currentTimeMillis();
+                if (def != null && le.getLocation().distance(target.getLocation()) <= 2.5
+                        && now - tamedHitAt.getOrDefault(le.getUniqueId(), 0L) >= HIT_COOLDOWN_MS) {
+                    tamedHitAt.put(le.getUniqueId(), now);
+                    useAbility(def.ability(), target, owner);
                 }
             }
         }
