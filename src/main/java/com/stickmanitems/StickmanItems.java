@@ -1,5 +1,6 @@
 package com.stickmanitems;
 
+import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.entity.Monster;
 import org.bukkit.Bukkit;
@@ -207,6 +208,10 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
                 cooldownCommand(sender, args);
                 return true;
             });
+        }
+        if (getCommand("stickcooldowns") != null) {
+            getCommand("stickcooldowns").setTabCompleter((sender, cmd, alias, args) -> cooldownTabs(args));
+            getLogger().info("/stickcooldowns is registered.");
         }
         startGambleTimer();
         creatures = new CreaturesModule();
@@ -3530,7 +3535,29 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
         p.getWorld().spawnParticle(Particle.FLAME, p.getLocation(), 30, 0.4, 0.4, 0.4, 0.05);
     }
 
+    private void highJump(Player p) {
+        if (!ready(p, "windpike-jump", 6000)) return;
+        p.setVelocity(new Vector(0, 2.1, 0));
+        p.getWorld().spawnParticle(Particle.CLOUD, p.getLocation(), 30, 0.5, 0.2, 0.5, 0.05);
+        new BukkitRunnable() {
+            int ticks = 0;
+
+            @Override
+            public void run() {
+                if (!p.isOnline() || ++ticks > 60) {
+                    cancel();
+                    return;
+                }
+                p.setFallDistance(0f);
+            }
+        }.runTaskTimer(this, 0L, 1L);
+    }
+
     private void gustVault(Player p) {
+        if (p.isSneaking()) {
+            highJump(p);
+            return;
+        }
         if (!ready(p, "windpike", 8000)) return;
         Vector fwd = p.getLocation().getDirection().setY(0);
         if (fwd.lengthSquared() < 0.01) return;
@@ -3826,7 +3853,25 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
             return true;
         }
         mine.put(it.getType(), now + cd);
+        p.setCooldown(it.getType(), (int) Math.max(1, cd / 50));
         return false;
+    }
+
+    private List<String> cooldownTabs(String[] args) {
+        if (args.length == 1) {
+            List<String> out = new ArrayList<>(List.of("list", "help", "spear"));
+            for (Material m : Material.values()) {
+                if (m.isItem() && !m.isLegacy()) out.add(m.name().toLowerCase(Locale.ROOT));
+            }
+            return filterTabs(out, args[0]);
+        }
+        if (args.length == 2) return filterTabs(List.of("0", "5", "10", "15", "20", "30", "60", "120"), args[1]);
+        return List.of();
+    }
+
+    private static List<String> filterTabs(List<String> options, String prefix) {
+        String p = prefix.toLowerCase(Locale.ROOT);
+        return options.stream().filter(o -> o.toLowerCase(Locale.ROOT).startsWith(p)).toList();
     }
 
     private static String prettyMaterial(Material m) {
@@ -3870,7 +3915,7 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
             }
             return;
         }
-        Material m = Material.matchMaterial(args[0]);
+        Material m = args[0].equalsIgnoreCase("spear") ? Material.matchMaterial("NETHERITE_SPEAR") : Material.matchMaterial(args[0].toUpperCase(Locale.ROOT));
         if (m == null || !m.isItem()) {
             sender.sendMessage(ChatColor.RED + "Unknown item: " + args[0]);
             return;
