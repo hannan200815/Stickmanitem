@@ -266,7 +266,7 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
         def("phoenixblade", "Phoenix Blade", Material.MACE, "#FF2D75", "Right-click to leap into the air, then dive and smash. Harder falls hit harder. Passive: Rebirth: heals you 1 heart on hit while below half health.");
         def("gauntlet", "Control Orb", Material.PRISMARINE_SHARD, "#7C4DFF", "Right-click a mob or player to take control of it. Right-click again to hurl it forward. Passive: Orb Control: 1 extra damage and a 1-second slow on hit.");
         def("grenade", "Grenade", Material.EGG, "#76FF03", "Ability 1 (right-click): Throw a grenade. It explodes on impact, then explodes again one second later, both at half a TNT minecart's power. Passive: Pin Pull. Each melee hit deals 1 extra damage and gives the target 1 second of nausea.");
-        def("magnetrod", "Magnet Rod", Material.MACE, "#D500F9", "Right-click to pull nearby mobs toward you, hard. Passive: Magnetism: pulls the target a block toward you on hit.");
+        def("magnetrod", "Magnet Rod", "END_ROD", "#D500F9", "Right-click to pull nearby mobs toward you, hard. Passive: Magnetism: pulls the target a block toward you on hit.");
         def("blizzardorb", "Blizzard Orb", Material.SNOWBALL, "#18FFFF", "Right-click to freeze everything nearby and slow it hard. Passive: Blizzard Chill: slows the target for 2 seconds on hit.");
         def("healingcharm", "Healing Charm", Material.GHAST_TEAR, "#FF4081", "Right-click to heal 8 hearts, gain regeneration and remove negative effects. Passive: Charm Heal: heals you half a heart on hit.");
         def("shadowcloak", "Shadow Cloak", Material.PHANTOM_MEMBRANE, "#6200EA", "Right-click for 20 seconds of invisibility and Speed II. Passive: Shroud: 1 second of invisibility on hit.");
@@ -2892,6 +2892,28 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
 
     /** CrazyRolls: one random ability from the batch-one arsenal per right-click. */
     private void crazyRolls(Player p) {
+        for (int k = 0; k < 3; k++) {
+            long delay = k * 8L;
+            Bukkit.getScheduler().runTaskLater(this, () -> {
+                if (p.isOnline()) rollOnce(p);
+            }, delay);
+        }
+    }
+
+    private List<String> passivePool;
+
+    /** A random passive from every item in the plugin, so CrazyRolls can trigger any of them. */
+    private String randomPassive() {
+        if (passivePool == null) {
+            passivePool = new ArrayList<>();
+            for (String id : items.keySet()) {
+                if (!id.equals("crazyrolls") && !id.equals("gamblersfavourite")) passivePool.add(id);
+            }
+        }
+        return passivePool.get(rnd.nextInt(passivePool.size()));
+    }
+
+    private void rollOnce(Player p) {
         int pick = rnd.nextInt(ABILITY_ITEM_IDS.length + GEM_PASSIVE_IDS.length);
         if (pick < ABILITY_ITEM_IDS.length) runAbilityFor(p, ABILITY_ITEM_IDS[pick]);
         else handleGemRight(p, GEM_PASSIVE_IDS[pick - ABILITY_ITEM_IDS.length]);
@@ -3073,7 +3095,7 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
         if (id == null) return;
         inPassive = true;
         try {
-            String passive = id.equals("crazyrolls") ? RANDOM_PASSIVES[rnd.nextInt(RANDOM_PASSIVES.length)] : id;
+            String passive = id.equals("crazyrolls") ? randomPassive() : id;
             switch (passive) {
                 case "boomhammer" -> {
                     if (rnd.nextDouble() < 0.25) le.setVelocity(new Vector(0, 0.8, 0));
@@ -5253,7 +5275,7 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
         while (it.hasNext()) {
             Map.Entry<UUID, List<BukkitTask>> en = it.next();
             Player p = Bukkit.getPlayer(en.getKey());
-            boolean holding = p != null && (gemOf(p) != null || holdsItem(p, "cursedcrown"));
+            boolean holding = p != null && (gemOf(p) != null || holdsItem(p, "cursedcrown") || holdsItem(p, "crazyrolls"));
             if (!holding) {
                 for (BukkitTask t : en.getValue()) t.cancel();
                 it.remove();
