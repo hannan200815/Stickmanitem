@@ -202,6 +202,7 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
 
     @Override
     public void onEnable() {
+        saveDefaultConfig();
         loadVanillaCooldowns();
         if (getCommand("stickcooldowns") != null) {
             getCommand("stickcooldowns").setExecutor((sender, cmd, label, args) -> {
@@ -327,6 +328,14 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
         def("duskblade", "Dusk Blade", Material.NETHERITE_SWORD, "#37474F", "Ability 1 (right-click): Dusk Veil. Everything within 4 blocks takes 4 damage and gets Darkness for 3 seconds. 9-second cooldown. Passive: Dusk Edge. At night, each melee hit deals 1 extra damage.");
         def("ironbulwark", "Iron Bulwark", Material.NETHERITE_SWORD, "#CFD8DC", "Ability 1 (right-click): Bulwark Mend. Restores 3 hearts. 11-second cooldown. Passive: Bulwark. Each melee hit gives you 1 heart of absorption.");
         def("gamblersfavourite", "Gambler's Favourite", Material.EMERALD, "#FFD700", "Right-click to receive a random ability item for 3 minutes. Single use.");
+        def("octopus", "Octopus", Material.HEART_OF_THE_SEA, "#4DD0E1", "Power 4th (weakest). Ability 1 (right-click): Ink Cloud. Every foe within 5 blocks is blinded for 5 seconds. 10-second cooldown. Passive: Tentacle Grip: 15% chance on hit to slow the target for 2 seconds. Sneak + right-click: Tentacle Grab. Pulls every foe within 8 blocks toward you. 9-second cooldown. Passive 2: Ink Venom. 20% chance on hit to poison the target for 3 seconds.");
+        def("sharktooth", "Shark's Tooth", Material.NETHERITE_SWORD, "#90A4AE", "Power 3rd. Ability 1 (right-click): Feeding Frenzy. Dash forward and hit the first foe for 7 damage. 7-second cooldown. Passive: Bloodscent: 2 extra damage on hit against targets below half health. Sneak + right-click: Blood Feast. Heals 2 hearts and gives regeneration for 5 seconds. 10-second cooldown. Passive 2: Hunter's Hunger. Every 5th hit heals you 1 heart.");
+        def("kraken", "Kraken", Material.NETHERITE_AXE, "#00838F", "Power 2nd. Ability 1 (right-click): Tentacle Crush. Everything within 5 blocks takes 4 damage and is slowed for 3 seconds. 12-second cooldown. Passive: Abyssal Pull: 15% chance on hit to drag the target toward you. Sneak + right-click: Maelstrom Pull. Drags every foe within 8 blocks toward you, hard. 12-second cooldown. Passive 2: Crushing Coils. 10% chance on hit for 3 extra damage and 2 seconds of weakness.");
+        def("poseidon", "Poseidon", Material.TRIDENT, "#1565C0", "Power 1st (strongest). Ability 1 (right-click): Tidal Wave. Everything within 6 blocks takes 8 damage and is pushed away. 15-second cooldown. Passive: Sea King: 20% chance on hit to call lightning for 4 damage. Sneak + right-click: Trident Beam. A 16-block beam that deals 10 damage to the first foe it hits. 12-second cooldown. Passive 2: Tidal Crest. 20% chance on hit to launch the target up and blind them for 2 seconds.");
+        def("tsunami", "Tsunami Overlord", Material.MACE, "#0277BD", "Ability 1 (right-click): Tsunami. Everything within 8 blocks takes 6 damage and is knocked back hard. 20-second cooldown. Passive: Wave Crest: 15% chance on hit to launch the target into the air and give them nausea for 3 seconds. Sneak + right-click: Riptide. Dash forward, damaging foes in your path for 5. 15-second cooldown. Passive 2: Undertow. 20% chance on hit to slow the target for 3 seconds.");
+        def("leviathan", "Leviathan Blade", Material.NETHERITE_SWORD, "#006064", "Ability 1 (right-click): Abyssal Slash. A cone 6 blocks long hits for 8 damage and slows what it hits. 8-second cooldown. Sneak + right-click: Deep Dive. Gives you dolphin's grace for 10 seconds. 15-second cooldown. Passive: Crushing Depth: 15% chance on hit for 3 extra damage. Passive 2: Dolphin's Speed: 20% chance on hit to gain speed for 2 seconds.");
+        def("anchor", "Anchor Maul", Material.MACE, "#37474F", "Ability 1 (right-click): Anchor Drop. Everything within 4 blocks takes 10 damage and is knocked back. 10-second cooldown. Sneak + right-click: Chain Anchor. Chains up to 3 foes within 8 blocks for 4 damage each. 12-second cooldown. Passive: Heavy Hull: 15% chance on hit to slow the target for 2 seconds. Passive 2: Barnacle: 10% chance on hit to slow the target harder for 2 seconds.");
+        def("conch", "Conch Spear", "NETHERITE_SPEAR", "#F48FB1", "Ability 1 (right-click): Conch Blast. A cone 6 blocks long hits for 7 damage and slows what it hits. 7-second cooldown. Sneak + right-click: Siren Song. Everything within 6 blocks is nauseated for 5 seconds. 14-second cooldown. Passive: Echoing Shell: 20% chance on hit for 2 extra damage. Passive 2: Siren's Call: 15% chance on hit to nauseate the target for 2 seconds.");
         def("crazyrolls", "CrazyRolls", Material.NETHER_STAR, "#FF00FF", "Ability 1 (right-click): Fires one random ability from every single-ability weapon and every gem. Passive: Everything. Each melee hit triggers a random weapon passive and a random gem passive.");
         def("boomhammer", "Boom Hammer", Material.MACE, "#795548", "Ability 1 (right-click): Thunder Slam. Leap upward, then crash down after 1 second, hitting everything within 5 blocks for 14 damage and launching it. 9-second cooldown. Passive: 25% chance on a melee hit to launch the target into the air.");
         def("spearlance", "Spear of Dawn", "NETHERITE_SPEAR", "#FFCA28", "Ability 1 (right-click): Sunlance. A line of light 8 blocks long strikes every foe along it for 6 damage and makes them glow. 8-second cooldown. Passive: Bleed. Each melee hit makes the target bleed 1 damage a second for 3 seconds.");
@@ -758,6 +767,16 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
         return expiry != null && System.currentTimeMillis() < expiry;
     }
 
+    /** Reads items.<id>.<key> from config.yml, or the default if it is missing. */
+    /** Reads helpers.<helper>.<key> from config.yml, or the default if missing. */
+    private double hv(String helper, String key, double def) {
+        return getConfig().getDouble("helpers." + helper + "." + key, def);
+    }
+
+    private double od(String id, String key, double def) {
+        return getConfig().getDouble("items." + id + "." + key, def);
+    }
+
     private boolean ready(Player p, String id, long ms) {
         if (noCooldown.contains(p.getUniqueId()) || (id.startsWith("g_") && gemNoCd.contains(p.getUniqueId()))) return true;
         String path = "cooldowns." + id;
@@ -914,30 +933,35 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
         Location eyeLoc = p.getEyeLocation();
         Vector look = eyeLoc.getDirection().normalize();
 
+        if (p.isSneaking() && OCEAN_IDS.contains(id)) {
+            oceanSecondary(p, id);
+            return;
+        }
+
         switch (id) {
             case "thunderstick" -> {
                 if (!ready(p, id, 5000)) return;
-                Location t = aimPoint(p, 40);
+                Location t = aimPoint(p, od(id, "range", 40));
                 w.strikeLightningEffect(t);
-                damageArea(t, 4, 12, p);
+                damageArea(t, od(id, "radius", 4), od(id, "damage", 12), p);
             }
             case "vampirefang" -> {
                 if (!ready(p, id, 20000)) return;
-                p.setHealth(Math.min(p.getMaxHealth(), p.getHealth() + 8));
+                p.setHealth(Math.min(p.getMaxHealth(), p.getHealth() + od(id, "heal", 8)));
                 w.spawnParticle(Particle.HEART, p.getLocation().add(0, 1, 0), 5, 0.4, 0.4, 0.4, 0);
             }
             case "frostbite" -> {
                 if (!ready(p, id, 8000)) return;
                 w.spawnParticle(Particle.SNOWFLAKE, p.getLocation(), 60, 4, 1, 4, 0.05);
                 w.playSound(p.getLocation(), Sound.BLOCK_GLASS_BREAK, 1f, 1.4f);
-                for (Entity en : w.getNearbyEntities(p.getLocation(), 7, 3, 7)) {
+                for (Entity en : w.getNearbyEntities(p.getLocation(), od(id, "radius", 7), 3, od(id, "radius", 7))) {
                     if (!(en instanceof LivingEntity le) || en.equals(p)) continue;
-                    le.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 100, 3));
-                    hit(le, 5, p);
+                    le.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, (int) od(id, "slow-ticks", 100), (int) od(id, "slow-amp", 3)));
+                    hit(le, od(id, "damage", 5), p);
                 }
             }
             case "winddash" -> {
-                p.setVelocity(look.clone().multiply(2.0));
+                p.setVelocity(look.clone().multiply(od("winddash", "launch-speed", 2.0)));
                 guard(p, 100);
                 w.playSound(p.getLocation(), Sound.ENTITY_PHANTOM_FLAP, 1f, 1f);
             }
@@ -952,12 +976,12 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
                 Location loc = p.getLocation();
                 w.spawnParticle(Particle.CLOUD, loc, 40, 2, 0.2, 2, 0.05);
                 w.playSound(loc, Sound.ENTITY_GENERIC_EXPLODE, 1f, 1.2f);
-                damageArea(loc, 6, 18, p);
-                knockArea(loc, 6, 0.5, p);
+                damageArea(loc, od(id, "radius", 6), od(id, "damage", 18), p);
+                knockArea(loc, od("groundbreaker", "extra-radius", 6), od("groundbreaker", "extra-strength", 0.5), p);
             }
             case "phoenixblade" -> {
                 if (!ready(p, id, 6000)) return;
-                p.setVelocity(new Vector(0, 1.4, 0));
+                p.setVelocity(new Vector(0, od("phoenixblade", "launch-up", 1.4), 0));
                 p.setFallDistance(0f);
                 phoenix.put(p.getUniqueId(), new PhoenixState());
                 w.playSound(p.getLocation(), Sound.ENTITY_ENDER_DRAGON_FLAP, 1f, 1.2f);
@@ -969,7 +993,7 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
             }
             case "shadowdagger" -> {
                 if (!ready(p, id, 8000)) return;
-                LivingEntity target = nearestEnemy(p.getLocation(), 12, p);
+                LivingEntity target = nearestEnemy(p.getLocation(), od(id, "range", 12), p);
                 if (target == null) {
                     p.sendMessage(ChatColor.RED + "No enemy within 12 blocks.");
                     return;
@@ -978,7 +1002,7 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
                 Location behind = target.getLocation().clone().add(target.getLocation().getDirection().setY(0).normalize().multiply(-1.5));
                 behind.setDirection(target.getLocation().toVector().subtract(behind.toVector()));
                 p.teleport(behind);
-                hit(target, 10, p);
+                hit(target, od(id, "damage", 10), p);
                 for (int k = 0; k <= 8; k++) {
                     Location tp = from.clone().add(behind.clone().toVector().subtract(from.toVector()).multiply(k / 8.0));
                     w.spawnParticle(Particle.DUST, tp.add(0, 1, 0), 3, 0.1, 0.2, 0.1, 0, new Particle.DustOptions(colorFor(id), 1.2f));
@@ -991,17 +1015,17 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
                 for (double d = 1; d <= 25; d += 0.5) {
                     Location pt = eyeLoc.clone().add(look.clone().multiply(d));
                     w.spawnParticle(Particle.DUST, pt, 2, 0.05, 0.05, 0.05, 0, new Particle.DustOptions(colorFor(id), 1.5f));
-                    for (Entity en : w.getNearbyEntities(pt, 1, 1, 1)) {
+                    for (Entity en : w.getNearbyEntities(pt, od("solarlance", "extra-radius", 1), 1, od("solarlance", "extra-radius", 1))) {
                         if (!(en instanceof LivingEntity le) || en.equals(p) || isFriendlyTo(p, le) || beamHit.contains(le.getUniqueId())) continue;
                         beamHit.add(le.getUniqueId());
-                        hit(le, 30, p);
+                        hit(le, od(id, "damage", 30), p);
                     }
                 }
                 w.playSound(eyeLoc, Sound.ENTITY_BLAZE_SHOOT, 1.5f, 1.8f);
             }
             case "gravitywell" -> {
                 if (!ready(p, id, 20000)) return;
-                Location center = aimPoint(p, 20);
+                Location center = aimPoint(p, od(id, "range", 20));
                 final int[] runs = {0};
                 final BukkitTask[] holder = new BukkitTask[1];
                 holder[0] = Bukkit.getScheduler().runTaskTimer(this, () -> {
@@ -1010,11 +1034,11 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
                         holder[0].cancel();
                         return;
                     }
-                    for (Entity en : w.getNearbyEntities(center, 6, 6, 6)) {
+                    for (Entity en : w.getNearbyEntities(center, od("gravitywell", "extra-radius", 6), 6, od("gravitywell", "extra-radius", 6))) {
                         if (!(en instanceof LivingEntity le) || en.equals(p) || isFriendlyTo(p, le)) continue;
                         Vector pull = center.toVector().subtract(le.getLocation().toVector());
-                        if (pull.lengthSquared() > 0) le.setVelocity(pull.normalize().multiply(0.6));
-                        if (runs[0] % 2 == 0) hit(le, 2, p);
+                        if (pull.lengthSquared() > 0) le.setVelocity(pull.normalize().multiply(od("gravitywell", "launch-speed", 0.6)));
+                        if (runs[0] % 2 == 0) hit(le, od(id, "damage", 2), p);
                     }
                     particleRing(center.clone().add(0, 0.2, 0), 2 + (runs[0] % 4), Particle.DRAGON_BREATH);
                 }, 0L, 10L);
@@ -1030,13 +1054,13 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
                         holder[0].cancel();
                         return;
                     }
-                    for (Entity en : p.getWorld().getNearbyEntities(p.getLocation(), 8, 4, 8)) {
+                    for (Entity en : p.getWorld().getNearbyEntities(p.getLocation(), od("aegistotem", "extra-radius", 8), 4, od("aegistotem", "extra-radius", 8))) {
                         if (!(en instanceof Player ally)) continue;
                         if (!ally.equals(p) && !isTrusted(p.getUniqueId(), ally.getUniqueId())) continue;
-                        ally.addPotionEffect(new PotionEffect(PotionEffectType.RESISTANCE, 40, 0));
-                        ally.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, 40, 0));
+                        ally.addPotionEffect(new PotionEffect(PotionEffectType.RESISTANCE, (int) od(id, "effect-ticks", 40), (int) od(id, "effect-amp", 0)));
+                        ally.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, (int) od(id, "effect-ticks-2", 40), (int) od(id, "effect-amp-2", 0)));
                     }
-                    particleRing(p.getLocation().add(0, 0.2, 0), 3, Particle.TOTEM_OF_UNDYING);
+                    particleRing(p.getLocation().add(0, 0.2, 0), 3, Particle.TOTEM);
                 }, 0L, 20L);
                 w.playSound(p.getLocation(), Sound.ITEM_TOTEM_USE, 1f, 1f);
             }
@@ -1044,7 +1068,7 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
             case "chronohourglass" -> {
                 if (!ready(p, id, 30000)) return;
                 int frozen = 0;
-                for (Entity en : w.getNearbyEntities(p.getLocation(), 10, 10, 10)) {
+                for (Entity en : w.getNearbyEntities(p.getLocation(), od("chronohourglass", "extra-radius", 10), 10, od("chronohourglass", "extra-radius", 10))) {
                     if (en.equals(p)) continue;
                     UUID own = ownerOf(en);
                     if (own != null && (own.equals(p.getUniqueId()) || isTrusted(p.getUniqueId(), own))) continue;
@@ -1056,7 +1080,7 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
                         }, 80L);
                         frozen++;
                     } else if (en instanceof LivingEntity le) {
-                        le.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 80, 9));
+                        le.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, (int) od(id, "effect-ticks", 80), (int) od(id, "effect-amp", 9)));
                         frozen++;
                     }
                 }
@@ -1067,10 +1091,10 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
             case "bloodstone" -> {
                 if (!ready(p, id, 8000)) return;
                 Location c = p.getLocation();
-                for (Entity en : w.getNearbyEntities(c, 5, 3, 5)) {
+                for (Entity en : w.getNearbyEntities(c, od("bloodstone", "extra-radius", 5), 3, od("bloodstone", "extra-radius", 5))) {
                     if (!(en instanceof LivingEntity le) || en.equals(p) || isFriendlyTo(p, le)) continue;
-                    hit(le, 8, p);
-                    le.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 60, 1));
+                    hit(le, od(id, "damage", 8), p);
+                    le.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, (int) od(id, "effect-ticks", 60), (int) od(id, "effect-amp", 1)));
                 }
                 particleRing(c.clone().add(0, 0.2, 0), 5, Particle.DUST);
                 w.playSound(c, Sound.ENTITY_PLAYER_ATTACK_CRIT, 2f, 0.6f);
@@ -1080,10 +1104,10 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
                 Location c = p.getLocation();
                 w.spawnParticle(Particle.CLOUD, c, 80, 4, 0.3, 4, 0.1);
                 w.playSound(c, Sound.ENTITY_GENERIC_EXPLODE, 2f, 0.6f);
-                for (Entity en : w.getNearbyEntities(c, 6, 3, 6)) {
+                for (Entity en : w.getNearbyEntities(c, od("quakehammer", "extra-radius", 6), 3, od("quakehammer", "extra-radius", 6))) {
                     if (!(en instanceof LivingEntity le) || en.equals(p) || isFriendlyTo(p, le)) continue;
-                    hit(le, 18, p);
-                    le.setVelocity(new Vector(0, 0.9, 0));
+                    hit(le, od(id, "damage", 18), p);
+                    le.setVelocity(new Vector(0, od("quakehammer", "launch-up", 0.9), 0));
                 }
                 for (double r = 2; r <= 6; r += 2) particleRing(c.clone().add(0, 0.2, 0), r, Particle.CLOUD);
             }
@@ -1099,10 +1123,10 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
                         return;
                     }
                     particleRing(cloud.clone().add(0, 0.2, 0), 4, Particle.COMPOSTER);
-                    for (Entity en : cloud.getWorld().getNearbyEntities(cloud, 4, 3, 4)) {
+                    for (Entity en : cloud.getWorld().getNearbyEntities(cloud, od("venomsickle", "extra-radius", 4), 3, od("venomsickle", "extra-radius", 4))) {
                         if (!(en instanceof LivingEntity le) || en.equals(p) || isFriendlyTo(p, le)) continue;
                         venomTouch(le);
-                        hit(le, 2, p);
+                        hit(le, od(id, "damage", 2), p);
                     }
                 }, 0L, 20L);
             }
@@ -1133,16 +1157,16 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
             }
             case "spoutshell" -> {
                 if (!ready(p, id, 12000)) return;
-                Location aim = aimPoint(p, 15);
+                Location aim = aimPoint(p, od(id, "range", 15));
                 for (int k = 0; k < 15; k++) {
                     final int step = k;
                     Bukkit.getScheduler().runTaskLater(this, () ->
                             w.spawnParticle(Particle.SPLASH, aim.clone().add(0, step * 0.6, 0), 12, 0.3, 0.2, 0.3, 0.05), k * 2L);
                 }
-                for (Entity en : w.getNearbyEntities(aim, 3, 4, 3)) {
+                for (Entity en : w.getNearbyEntities(aim, od("spoutshell", "extra-radius", 3), 4, od("spoutshell", "extra-radius", 3))) {
                     if (!(en instanceof LivingEntity le) || en.equals(p) || isFriendlyTo(p, le)) continue;
-                    hit(le, 8, p);
-                    le.setVelocity(new Vector(0, 2.5, 0));
+                    hit(le, od(id, "damage", 8), p);
+                    le.setVelocity(new Vector(0, od("spoutshell", "launch-up", 2.5), 0));
                 }
                 w.playSound(aim, Sound.ENTITY_GENERIC_SPLASH, 2f, 0.8f);
             }
@@ -1154,16 +1178,16 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
             }
             case "cloudbottle" -> {
                 if (!ready(p, id, 20000)) return;
-                p.setVelocity(new Vector(0, 1.7, 0));
+                p.setVelocity(new Vector(0, od("cloudbottle", "launch-up", 1.7), 0));
                 p.setFallDistance(0f);
-                p.addPotionEffect(new PotionEffect(PotionEffectType.SLOW_FALLING, 200, 0));
+                p.addPotionEffect(new PotionEffect(PotionEffectType.SLOW_FALLING, (int) od(id, "effect-ticks", 200), (int) od(id, "effect-amp", 0)));
                 guard(p, 200);
                 w.spawnParticle(Particle.CLOUD, p.getLocation(), 60, 0.8, 0.2, 0.8, 0.05);
                 w.playSound(p.getLocation(), Sound.ENTITY_SHEEP_SHEAR, 1f, 1.4f);
             }
             case "meteor" -> {
                 if (!ready(p, id, 90000)) return;
-                Location aim = aimPoint(p, 40);
+                Location aim = aimPoint(p, od(id, "range", 40));
                 int count = 10 + rnd.nextInt(11);
                 int spawned = 0;
                 for (int i = 0; i < count; i++) {
@@ -1171,7 +1195,7 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
                     try {
                         DragonFireball fb = w.spawn(spot.clone().add(0, 25, 0), DragonFireball.class);
                         fb.setShooter(p);
-                        fb.setVelocity(new Vector(0, -1.4, 0));
+                        fb.setVelocity(new Vector(0, od("meteor", "impulse-y", -1.4), 0));
                         meteorOwners.put(p.getUniqueId(), System.currentTimeMillis());
                         spawned++;
                     } catch (Exception ex) {
@@ -1194,10 +1218,10 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
                         holder[0].cancel();
                         return;
                     }
-                    for (Entity en : c.getWorld().getNearbyEntities(c, 6, 3, 6)) {
+                    for (Entity en : c.getWorld().getNearbyEntities(c, od("hexbone", "extra-radius", 6), 3, od("hexbone", "extra-radius", 6))) {
                         if (!(en instanceof LivingEntity le) || en.equals(p) || isFriendlyTo(p, le)) continue;
-                        hit(le, 3, p);
-                        le.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 30, 1));
+                        hit(le, od(id, "damage", 3), p);
+                        le.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, (int) od(id, "effect-ticks", 30), (int) od(id, "effect-amp", 1)));
                     }
                     particleRing(c.clone().add(0, 0.2, 0), 6, Particle.SOUL);
                 }, 0L, 20L);
@@ -1207,18 +1231,18 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
                 Location c = p.getLocation();
                 int flip = rnd.nextInt(3);
                 if (flip == 0) {
-                    p.setHealth(Math.min(p.getMaxHealth(), p.getHealth() + 6));
+                    p.setHealth(Math.min(p.getMaxHealth(), p.getHealth() + od(id, "heal", 6)));
                     p.sendMessage(ChatColor.GREEN + "The coin lands heads. You are healed.");
                 } else if (flip == 1) {
-                    for (Entity en : w.getNearbyEntities(c, 8, 4, 8)) {
+                    for (Entity en : w.getNearbyEntities(c, od("cursedcoin", "extra-radius", 8), 4, od("cursedcoin", "extra-radius", 8))) {
                         if (!(en instanceof LivingEntity le) || en.equals(p) || isFriendlyTo(p, le)) continue;
-                        le.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 80, 0));
+                        le.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, (int) od(id, "effect-ticks", 80), (int) od(id, "effect-amp", 0)));
                     }
                     p.sendMessage(ChatColor.DARK_GRAY + "The coin lands tails. Nearby enemies are blinded.");
                 } else {
-                    for (Entity en : w.getNearbyEntities(c, 8, 4, 8)) {
+                    for (Entity en : w.getNearbyEntities(c, od("cursedcoin", "extra-radius-2", 8), 4, od("cursedcoin", "extra-radius-2", 8))) {
                         if (!(en instanceof LivingEntity le) || en.equals(p) || isFriendlyTo(p, le)) continue;
-                        le.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 100, 1));
+                        le.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, (int) od(id, "effect-ticks-2", 100), (int) od(id, "effect-amp-2", 1)));
                     }
                     p.sendMessage(ChatColor.DARK_PURPLE + "The coin wails. Nearby enemies are slowed.");
                 }
@@ -1231,9 +1255,9 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
                     return;
                 }
                 if (!ready(p, id, 12000)) return;
-                hit(target, 12, p);
-                target.addPotionEffect(new PotionEffect(PotionEffectType.WITHER, 120, 0));
-                target.addPotionEffect(new PotionEffect(PotionEffectType.DARKNESS, 120, 0));
+                hit(target, od("spectralquill", "extra-damage", 12), p);
+                target.addPotionEffect(new PotionEffect(PotionEffectType.WITHER, (int) od(id, "effect-ticks", 120), (int) od(id, "effect-amp", 0)));
+                target.addPotionEffect(new PotionEffect(PotionEffectType.DARKNESS, (int) od(id, "effect-ticks-2", 120), (int) od(id, "effect-amp-2", 0)));
                 target.getWorld().spawnParticle(Particle.SOUL, target.getLocation().add(0, 1, 0), 30, 0.4, 0.6, 0.4, 0.02);
                 w.playSound(target.getLocation(), Sound.ENTITY_ENDERMAN_STARE, 1.5f, 0.5f);
             }
@@ -1254,10 +1278,10 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
                 if (!ready(p, id, 20000)) return;
                 Location c = p.getLocation();
                 int revealed = 0;
-                for (Entity en : w.getNearbyEntities(c, 20, 20, 20)) {
+                for (Entity en : w.getNearbyEntities(c, od("eyeofthecrypt", "extra-radius", 20), 20, od("eyeofthecrypt", "extra-radius", 20))) {
                     if (!(en instanceof LivingEntity le) || en.equals(p)) continue;
                     if (!le.isInvisible() && !le.hasPotionEffect(PotionEffectType.INVISIBILITY)) continue;
-                    le.addPotionEffect(new PotionEffect(PotionEffectType.GLOWING, 160, 0));
+                    le.addPotionEffect(new PotionEffect(PotionEffectType.GLOWING, (int) od(id, "effect-ticks", 160), (int) od(id, "effect-amp", 0)));
                     revealed++;
                 }
                 w.playSound(c, Sound.AMBIENT_CAVE, 2f, 1f);
@@ -1289,11 +1313,11 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
                 if (fwd.lengthSquared() < 0.01) return;
                 fwd = fwd.normalize();
                 if (!ready(p, id, 5000)) return;
-                for (Entity en : p.getWorld().getNearbyEntities(p.getLocation(), 6, 3, 6)) {
+                for (Entity en : p.getWorld().getNearbyEntities(p.getLocation(), od("emberblade", "extra-radius", 6), 3, od("emberblade", "extra-radius", 6))) {
                     if (!(en instanceof LivingEntity le) || en.equals(p) || isFriendlyTo(p, le)) continue;
                     Vector to = le.getLocation().toVector().subtract(p.getLocation().toVector()).setY(0);
                     if (to.lengthSquared() == 0 || to.clone().normalize().dot(fwd) < 0.5) continue;
-                    hit(le, 8, p);
+                    hit(le, od(id, "damage", 8), p);
                     le.setFireTicks(80);
                 }
                 p.getWorld().spawnParticle(Particle.FLAME, p.getLocation().add(fwd.clone().multiply(2)).add(0, 1, 0), 30, 1.5, 0.5, 1.5, 0.05);
@@ -1303,23 +1327,23 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
                 if (!ready(p, id, 6000)) return;
                 final Player lp = p;
                 Vector dir = p.getLocation().getDirection().normalize();
-                p.setVelocity(dir.multiply(1.2).setY(0.1));
+                p.setVelocity(dir.multiply(od("thornrapier", "launch-speed", 1.2)).setY(od("thornrapier", "launch-up", 0.1)));
                 Bukkit.getScheduler().runTaskLater(this, () -> {
-                    for (Entity en : lp.getWorld().getNearbyEntities(lp.getLocation(), 2.5, 2.5, 2.5)) {
+                    for (Entity en : lp.getWorld().getNearbyEntities(lp.getLocation(), od("thornrapier", "extra-radius", 2.5), 2.5, od("thornrapier", "extra-radius", 2.5))) {
                         if (!(en instanceof LivingEntity le) || en.equals(lp) || isFriendlyTo(lp, le)) continue;
-                        hit(le, 10, lp);
-                        le.addPotionEffect(new PotionEffect(PotionEffectType.POISON, 100, 0));
+                        hit(le, od("thornrapier", "extra-damage", 10), lp);
+                        le.addPotionEffect(new PotionEffect(PotionEffectType.POISON, (int) od(id, "effect-ticks", 100), (int) od(id, "effect-amp", 0)));
                         break;
                     }
                 }, 6L);
             }
             case "moonsplitter" -> {
                 if (!ready(p, id, 7000)) return;
-                for (Entity en : p.getWorld().getNearbyEntities(p.getLocation(), 5, 3, 5)) {
+                for (Entity en : p.getWorld().getNearbyEntities(p.getLocation(), od("moonsplitter", "extra-radius", 5), 3, od("moonsplitter", "extra-radius", 5))) {
                     if (!(en instanceof LivingEntity le) || en.equals(p) || isFriendlyTo(p, le)) continue;
-                    hit(le, 9, p);
+                    hit(le, od(id, "damage", 9), p);
                     Vector out = le.getLocation().toVector().subtract(p.getLocation().toVector()).setY(0.4);
-                    if (out.lengthSquared() > 0) le.setVelocity(out.normalize().multiply(0.9));
+                    if (out.lengthSquared() > 0) le.setVelocity(out.normalize().multiply(od("moonsplitter", "launch-speed", 0.9)));
                 }
                 p.getWorld().spawnParticle(Particle.SWEEP_ATTACK, p.getLocation().add(0, 1, 0), 20, 3, 0.5, 3, 0);
                 p.getWorld().playSound(p.getLocation(), Sound.ENTITY_PLAYER_ATTACK_SWEEP, 1f, 0.8f);
@@ -1329,12 +1353,12 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
                 if (fwd.lengthSquared() < 0.01) return;
                 fwd = fwd.normalize();
                 if (!ready(p, id, 9000)) return;
-                for (Entity en : p.getWorld().getNearbyEntities(p.getLocation(), 8, 3, 8)) {
+                for (Entity en : p.getWorld().getNearbyEntities(p.getLocation(), od("frostfang", "extra-radius", 8), 3, od("frostfang", "extra-radius", 8))) {
                     if (!(en instanceof LivingEntity le) || en.equals(p) || isFriendlyTo(p, le)) continue;
                     Vector to = le.getLocation().toVector().subtract(p.getLocation().toVector()).setY(0);
                     if (to.lengthSquared() == 0 || to.clone().normalize().dot(fwd) < 0.6) continue;
-                    hit(le, 6, p);
-                    le.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 100, 2));
+                    hit(le, od(id, "damage", 6), p);
+                    le.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, (int) od(id, "effect-ticks", 100), (int) od(id, "effect-amp", 2)));
                 }
                 p.getWorld().spawnParticle(Particle.SNOWFLAKE, p.getLocation().add(fwd.clone().multiply(4)).add(0, 1, 0), 60, 2.5, 0.8, 2.5, 0.05);
                 p.getWorld().playSound(p.getLocation(), Sound.BLOCK_GLASS_BREAK, 1f, 0.6f);
@@ -1347,9 +1371,9 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
                 if (!isClear(dest)) dest = start;
                 p.getWorld().spawnParticle(Particle.PORTAL, start.clone().add(0, 1, 0), 40, 0.5, 1, 0.5, 0.5);
                 p.teleport(dest);
-                for (Entity en : p.getWorld().getNearbyEntities(dest, 2.5, 2.5, 2.5)) {
+                for (Entity en : p.getWorld().getNearbyEntities(dest, od("voidcutter", "extra-radius", 2.5), 2.5, od("voidcutter", "extra-radius", 2.5))) {
                     if (!(en instanceof LivingEntity le) || en.equals(p) || isFriendlyTo(p, le)) continue;
-                    hit(le, 10, p);
+                    hit(le, od(id, "damage", 10), p);
                 }
                 p.getWorld().playSound(dest, Sound.ENTITY_ENDERMAN_TELEPORT, 1f, 0.8f);
             }
@@ -1360,9 +1384,9 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
                 }
                 if (!ready(p, id, 10000)) return;
                 p.setHealth(p.getHealth() - 4);
-                for (Entity en : p.getWorld().getNearbyEntities(p.getLocation(), 3, 2, 3)) {
+                for (Entity en : p.getWorld().getNearbyEntities(p.getLocation(), od("bloodletter", "extra-radius", 3), 2, od("bloodletter", "extra-radius", 3))) {
                     if (!(en instanceof LivingEntity le) || en.equals(p) || isFriendlyTo(p, le)) continue;
-                    hit(le, 12, p);
+                    hit(le, od(id, "damage", 12), p);
                 }
                 p.getWorld().spawnParticle(Particle.DAMAGE_INDICATOR, p.getLocation().add(0, 1, 0), 20, 1, 0.8, 1, 0.1);
                 p.getWorld().playSound(p.getLocation(), Sound.ENTITY_PLAYER_HURT, 1f, 0.7f);
@@ -1370,44 +1394,52 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
             case "sunder" -> {
                 if (!ready(p, id, 6000)) return;
                 Location c = p.getLocation().clone();
-                for (Entity en : p.getWorld().getNearbyEntities(c, 4, 2, 4)) {
+                for (Entity en : p.getWorld().getNearbyEntities(c, od("sunder", "extra-radius", 4), 2, od("sunder", "extra-radius", 4))) {
                     if (!(en instanceof LivingEntity le) || en.equals(p) || isFriendlyTo(p, le)) continue;
-                    hit(le, 7, p);
+                    hit(le, od(id, "damage", 7), p);
                     Vector out = le.getLocation().toVector().subtract(c.toVector()).setY(0.6);
-                    if (out.lengthSquared() > 0) le.setVelocity(out.normalize().multiply(0.7).setY(0.6));
+                    if (out.lengthSquared() > 0) le.setVelocity(out.normalize().multiply(od("sunder", "launch-speed", 0.7)).setY(od("sunder", "launch-up", 0.6)));
                 }
                 p.getWorld().spawnParticle(Particle.EXPLOSION, c, 3, 1, 0.2, 1, 0);
                 p.getWorld().playSound(c, Sound.ENTITY_GENERIC_EXPLODE, 1f, 0.7f);
             }
             case "crazyrolls" -> crazyRolls(p);
             case "gamblersfavourite" -> gamble(p);
-            case "voidfang" -> gearDash(p, "voidfang", 2.0, 8, 5000);
-            case "solstice" -> gearBurst(p, "solstice", 4.5, 11, 1.3, 9000);
-            case "glacierhalberd" -> gearAoe(p, "glacierhalberd", 5, PotionEffectType.SLOWNESS, 60, 3, 4, 10000);
-            case "embershort" -> gearCone(p, "embershort", 5, 8, 0, 6000);
-            case "runescythe" -> gearCone(p, "runescythe", 6, 7, 80, 7000);
-            case "thundercudgel" -> gearChain(p, "thundercudgel", 2, 10, 7, 8000);
-            case "duskblade" -> gearAoe(p, "duskblade", 4, PotionEffectType.DARKNESS, 60, 0, 4, 9000);
-            case "ironbulwark" -> gearMend(p, "ironbulwark", 3, 0, 11000);
-            case "hyperion" -> gearBurst(p, "hyperion", 4, 9, 0.8, 8000);
-            case "mistral" -> gearDash(p, "mistral", 1.8, 9, 6000);
-            case "obsidianfist" -> gearAoe(p, "obsidianfist", 4, PotionEffectType.SLOWNESS, 40, 2, 4, 9000);
-            case "starshard" -> gearAoe(p, "starshard", 10, PotionEffectType.GLOWING, 100, 0, 3, 8000);
-            case "cryptbone" -> gearBurst(p, "cryptbone", 3, 6, 0.2, 7000);
-            case "tempesthalberd" -> gearBurst(p, "tempesthalberd", 4, 6, 1.4, 8000);
-            case "bloodmoon" -> gearMend(p, "bloodmoon", 2, 200, 10000);
-            case "prismblade" -> gearBeam(p, "prismblade", 10, 6, 6000);
+            case "voidfang" -> gearDash(p, "voidfang", od("voidfang", "speed", 2.0), od("voidfang", "damage", 8), 5000);
+            case "solstice" -> gearBurst(p, "solstice", od("solstice", "radius", 4.5), od("solstice", "damage", 11), od("solstice", "knockback", 1.3), 9000);
+            case "glacierhalberd" -> gearAoe(p, "glacierhalberd", od("glacierhalberd", "radius", 5), PotionEffectType.SLOWNESS, (int) od("glacierhalberd", "ticks", 60), (int) od("glacierhalberd", "amplifier", 3), od("glacierhalberd", "damage", 4), 10000);
+            case "embershort" -> gearCone(p, "embershort", od("embershort", "range", 5), od("embershort", "damage", 8), (int) od("embershort", "slow-ticks", 0), 6000);
+            case "runescythe" -> gearCone(p, "runescythe", od("runescythe", "range", 6), od("runescythe", "damage", 7), (int) od("runescythe", "slow-ticks", 80), 7000);
+            case "thundercudgel" -> gearChain(p, "thundercudgel", (int) od("thundercudgel", "count", 2), od("thundercudgel", "range", 10), od("thundercudgel", "damage", 7), 8000);
+            case "duskblade" -> gearAoe(p, "duskblade", od("duskblade", "radius", 4), PotionEffectType.DARKNESS, (int) od("duskblade", "ticks", 60), (int) od("duskblade", "amplifier", 0), od("duskblade", "damage", 4), 9000);
+            case "ironbulwark" -> gearMend(p, "ironbulwark", od("ironbulwark", "hearts", 3), (int) od("ironbulwark", "regen-ticks", 0), 11000);
+            case "hyperion" -> gearBurst(p, "hyperion", od("hyperion", "radius", 4), od("hyperion", "damage", 9), od("hyperion", "knockback", 0.8), 8000);
+            case "mistral" -> gearDash(p, "mistral", od("mistral", "speed", 1.8), od("mistral", "damage", 9), 6000);
+            case "obsidianfist" -> gearAoe(p, "obsidianfist", od("obsidianfist", "radius", 4), PotionEffectType.SLOWNESS, (int) od("obsidianfist", "ticks", 40), (int) od("obsidianfist", "amplifier", 2), od("obsidianfist", "damage", 4), 9000);
+            case "starshard" -> gearAoe(p, "starshard", od("starshard", "radius", 10), PotionEffectType.GLOWING, (int) od("starshard", "ticks", 100), (int) od("starshard", "amplifier", 0), od("starshard", "damage", 3), 8000);
+            case "cryptbone" -> gearBurst(p, "cryptbone", od("cryptbone", "radius", 3), od("cryptbone", "damage", 6), od("cryptbone", "knockback", 0.2), 7000);
+            case "tempesthalberd" -> gearBurst(p, "tempesthalberd", od("tempesthalberd", "radius", 4), od("tempesthalberd", "damage", 6), od("tempesthalberd", "knockback", 1.4), 8000);
+            case "bloodmoon" -> gearMend(p, "bloodmoon", od("bloodmoon", "hearts", 2), (int) od("bloodmoon", "regen-ticks", 200), 10000);
+            case "prismblade" -> gearBeam(p, "prismblade", od("prismblade", "range", 10), od("prismblade", "damage", 6), 6000);
             case "boomhammer" -> thunderSlam(p);
             case "spearlance" -> sunlance(p);
             case "duskscythe" -> reapingArc(p);
             case "thornwhip" -> lashChain(p);
             case "frostglaive" -> frostZone(p);
+            case "octopus" -> gearAoe(p, "octopus", od("octopus", "radius", 6), PotionEffectType.BLINDNESS, (int) (od("octopus", "duration-seconds", 6) * 20), 0, od("octopus", "damage", 2), 10000);
+            case "sharktooth" -> gearDash(p, "sharktooth", od("sharktooth", "dash-speed", 1.8), od("sharktooth", "damage", 8), 7000);
+            case "kraken" -> gearAoe(p, "kraken", od("kraken", "radius", 6), PotionEffectType.SLOWNESS, (int) (od("kraken", "duration-seconds", 4) * 20), 1, od("kraken", "damage", 5), 12000);
+            case "poseidon" -> gearBurst(p, "poseidon", od("poseidon", "radius", 7), od("poseidon", "damage", 9), od("poseidon", "knockback", 1.4), 15000);
+            case "tsunami" -> gearBurst(p, "tsunami", od("tsunami", "radius", 8), od("tsunami", "damage", 6), od("tsunami", "knockback", 2.0), 20000);
+            case "leviathan" -> gearCone(p, "leviathan", od("leviathan", "range", 6), od("leviathan", "damage", 8), (int) od("leviathan", "slow-ticks", 60), 8000);
+            case "anchor" -> gearBurst(p, "anchor", od("anchor", "radius", 4), od("anchor", "damage", 10), od("anchor", "knockback", 0.3), 10000);
+            case "conch" -> gearCone(p, "conch", od("conch", "range", 6), od("conch", "damage", 7), (int) od("conch", "slow-ticks", 40), 7000);
             case "ironhalberd" -> cleavingSpin(p);
             case "tidecaller" -> maelstrom(p);
             case "bloodsickle" -> hemorrhage(p);
             case "nagina" -> shadowSlash(p);
             case "chainflail" -> chainWhirl(p);
-            case "lanternstaff" -> gearBeam(p, "lanternstaff", 25, 9, 4000);
+            case "lanternstaff" -> gearBeam(p, "lanternstaff", od("lanternstaff", "range", 25), od("lanternstaff", "damage", 9), 4000);
             case "stonepike" -> bedrockStab(p);
             case "cleaver" -> shatterSlash(p);
             case "wardenclaw" -> sonicClaw(p);
@@ -1432,7 +1464,7 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
             case "arccaster" -> {
                 if (!ready(p, id, 6000)) return;
                 List<LivingEntity> chain = new ArrayList<>();
-                LivingEntity cur = nearestEnemy(p.getLocation(), 12, p);
+                LivingEntity cur = nearestEnemy(p.getLocation(), od(id, "range", 12), p);
                 while (cur != null && chain.size() < 4) {
                     chain.add(cur);
                     cur = nextChain(cur, chain);
@@ -1448,16 +1480,16 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
                             w.spawnParticle(Particle.CRIT, pt, 3, 0.1, 0.1, 0.1, 0);
                         }
                         w.strikeLightningEffect(target.getLocation());
-                        hit(target, 10, p);
+                        hit(target, od(id, "damage", 10), p);
                     }, i * 4L);
                 }
             }
             case "soulreaver" -> {
                 if (!ready(p, id, 12000)) return;
                 int drained = 0;
-                for (Entity en : p.getWorld().getNearbyEntities(p.getLocation(), 4, 3, 4)) {
+                for (Entity en : p.getWorld().getNearbyEntities(p.getLocation(), od("soulreaver", "extra-radius", 4), 3, od("soulreaver", "extra-radius", 4))) {
                     if (!(en instanceof LivingEntity le) || en.equals(p) || isFriendlyTo(p, le)) continue;
-                    hit(le, 12, p);
+                    hit(le, od(id, "damage", 12), p);
                     drained++;
                 }
                 if (drained > 0) p.setHealth(Math.min(p.getMaxHealth(), p.getHealth() + Math.min(12, drained * 6)));
@@ -1467,14 +1499,14 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
             case "stormfang" -> {
                 if (!ready(p, id, 9000)) return;
                 java.util.List<LivingEntity> foes = new java.util.ArrayList<>();
-                for (Entity en : p.getWorld().getNearbyEntities(p.getLocation(), 8, 4, 8)) {
+                for (Entity en : p.getWorld().getNearbyEntities(p.getLocation(), od(id, "radius", 8), 4, od(id, "radius-2", 8))) {
                     if (en instanceof LivingEntity le && !en.equals(p) && !isFriendlyTo(p, le)) foes.add(le);
                 }
                 foes.sort(java.util.Comparator.comparingDouble(le -> le.getLocation().distanceSquared(p.getLocation())));
                 for (int i = 0; i < Math.min(3, foes.size()); i++) {
                     LivingEntity target = foes.get(i);
                     target.getWorld().strikeLightningEffect(target.getLocation());
-                    hit(target, 6, p);
+                    hit(target, od(id, "damage", 6), p);
                 }
             }
             case "venomtooth" -> {
@@ -1483,10 +1515,10 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
                 final Location cloud = p.getLocation().clone();
                 for (int t = 0; t < 6; t++) {
                     Bukkit.getScheduler().runTaskLater(this, () -> {
-                        for (Entity en : cloud.getWorld().getNearbyEntities(cloud, 3, 2, 3)) {
+                        for (Entity en : cloud.getWorld().getNearbyEntities(cloud, od("venomtooth", "extra-radius", 3), 2, od("venomtooth", "extra-radius", 3))) {
                             if (!(en instanceof LivingEntity le) || en.equals(vp) || isFriendlyTo(vp, le)) continue;
-                            le.addPotionEffect(new PotionEffect(PotionEffectType.POISON, 40, 0));
-                            hit(le, 1, vp);
+                            le.addPotionEffect(new PotionEffect(PotionEffectType.POISON, (int) od(id, "effect-ticks", 40), (int) od(id, "effect-amp", 0)));
+                            hit(le, od("venomtooth", "extra-damage", 1), vp);
                         }
                         cloud.getWorld().spawnParticle(Particle.SPORE_BLOSSOM_AIR, cloud.clone().add(0, 0.5, 0), 25, 2.5, 0.4, 2.5, 0.01);
                     }, t * 20L);
@@ -1498,9 +1530,9 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
                 final Player bp = p;
                 for (int pulse = 0; pulse < 2; pulse++) {
                     Bukkit.getScheduler().runTaskLater(this, () -> {
-                        for (Entity en : bp.getWorld().getNearbyEntities(bp.getLocation(), 3, 2, 3)) {
+                        for (Entity en : bp.getWorld().getNearbyEntities(bp.getLocation(), od(id, "radius", 3), 2, od(id, "radius-2", 3))) {
                             if (!(en instanceof LivingEntity le) || en.equals(bp) || isFriendlyTo(bp, le)) continue;
-                            hit(le, 5, bp);
+                            hit(le, od(id, "damage", 5), bp);
                         }
                         bp.getWorld().spawnParticle(Particle.SWEEP_ATTACK, bp.getLocation().add(0, 1, 0), 15, 2, 0.5, 2, 0);
                     }, pulse * 10L);
@@ -1530,10 +1562,10 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
             }
             case "magnetrod" -> {
                 if (!ready(p, id, 3000)) return;
-                for (Entity en : w.getNearbyEntities(p.getLocation(), 12, 5, 12)) {
+                for (Entity en : w.getNearbyEntities(p.getLocation(), od(id, "radius", 12), 5, od(id, "radius-2", 12))) {
                     if (!(en instanceof LivingEntity le) || en.equals(p)) continue;
                     Vector pull = p.getLocation().toVector().subtract(le.getLocation().toVector());
-                    if (pull.lengthSquared() > 0) le.setVelocity(pull.normalize().multiply(1.8));
+                    if (pull.lengthSquared() > 0) le.setVelocity(pull.normalize().multiply(od(id, "pull-strength", 1.8)));
                 }
             }
             case "blizzardorb" -> {
@@ -1541,25 +1573,25 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
                 Location c = p.getLocation();
                 w.spawnParticle(Particle.SNOWFLAKE, c, 120, 5, 1.5, 5, 0.05);
                 w.playSound(c, Sound.BLOCK_GLASS_BREAK, 1.5f, 0.6f);
-                for (Entity en : w.getNearbyEntities(c, 9, 4, 9)) {
+                for (Entity en : w.getNearbyEntities(c, od("blizzardorb", "extra-radius", 9), 4, od("blizzardorb", "extra-radius", 9))) {
                     if (!(en instanceof LivingEntity le) || en.equals(p) || isFriendlyTo(p, le)) continue;
-                    le.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 120, 9));
-                    le.addPotionEffect(new PotionEffect(PotionEffectType.MINING_FATIGUE, 120, 2));
-                    hit(le, 4, p);
+                    le.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, (int) od(id, "effect-ticks", 120), (int) od(id, "effect-amp", 9)));
+                    le.addPotionEffect(new PotionEffect(PotionEffectType.MINING_FATIGUE, (int) od(id, "effect-ticks-2", 120), (int) od(id, "effect-amp-2", 2)));
+                    hit(le, od(id, "damage", 4), p);
                 }
                 particleRing(c.clone().add(0, 0.2, 0), 9, Particle.SNOWFLAKE);
             }
             case "healingcharm" -> {
                 if (!ready(p, id, 60000)) return;
-                p.setHealth(Math.min(p.getMaxHealth(), p.getHealth() + 16));
+                p.setHealth(Math.min(p.getMaxHealth(), p.getHealth() + od(id, "heal", 16)));
                 cleanse(p);
-                p.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, 200, 2));
+                p.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, (int) od(id, "effect-ticks", 200), (int) od(id, "effect-amp", 2)));
                 w.spawnParticle(Particle.HEART, p.getLocation().add(0, 1, 0), 8, 0.5, 0.5, 0.5, 0);
             }
             case "shadowcloak" -> {
                 if (!ready(p, id, 60000)) return;
-                p.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 400, 0));
-                p.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 400, 1));
+                p.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, (int) od(id, "effect-ticks", 400), (int) od(id, "effect-amp", 0)));
+                p.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, (int) od(id, "effect-ticks-2", 400), (int) od(id, "effect-amp-2", 1)));
                 p.sendMessage(ChatColor.DARK_GRAY + "Shadow Cloak: 20 seconds of invisibility.");
             }
             case "golembell" -> {
@@ -1590,11 +1622,11 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
                     Bukkit.getScheduler().runTaskLater(this, () -> {
                         Location front = origin.clone().add(fwd.clone().multiply(s * 1.2));
                         w.spawnParticle(Particle.SONIC_BOOM, front, 1, 0, 0, 0, 0);
-                        for (Entity en : w.getNearbyEntities(front, 1.8, 1.8, 1.8)) {
+                        for (Entity en : w.getNearbyEntities(front, od(id, "radius", 1.8), 1.8, od(id, "radius-2", 1.8))) {
                             if (!(en instanceof LivingEntity hitMob) || en.equals(p) || hitIds.contains(en.getUniqueId())) continue;
                             hitIds.add(en.getUniqueId());
-                            hit(hitMob, 150, p);
-                            hitMob.setVelocity(fwd.clone().multiply(2.4).setY(0.6));
+                            hit(hitMob, od(id, "damage", 150), p);
+                            hitMob.setVelocity(fwd.clone().multiply(od("sonichorn", "launch-speed", 2.4)).setY(od("sonichorn", "launch-up", 0.6)));
                         }
                     }, step);
                 }
@@ -1602,14 +1634,14 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
             case "stormheart" -> {
                 if (!ready(p, id, 20000)) return;
                 List<LivingEntity> targets = new ArrayList<>();
-                for (Entity en : w.getNearbyEntities(p.getLocation(), 25, 25, 25)) {
+                for (Entity en : w.getNearbyEntities(p.getLocation(), od(id, "radius", 25), 25, od(id, "radius-2", 25))) {
                     if (en instanceof LivingEntity le && !(en instanceof Player)) targets.add(le);
                 }
                 Collections.shuffle(targets, rnd);
                 for (int i = 0; i < Math.min(5, targets.size()); i++) {
                     Location tl = targets.get(i).getLocation();
                     w.strikeLightningEffect(tl);
-                    hit(targets.get(i), 20, p);
+                    hit(targets.get(i), od(id, "damage", 20), p);
                 }
             }
             case "phasefruit" -> {
@@ -1638,7 +1670,7 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
                 dest.setPitch(p.getLocation().getPitch());
                 w.spawnParticle(Particle.PORTAL, p.getLocation().add(0, 1, 0), 30, 0.3, 0.6, 0.3, 0.1);
                 p.teleport(dest);
-                p.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 40, 1));
+                p.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, (int) od(id, "effect-ticks", 40), (int) od(id, "effect-amp", 1)));
                 guard(p, 40);
                 w.spawnParticle(Particle.PORTAL, dest.clone().add(0, 1, 0), 30, 0.3, 0.6, 0.3, 0.1);
             }
@@ -1649,13 +1681,13 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
                 final Vector f = fwd.normalize();
                 final Location origin = p.getLocation().clone();
                 int hits = 0;
-                for (Entity en : w.getNearbyEntities(origin, 8, 4, 8)) {
+                for (Entity en : w.getNearbyEntities(origin, od(id, "radius", 8), 4, od(id, "radius-2", 8))) {
                     if (!(en instanceof LivingEntity le) || en.equals(p) || isFriendlyTo(p, le)) continue;
                     Vector to = le.getLocation().toVector().subtract(origin.toVector()).setY(0);
                     if (to.lengthSquared() == 0) continue;
                     if (to.normalize().dot(f) > 0.2) {
-                        le.damage(20, p);
-                        le.setVelocity(f.clone().multiply(0.6).setY(0.3));
+                        le.damage(od(id, "damage", 20), p);
+                        le.setVelocity(f.clone().multiply(od("voidscythe", "launch-speed", 0.6)).setY(od("voidscythe", "launch-up", 0.3)));
                         hits++;
                     }
                 }
@@ -1699,13 +1731,13 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
                 Vector pull = target.clone().subtract(p.getLocation().toVector());
                 double dist = pull.length();
                 if (dist < 1.5) return;
-                p.setVelocity(pull.normalize().multiply(Math.min(2.6, dist * 0.3)).setY(0.6));
+                p.setVelocity(pull.normalize().multiply(Math.min(2.6, dist * 0.3)).setY(od("grapple", "launch-up", 0.6)));
                 guard(p, 100);
                 w.playSound(p.getLocation(), Sound.ENTITY_FISHING_BOBBER_THROW, 1f, 1f);
             }
             case "starfall" -> {
                 if (!ready(p, id, 8000)) return;
-                Location center = aimPoint(p, 20);
+                Location center = aimPoint(p, od(id, "range", 20));
                 for (int i = 0; i < 5; i++) {
                     final Location strike = center.clone().add(rand(-3, 3), 0, rand(-3, 3));
                     long base = i * 6L;
@@ -1721,12 +1753,12 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
             }
             case "venom" -> {
                 if (!ready(p, id, 4000)) return;
-                p.setVelocity(look.clone().multiply(1.2).setY(0.2));
+                p.setVelocity(look.clone().multiply(od("venom", "launch-speed", 1.2)).setY(od("venom", "launch-up", 0.2)));
                 guard(p, 30);
-                for (Entity en : w.getNearbyEntities(p.getLocation(), 2.5, 2, 2.5)) {
+                for (Entity en : w.getNearbyEntities(p.getLocation(), od("venom", "extra-radius", 2.5), 2, od("venom", "extra-radius", 2.5))) {
                     if (!(en instanceof LivingEntity le) || en.equals(p)) continue;
                     venomTouch(le);
-                    hit(le, 6, p);
+                    hit(le, od(id, "damage", 6), p);
                 }
                 w.spawnParticle(Particle.SWEEP_ATTACK, p.getLocation().add(0, 1, 0), 3, 0.5, 0.5, 0.5, 0);
             }
@@ -1734,7 +1766,7 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
                 if (!ready(p, id, 8000)) return;
                 PhoenixState call = new PhoenixState();
                 call.call = true;
-                p.setVelocity(new Vector(0, 1.4, 0));
+                p.setVelocity(new Vector(0, od("glacier", "launch-up", 1.4), 0));
                 p.setFallDistance(0f);
                 phoenix.put(p.getUniqueId(), call);
                 w.playSound(p.getLocation(), Sound.ENTITY_ENDER_DRAGON_FLAP, 1f, 0.8f);
@@ -1755,10 +1787,10 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
                         p.getWorld().spawnParticle(Particle.SOUL, orb, 1, 0, 0, 0, 0);
                     }
                     if (t[0] % 20 == 0) {
-                        LivingEntity target = nearestEnemy(p.getLocation(), 12, p);
+                        LivingEntity target = nearestEnemy(p.getLocation(), od(id, "range", 12), p);
                         if (target != null) {
                             p.getWorld().strikeLightningEffect(target.getLocation());
-                            hit(target, 7, p);
+                            hit(target, od(id, "damage", 7), p);
                         }
                     }
                     t[0]++;
@@ -1866,7 +1898,7 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
         if (hurl && mob != null) {
             Vector look = p.getEyeLocation().getDirection().normalize();
             if (mob instanceof Player target) guard(target, 60);
-            mob.setVelocity(look.multiply(2.2).setY(0.3));
+            mob.setVelocity(look.multiply(hv("release", "speed", 2.2)).setY(hv("release", "up", 0.3)));
             p.sendMessage(ChatColor.YELLOW + "Hurled!");
         } else {
             p.sendMessage(ChatColor.YELLOW + "Released.");
@@ -2093,7 +2125,7 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
                         && !isFriendlyTo(sp, snowed)) {
                     hit(snowed, 7, sp);
                     Vector kb = pr.getVelocity();
-                    if (kb.lengthSquared() > 0) snowed.setVelocity(kb.normalize().multiply(1.2).setY(0.4));
+                    if (kb.lengthSquared() > 0) snowed.setVelocity(kb.normalize().multiply(hv("onProjectileHit", "speed", 1.2)).setY(hv("onProjectileHit", "up", 0.4)));
                     String key = sp.getUniqueId() + ":" + snowed.getUniqueId();
                     int count = snowHits.merge(key, 1, Integer::sum);
                     if (count >= 3) {
@@ -2420,17 +2452,17 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
 
     private void tidalWave(Player p) {
         if (!ready(p, "g_wave", 4000)) return;
-        Vector fwd = p.getLocation().getDirection().setY(0);
+        Vector fwd = p.getLocation().getDirection().setY(hv("tidalWave", "up", 0));
         if (fwd.lengthSquared() < 0.01) return;
         fwd = fwd.normalize();
         for (Entity en : p.getWorld().getNearbyEntities(p.getLocation(), 8, 3, 8)) {
             if (!(en instanceof LivingEntity le) || en.equals(p) || isFriendlyTo(p, le)) continue;
-            Vector to = le.getLocation().toVector().subtract(p.getLocation().toVector()).setY(0);
+            Vector to = le.getLocation().toVector().subtract(p.getLocation().toVector()).setY(hv("tidalWave", "up-2", 0));
             if (to.lengthSquared() == 0 || to.clone().normalize().dot(fwd) < 0.5) continue;
             hit(le, 8, p);
-            le.setVelocity(fwd.clone().multiply(0.8).setY(0.3));
+            le.setVelocity(fwd.clone().multiply(hv("tidalWave", "speed", 0.8)).setY(hv("tidalWave", "up-3", 0.3)));
         }
-        p.getWorld().spawnParticle(Particle.SPLASH, p.getLocation().add(fwd.clone().multiply(3)).add(0, 1, 0), 60, 2, 1, 2, 0.1);
+        p.getWorld().spawnParticle(Particle.SPLASH, p.getLocation().add(fwd.clone().multiply(hv("tidalWave", "speed-2", 3))).add(0, 1, 0), 60, 2, 1, 2, 0.1);
         p.getWorld().playSound(p.getLocation(), Sound.ENTITY_PLAYER_SPLASH, 1f, 0.8f);
     }
 
@@ -2438,8 +2470,8 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
         if (!ready(p, "g_whirl", 8000)) return;
         for (Entity en : p.getWorld().getNearbyEntities(p.getLocation(), 6, 3, 6)) {
             if (!(en instanceof LivingEntity le) || en.equals(p) || isFriendlyTo(p, le)) continue;
-            Vector pull = p.getLocation().toVector().subtract(le.getLocation().toVector()).setY(0.2);
-            if (pull.lengthSquared() > 0) le.setVelocity(pull.normalize().multiply(1.0));
+            Vector pull = p.getLocation().toVector().subtract(le.getLocation().toVector()).setY(hv("whirlpool", "up", 0.2));
+            if (pull.lengthSquared() > 0) le.setVelocity(pull.normalize().multiply(hv("whirlpool", "speed", 1.0)));
             le.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 60, 1));
         }
         p.getWorld().spawnParticle(Particle.BUBBLE_POP, p.getLocation().add(0, 1, 0), 50, 3, 1, 3, 0.2);
@@ -2449,7 +2481,7 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
     private void riptide(Player p) {
         if (!ready(p, "g_riptide", 6000)) return;
         Vector dir = p.getLocation().getDirection().normalize();
-        p.setVelocity(dir.clone().multiply(1.6).setY(0.1));
+        p.setVelocity(dir.clone().multiply(hv("riptide", "speed", 1.6)).setY(hv("riptide", "up", 0.1)));
         final Player rp = p;
         Bukkit.getScheduler().runTaskLater(this, () -> {
             for (Entity en : rp.getWorld().getNearbyEntities(rp.getLocation(), 2.5, 2.5, 2.5)) {
@@ -2485,7 +2517,7 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
         for (Entity en : c.getWorld().getNearbyEntities(c, 4, 2, 4)) {
             if (!(en instanceof LivingEntity le) || en.equals(p) || isFriendlyTo(p, le)) continue;
             hit(le, 6, p);
-            le.setVelocity(new Vector(0, 0.7, 0));
+            le.setVelocity(new Vector(0, hv("quakeStomp", "up", 0.7), 0));
         }
         c.getWorld().spawnParticle(Particle.EXPLOSION, c, 3, 1, 0.2, 1, 0);
         c.getWorld().playSound(c, Sound.ENTITY_IRON_GOLEM_STEP, 1.5f, 0.6f);
@@ -2622,8 +2654,8 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
         Location c = p.getLocation().clone();
         for (Entity en : c.getWorld().getNearbyEntities(c, 8, 4, 8)) {
             if (!(en instanceof LivingEntity le) || en.equals(p) || isFriendlyTo(p, le)) continue;
-            Vector pull = c.toVector().subtract(le.getLocation().toVector()).setY(0.2);
-            if (pull.lengthSquared() > 0) le.setVelocity(pull.normalize().multiply(1.2));
+            Vector pull = c.toVector().subtract(le.getLocation().toVector()).setY(hv("gravityPull", "up", 0.2));
+            if (pull.lengthSquared() > 0) le.setVelocity(pull.normalize().multiply(hv("gravityPull", "speed", 1.2)));
         }
         c.getWorld().spawnParticle(Particle.PORTAL, c.clone().add(0, 1, 0), 60, 3, 1, 3, 0.4);
         c.getWorld().playSound(c, Sound.ENTITY_ENDERMAN_TELEPORT, 1f, 0.5f);
@@ -2662,7 +2694,7 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
             for (Entity en : c.getWorld().getNearbyEntities(c, 10, 6, 10)) {
                 if (!(en instanceof LivingEntity le) || en.equals(p) || isFriendlyTo(p, le)) continue;
                 Vector pull = c.toVector().subtract(le.getLocation().toVector());
-                if (pull.lengthSquared() > 0.5) le.setVelocity(pull.normalize().multiply(0.5));
+                if (pull.lengthSquared() > 0.5) le.setVelocity(pull.normalize().multiply(hv("singularity", "speed", 0.5)));
                 if (ticks[0] % 10 == 0) hit(le, 2, p);
             }
             c.getWorld().spawnParticle(Particle.PORTAL, c.clone().add(0, 1, 0), 30, 2, 1, 2, 0.5);
@@ -2671,6 +2703,61 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
     }
 
     // ----- Melee and staff abilities (no bows or crossbows) -----
+
+    /** A second passive for each ocean item. It runs on every melee hit with that item. */
+    private void oceanExtraPassive(Player p, LivingEntity le, String id) {
+        switch (id) {
+            case "octopus" -> {
+                if (rnd.nextDouble() < od("octopus", "passive-chance", 0.2)) le.addPotionEffect(new PotionEffect(PotionEffectType.POISON, (int) od("octopus", "passive-ticks", 60), (int) od("octopus", "passive-amp", 0)));
+            }
+            case "sharktooth" -> {
+                int count = hitCount.merge(p.getUniqueId(), 1, Integer::sum);
+                if (count % 5 == 0) p.setHealth(Math.min(p.getMaxHealth(), p.getHealth() + 2));
+            }
+            case "kraken" -> {
+                if (rnd.nextDouble() < od("kraken", "passive-chance", 0.1)) {
+                    hit(le, od("kraken", "passive-damage", 3), p);
+                    le.addPotionEffect(new PotionEffect(PotionEffectType.WEAKNESS, (int) od("kraken", "passive-ticks", 40), (int) od("kraken", "passive-amp", 0)));
+                }
+            }
+            case "poseidon" -> {
+                if (rnd.nextDouble() < od("poseidon", "passive-chance", 0.2)) {
+                    le.setVelocity(new Vector(0, od("poseidon", "launch-up", 0.4), 0));
+                    le.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, (int) od("poseidon", "passive-ticks", 40), (int) od("poseidon", "passive-amp", 0)));
+                }
+            }
+            case "tsunami" -> {
+                if (rnd.nextDouble() < od("tsunami", "passive-chance", 0.2)) le.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, (int) od("tsunami", "passive-ticks", 60), (int) od("tsunami", "passive-amp", 1)));
+            }
+            case "leviathan" -> {
+                if (rnd.nextDouble() < od("leviathan", "passive-chance", 0.2)) p.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, (int) od("leviathan", "passive-ticks", 40), (int) od("leviathan", "passive-amp", 0)));
+            }
+            case "anchor" -> {
+                if (rnd.nextDouble() < od("anchor", "passive-chance", 0.1)) le.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, (int) od("anchor", "passive-ticks", 40), (int) od("anchor", "passive-amp", 1)));
+            }
+            case "conch" -> {
+                if (rnd.nextDouble() < od("conch", "passive-chance", 0.15)) le.addPotionEffect(new PotionEffect(PotionEffectType.NAUSEA, (int) od("conch", "passive-ticks", 40), (int) od("conch", "passive-amp", 0)));
+            }
+            default -> { }
+        }
+    }
+
+    static final Set<String> OCEAN_IDS = Set.of("octopus", "sharktooth", "kraken", "poseidon", "tsunami", "leviathan", "anchor", "conch");
+
+    /** Sneak + right-click ability for the ocean items. Each has its own cooldown. */
+    private void oceanSecondary(Player p, String id) {
+        switch (id) {
+            case "octopus" -> gearPull(p, "octopus2", od("octopus", "pull-radius", 8), od("octopus", "pull-strength", 1.0), 9000);
+            case "sharktooth" -> gearMend(p, "sharktooth2", od("sharktooth", "heal-hearts", 2), 100, 10000);
+            case "kraken" -> gearPull(p, "kraken2", od("kraken", "pull-radius", 8), od("kraken", "pull-strength", 1.4), 12000);
+            case "poseidon" -> gearBeam(p, "poseidon2", od("poseidon", "beam-range", 16), od("poseidon", "beam-damage", 10), 12000);
+            case "tsunami" -> gearDash(p, "tsunami2", od("tsunami", "dash-speed", 2.4), od("tsunami", "dash-damage", 5), 15000);
+            case "leviathan" -> gearBuff(p, "leviathan2", PotionEffectType.DOLPHINS_GRACE, (int) od("leviathan", "buff-ticks", 200), 0, 15000);
+            case "anchor" -> gearChain(p, "anchor2", (int) od("anchor", "chain-count", 3), od("anchor", "chain-range", 8), od("anchor", "chain-damage", 4), 12000);
+            case "conch" -> gearAoe(p, "conch2", od("conch", "siren-radius", 6), PotionEffectType.NAUSEA, (int) od("conch", "siren-ticks", 100), 0, 0, 14000);
+            default -> { }
+        }
+    }
 
     private void gearBurst(Player p, String id, double radius, double dmg, double kb, long cd) {
         if (!ready(p, id, cd)) return;
@@ -2704,7 +2791,7 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
     private void gearDash(Player p, String id, double speed, double dmg, long cd) {
         if (!ready(p, id, cd)) return;
         Vector dir = p.getLocation().getDirection().normalize();
-        p.setVelocity(dir.clone().multiply(speed).setY(0.1));
+        p.setVelocity(dir.clone().multiply(speed).setY(hv("gearDash", "up", 0.1)));
         final Player dp = p;
         Bukkit.getScheduler().runTaskLater(this, () -> {
             for (Entity en : dp.getWorld().getNearbyEntities(dp.getLocation(), 2.5, 2.5, 2.5)) {
@@ -2799,9 +2886,9 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
 
     private boolean inPassive = false;
 
-    static final double ABILITY_DAMAGE_MULT = 1.25;
+    static final double ABILITY_DAMAGE_MULT = 1.0;
 
-    private static final String[] ABILITY_ITEM_IDS = {"unoreverse", "boomhammer", "spearlance", "duskscythe", "thornwhip", "frostglaive", "ironhalberd", "tidecaller", "bloodsickle", "nagina", "chainflail", "lanternstaff", "stonepike", "cleaver", "wardenclaw", "frostlance", "emberpike", "stormhalberd", "hexscythe", "windpike", "ironmaul", "ghostglaive", "dawnhalberd", "tidallance", "bloomstaff", "moonblade", "echohammer", "gravelglaive", "eclipsescythe", "stormstaff", "soulsickle", "emberglaive", "wardenspear", "hyperion", "mistral", "obsidianfist", "starshard", "cryptbone", "tempesthalberd", "bloodmoon", "prismblade", "voidfang", "solstice", "glacierhalberd", "embershort", "runescythe", "thundercudgel", "duskblade", "ironbulwark"};
+    private static final String[] ABILITY_ITEM_IDS = {"leviathan", "anchor", "conch", "octopus", "sharktooth", "kraken", "poseidon", "tsunami", "unoreverse", "boomhammer", "spearlance", "duskscythe", "thornwhip", "frostglaive", "ironhalberd", "tidecaller", "bloodsickle", "nagina", "chainflail", "lanternstaff", "stonepike", "cleaver", "wardenclaw", "frostlance", "emberpike", "stormhalberd", "hexscythe", "windpike", "ironmaul", "ghostglaive", "dawnhalberd", "tidallance", "bloomstaff", "moonblade", "echohammer", "gravelglaive", "eclipsescythe", "stormstaff", "soulsickle", "emberglaive", "wardenspear", "hyperion", "mistral", "obsidianfist", "starshard", "cryptbone", "tempesthalberd", "bloodmoon", "prismblade", "voidfang", "solstice", "glacierhalberd", "embershort", "runescythe", "thundercudgel", "duskblade", "ironbulwark"};
     private static final String[] GEM_PASSIVE_IDS = {"tide", "stonefist", "spectral", "verdant", "gravity", "blizzard", "nightmare", "thunder", "wind", "inferno", "atomic", "warden", "yinyang", "eclipse", "undead"};
     private static final java.util.List<String> NEW_GEM_PASSIVES = java.util.List.of("tide", "stonefist", "spectral", "verdant", "gravity");
 
@@ -2814,12 +2901,20 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
             case "duskscythe" -> reapingArc(p);
             case "thornwhip" -> lashChain(p);
             case "frostglaive" -> frostZone(p);
+            case "octopus" -> gearAoe(p, "octopus", od("octopus", "radius", 6), PotionEffectType.BLINDNESS, (int) (od("octopus", "duration-seconds", 6) * 20), 0, od("octopus", "damage", 2), 10000);
+            case "sharktooth" -> gearDash(p, "sharktooth", od("sharktooth", "dash-speed", 1.8), od("sharktooth", "damage", 8), 7000);
+            case "kraken" -> gearAoe(p, "kraken", od("kraken", "radius", 6), PotionEffectType.SLOWNESS, (int) (od("kraken", "duration-seconds", 4) * 20), 1, od("kraken", "damage", 5), 12000);
+            case "poseidon" -> gearBurst(p, "poseidon", od("poseidon", "radius", 7), od("poseidon", "damage", 9), od("poseidon", "knockback", 1.4), 15000);
+            case "tsunami" -> gearBurst(p, "tsunami", od("tsunami", "radius", 8), od("tsunami", "damage", 6), od("tsunami", "knockback", 2.0), 20000);
+            case "leviathan" -> gearCone(p, "leviathan", od("leviathan", "range", 6), od("leviathan", "damage", 8), (int) od("leviathan", "slow-ticks", 60), 8000);
+            case "anchor" -> gearBurst(p, "anchor", od("anchor", "radius", 4), od("anchor", "damage", 10), od("anchor", "knockback", 0.3), 10000);
+            case "conch" -> gearCone(p, "conch", od("conch", "range", 6), od("conch", "damage", 7), (int) od("conch", "slow-ticks", 40), 7000);
             case "ironhalberd" -> cleavingSpin(p);
             case "tidecaller" -> maelstrom(p);
             case "bloodsickle" -> hemorrhage(p);
             case "nagina" -> shadowSlash(p);
             case "chainflail" -> chainWhirl(p);
-            case "lanternstaff" -> gearBeam(p, "lanternstaff", 25, 9, 4000);
+            case "lanternstaff" -> gearBeam(p, "lanternstaff", od("lanternstaff", "range", 25), od("lanternstaff", "damage", 9), 4000);
             case "stonepike" -> bedrockStab(p);
             case "cleaver" -> shatterSlash(p);
             case "wardenclaw" -> sonicClaw(p);
@@ -2860,7 +2955,7 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
                     hit(le, 2, p);
                 }
             }
-            case "wind" -> le.setVelocity(new Vector(0, 0.5, 0));
+            case "wind" -> le.setVelocity(new Vector(0, getConfig().getDouble("creatures.ability.WIND.lift", 0.5), 0));
             case "inferno" -> le.setFireTicks(40);
             case "atomic" -> hit(le, 1, p);
             case "warden" -> le.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 20, 0));
@@ -2872,7 +2967,7 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
     }
 
 
-    private static final String[] RANDOM_PASSIVES = {"boomhammer", "spearlance", "duskscythe", "thornwhip",
+    private static final String[] RANDOM_PASSIVES = {"leviathan", "anchor", "conch", "octopus", "sharktooth", "kraken", "poseidon", "tsunami", "boomhammer", "spearlance", "duskscythe", "thornwhip",
             "frostglaive", "ironhalberd", "tidecaller", "bloodsickle", "frostlance", "stormhalberd", "hexscythe",
             "ironmaul", "ghostglaive", "dawnhalberd", "moonblade", "soulsickle", "emberpike", "windpike", "tidallance",
             "gravelglaive", "echohammer", "eclipsescythe", "stormstaff", "emberglaive", "wardenspear", "bloomstaff",
@@ -2921,15 +3016,15 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
 
     private void thunderSlam(Player p) {
         if (!ready(p, "boomhammer", 9000)) return;
-        p.setVelocity(new Vector(0, 1.0, 0));
+        p.setVelocity(new Vector(0, hv("thunderSlam", "up", 1.0), 0));
         final Player sp = p;
         Bukkit.getScheduler().runTaskLater(this, () -> {
             Location c = sp.getLocation().clone();
             for (Entity en : c.getWorld().getNearbyEntities(c, 5, 3, 5)) {
                 if (!(en instanceof LivingEntity le) || en.equals(sp) || isFriendlyTo(sp, le)) continue;
                 hit(le, 14, sp);
-                Vector out = le.getLocation().toVector().subtract(c.toVector()).setY(0.6);
-                if (out.lengthSquared() > 0) le.setVelocity(out.normalize().multiply(1.2));
+                Vector out = le.getLocation().toVector().subtract(c.toVector()).setY(hv("thunderSlam", "up-2", 0.6));
+                if (out.lengthSquared() > 0) le.setVelocity(out.normalize().multiply(hv("thunderSlam", "speed", 1.2)));
             }
             c.getWorld().spawnParticle(Particle.EXPLOSION, c, 3, 1, 0.2, 1, 0);
             c.getWorld().playSound(c, Sound.ENTITY_GENERIC_EXPLODE, 1.5f, 0.6f);
@@ -2957,19 +3052,19 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
 
     private void reapingArc(Player p) {
         if (!ready(p, "duskscythe", 6000)) return;
-        Vector fwd = p.getLocation().getDirection().setY(0);
+        Vector fwd = p.getLocation().getDirection().setY(hv("reapingArc", "up", 0));
         if (fwd.lengthSquared() < 0.01) return;
         fwd = fwd.normalize();
         List<LivingEntity> victims = new ArrayList<>();
         for (Entity en : p.getWorld().getNearbyEntities(p.getLocation(), 6, 3, 6)) {
             if (!(en instanceof LivingEntity le) || en.equals(p) || isFriendlyTo(p, le)) continue;
-            Vector to = le.getLocation().toVector().subtract(p.getLocation().toVector()).setY(0);
+            Vector to = le.getLocation().toVector().subtract(p.getLocation().toVector()).setY(hv("reapingArc", "up-2", 0));
             if (to.lengthSquared() == 0 || to.clone().normalize().dot(fwd) < 0.5) continue;
             victims.add(le);
         }
         for (LivingEntity v : victims) {
-            Vector pull = p.getLocation().toVector().subtract(v.getLocation().toVector()).setY(0.1);
-            if (pull.lengthSquared() > 0) v.setVelocity(pull.normalize().multiply(1.1));
+            Vector pull = p.getLocation().toVector().subtract(v.getLocation().toVector()).setY(hv("reapingArc", "up-3", 0.1));
+            if (pull.lengthSquared() > 0) v.setVelocity(pull.normalize().multiply(hv("reapingArc", "speed", 1.1)));
         }
         final Player sp = p;
         Bukkit.getScheduler().runTaskLater(this, () -> {
@@ -2999,8 +3094,8 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
             return;
         }
         hit(target, 6, p);
-        Vector pull = p.getLocation().toVector().subtract(target.getLocation().toVector()).setY(0.2);
-        if (pull.lengthSquared() > 0) target.setVelocity(pull.normalize().multiply(1.3));
+        Vector pull = p.getLocation().toVector().subtract(target.getLocation().toVector()).setY(hv("lashChain", "up", 0.2));
+        if (pull.lengthSquared() > 0) target.setVelocity(pull.normalize().multiply(hv("lashChain", "speed", 1.3)));
         p.getWorld().playSound(p.getLocation(), Sound.ENTITY_FISHING_BOBBER_THROW, 1f, 0.7f);
     }
 
@@ -3035,14 +3130,14 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
 
     private void maelstrom(Player p) {
         if (!ready(p, "tidecaller", 8000)) return;
-        Vector fwd = p.getLocation().getDirection().setY(0);
+        Vector fwd = p.getLocation().getDirection().setY(hv("maelstrom", "up", 0));
         if (fwd.lengthSquared() < 0.01) return;
-        Location point = p.getLocation().clone().add(fwd.normalize().multiply(6));
+        Location point = p.getLocation().clone().add(fwd.normalize().multiply(hv("maelstrom", "speed", 6)));
         for (Entity en : point.getWorld().getNearbyEntities(point, 4, 3, 4)) {
             if (!(en instanceof LivingEntity le) || en.equals(p) || isFriendlyTo(p, le)) continue;
             hit(le, 5, p);
-            Vector pull = point.toVector().subtract(le.getLocation().toVector()).setY(0.1);
-            if (pull.lengthSquared() > 0) le.setVelocity(pull.normalize().multiply(1.0));
+            Vector pull = point.toVector().subtract(le.getLocation().toVector()).setY(hv("maelstrom", "up-2", 0.1));
+            if (pull.lengthSquared() > 0) le.setVelocity(pull.normalize().multiply(hv("maelstrom", "speed-2", 1.0)));
         }
         point.getWorld().spawnParticle(Particle.BUBBLE_POP, point.clone().add(0, 1, 0), 80, 3, 1, 3, 0.2);
         point.getWorld().playSound(point, Sound.ENTITY_PLAYER_SPLASH_HIGH_SPEED, 1f, 0.7f);
@@ -3083,7 +3178,7 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
         if (inPassive || e.getCause() != EntityDamageEvent.DamageCause.ENTITY_ATTACK) return;
         if (!(e.getDamager() instanceof Player p)) return;
         if (idOf(p.getInventory().getItemInMainHand()) == null) return;
-        e.setDamage(e.getDamage() * 1.5);
+        e.setDamage(e.getDamage() * getConfig().getDouble("damage.weapon-multiplier", 1.0));
     }
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
@@ -3096,9 +3191,10 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
         inPassive = true;
         try {
             String passive = id.equals("crazyrolls") ? randomPassive() : id;
+            if (OCEAN_IDS.contains(passive)) oceanExtraPassive(p, le, passive);
             switch (passive) {
                 case "boomhammer" -> {
-                    if (rnd.nextDouble() < 0.25) le.setVelocity(new Vector(0, 0.8, 0));
+                    if (rnd.nextDouble() < od("boomhammer", "passive-chance", 0.25)) le.setVelocity(new Vector(0, 0.8, 0));
                 }
                 case "spearlance" -> {
                     for (int i = 1; i <= 3; i++) {
@@ -3108,69 +3204,69 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
                     }
                 }
                 case "duskscythe" -> p.setHealth(Math.min(p.getMaxHealth(), p.getHealth() + 2));
-                case "thornwhip" -> le.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 40, 0));
+                case "thornwhip" -> le.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, (int) od("thornwhip", "passive-ticks", 40), (int) od("thornwhip", "passive-amp", 0)));
                 case "frostglaive" -> {
                     le.setFireTicks(0);
-                    hit(le, 1, p);
+                    hit(le, od("frostglaive", "passive-damage", 1), p);
                 }
                 case "ironhalberd" -> {
-                    for (Entity en : le.getWorld().getNearbyEntities(le.getLocation(), 2, 2, 2)) {
+                    for (Entity en : le.getWorld().getNearbyEntities(le.getLocation(), od("ironhalberd", "extra-radius", 2), 2, od("ironhalberd", "extra-radius", 2))) {
                         if (en instanceof LivingEntity other && !en.equals(le) && !en.equals(p) && !isFriendlyTo(p, other)) {
-                            hit(other, 2, p);
+                            hit(other, od("ironhalberd", "passive-damage", 2), p);
                             break;
                         }
                     }
                 }
                 case "tidecaller" -> {
                     Vector out = le.getLocation().toVector().subtract(p.getLocation().toVector()).setY(0.1);
-                    if (out.lengthSquared() > 0) le.setVelocity(out.normalize().multiply(0.8));
+                    if (out.lengthSquared() > 0) le.setVelocity(out.normalize().multiply(od("tidecaller", "launch-speed", 0.8)));
                 }
                 case "bloodsickle" -> {
                     if (le instanceof Player) p.setHealth(Math.min(p.getMaxHealth(), p.getHealth() + 2));
                 }
                 case "frostlance" -> {
-                    if (rnd.nextDouble() < 0.2) le.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 20, 9));
+                    if (rnd.nextDouble() < od("frostlance", "passive-chance", 0.2)) le.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, (int) od("frostlance", "passive-ticks", 20), (int) od("frostlance", "passive-amp", 9)));
                 }
                 case "stormhalberd" -> {
-                    if (rnd.nextDouble() < 0.15) {
+                    if (rnd.nextDouble() < od("stormhalberd", "passive-chance", 0.15)) {
                         le.getWorld().strikeLightningEffect(le.getLocation());
-                        hit(le, 3, p);
+                        hit(le, od("stormhalberd", "passive-damage", 3), p);
                     }
                 }
-                case "hexscythe" -> le.addPotionEffect(new PotionEffect(PotionEffectType.WITHER, 40, 0));
+                case "hexscythe" -> le.addPotionEffect(new PotionEffect(PotionEffectType.WITHER, (int) od("hexscythe", "passive-ticks", 40), (int) od("hexscythe", "passive-amp", 0)));
                 case "ironmaul" -> {
                     int count = hitCount.merge(p.getUniqueId(), 1, Integer::sum);
-                    if (count % 5 == 0) hit(le, 6, p);
+                    if (count % 5 == 0) hit(le, od("ironmaul", "passive-damage", 6), p);
                 }
                 case "ghostglaive" -> {
-                    le.addPotionEffect(new PotionEffect(PotionEffectType.GLOWING, 60, 0));
+                    le.addPotionEffect(new PotionEffect(PotionEffectType.GLOWING, (int) od("ghostglaive", "passive-ticks", 60), (int) od("ghostglaive", "passive-amp", 0)));
                     Long until = phantomUntil.get(p.getUniqueId());
                     if (until != null && System.currentTimeMillis() < until) {
                         phantomUntil.remove(p.getUniqueId());
-                        hit(le, 6, p);
+                        hit(le, od("ghostglaive", "passive-damage", 6), p);
                     }
                 }
                 case "dawnhalberd" -> {
-                    if (undeadMob(le)) hit(le, 3, p);
+                    if (undeadMob(le)) hit(le, od("dawnhalberd", "passive-damage", 3), p);
                 }
                 case "moonblade" -> {
                     long time = p.getWorld().getTime();
-                    if (time >= 13000 && time < 23000) hit(le, 2, p);
+                    if (time >= 13000 && time < 23000) hit(le, od("moonblade", "passive-damage", 2), p);
                 }
                 case "soulsickle" -> Bukkit.getScheduler().runTaskLater(this, () -> {
                     if (le.isDead() && p.isOnline()) p.setHealth(Math.min(p.getMaxHealth(), p.getHealth() + 4));
                 }, 1L);
                 case "emberpike" -> le.setFireTicks(60);
-                case "windpike" -> p.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 40, 0));
-                case "tidallance" -> le.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 20, 2));
+                case "windpike" -> p.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, (int) od("windpike", "passive-ticks", 40), (int) od("windpike", "passive-amp", 0)));
+                case "tidallance" -> le.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, (int) od("tidallance", "passive-ticks", 20), (int) od("tidallance", "passive-amp", 2)));
                 case "gravelglaive" -> {
-                    hit(le, 1, p);
-                    le.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 20, 0));
+                    hit(le, od("gravelglaive", "passive-damage", 1), p);
+                    le.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, (int) od("gravelglaive", "passive-ticks", 20), (int) od("gravelglaive", "passive-amp", 0)));
                 }
                 case "echohammer" -> {
                     LivingEntity nearest = null;
                     double best = 3;
-                    for (Entity en : le.getWorld().getNearbyEntities(le.getLocation(), 3, 3, 3)) {
+                    for (Entity en : le.getWorld().getNearbyEntities(le.getLocation(), od("echohammer", "extra-radius", 3), 3, od("echohammer", "extra-radius", 3))) {
                         if (en instanceof LivingEntity other && !en.equals(le) && !en.equals(p) && !isFriendlyTo(p, other)) {
                             double d = other.getLocation().distance(le.getLocation());
                             if (d < best) {
@@ -3179,15 +3275,15 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
                             }
                         }
                     }
-                    if (nearest != null) hit(nearest, 2, p);
+                    if (nearest != null) hit(nearest, od("echohammer", "passive-damage", 2), p);
                 }
-                case "eclipsescythe" -> le.addPotionEffect(new PotionEffect(PotionEffectType.DARKNESS, 40, 0));
+                case "eclipsescythe" -> le.addPotionEffect(new PotionEffect(PotionEffectType.DARKNESS, (int) od("eclipsescythe", "passive-ticks", 40), (int) od("eclipsescythe", "passive-amp", 0)));
                 case "stormstaff" -> {
                     int count = chargeCount.merge(p.getUniqueId(), 1, Integer::sum);
                     if (count % 4 == 0) {
                         LivingEntity chain = null;
                         double best = 4;
-                        for (Entity en : le.getWorld().getNearbyEntities(le.getLocation(), 4, 3, 4)) {
+                        for (Entity en : le.getWorld().getNearbyEntities(le.getLocation(), od("stormstaff", "extra-radius", 4), 3, od("stormstaff", "extra-radius", 4))) {
                             if (en instanceof LivingEntity other && !en.equals(le) && !en.equals(p) && !isFriendlyTo(p, other)) {
                                 double d = other.getLocation().distance(le.getLocation());
                                 if (d < best) {
@@ -3198,184 +3294,207 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
                         }
                         if (chain != null) {
                             chain.getWorld().strikeLightningEffect(chain.getLocation());
-                            hit(chain, 3, p);
+                            hit(chain, od("stormstaff", "passive-damage", 3), p);
                         }
                     }
                 }
                 case "emberglaive" -> le.setFireTicks(40);
-                case "wardenspear" -> le.addPotionEffect(new PotionEffect(PotionEffectType.DARKNESS, 40, 0));
-                case "bloomstaff" -> p.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, 40, 0));
-                case "cleaver" -> le.addPotionEffect(new PotionEffect(PotionEffectType.WEAKNESS, 40, 0));
+                case "wardenspear" -> le.addPotionEffect(new PotionEffect(PotionEffectType.DARKNESS, (int) od("wardenspear", "passive-ticks", 40), (int) od("wardenspear", "passive-amp", 0)));
+                case "bloomstaff" -> p.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, (int) od("bloomstaff", "passive-ticks", 40), (int) od("bloomstaff", "passive-amp", 0)));
+                case "cleaver" -> le.addPotionEffect(new PotionEffect(PotionEffectType.WEAKNESS, (int) od("cleaver", "passive-ticks", 40), (int) od("cleaver", "passive-amp", 0)));
                 case "wardenclaw" -> {
                     Vector push = le.getLocation().toVector().subtract(p.getLocation().toVector()).setY(0.1);
-                    if (push.lengthSquared() > 0) le.setVelocity(push.normalize().multiply(0.6));
+                    if (push.lengthSquared() > 0) le.setVelocity(push.normalize().multiply(od("wardenclaw", "launch-speed", 0.6)));
                 }
-                case "stonepike" -> p.addPotionEffect(new PotionEffect(PotionEffectType.ABSORPTION, 100, 0));
+                case "stonepike" -> p.addPotionEffect(new PotionEffect(PotionEffectType.ABSORPTION, (int) od("stonepike", "passive-ticks", 100), (int) od("stonepike", "passive-amp", 0)));
                 case "chainflail" -> {
-                    if (rnd.nextDouble() < 0.2) {
+                    if (rnd.nextDouble() < od("chainflail", "passive-chance", 0.2)) {
                         Vector pull = p.getLocation().toVector().subtract(le.getLocation().toVector()).setY(0.1);
-                        if (pull.lengthSquared() > 0) le.setVelocity(pull.normalize().multiply(1.2));
+                        if (pull.lengthSquared() > 0) le.setVelocity(pull.normalize().multiply(od("chainflail", "launch-speed", 1.2)));
                     }
                 }
-                case "nagina" -> p.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 20, 0));
+                case "nagina" -> p.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, (int) od("nagina", "passive-ticks", 20), (int) od("nagina", "passive-amp", 0)));
                 case "lanternstaff" -> {
-                    le.addPotionEffect(new PotionEffect(PotionEffectType.GLOWING, 60, 0));
-                    hit(le, 1, p);
+                    le.addPotionEffect(new PotionEffect(PotionEffectType.GLOWING, (int) od("lanternstaff", "passive-ticks", 60), (int) od("lanternstaff", "passive-amp", 0)));
+                    hit(le, od("lanternstaff", "passive-damage", 1), p);
                 }
                 case "thunderstick" -> {
-                    if (rnd.nextDouble() < 0.1) {
+                    if (rnd.nextDouble() < od("thunderstick", "passive-chance", 0.1)) {
                         le.getWorld().strikeLightningEffect(le.getLocation());
-                        hit(le, 3, p);
+                        hit(le, od("thunderstick", "passive-damage", 3), p);
                     }
                 }
                 case "vampirefang" -> p.setHealth(Math.min(p.getMaxHealth(), p.getHealth() + 2));
-                case "frostbite" -> le.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 20, 0));
+                case "octopus" -> { if (rnd.nextDouble() < od("octopus", "passive-chance-2", 0.15)) le.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, (int) od("octopus", "passive-ticks-2", 40), (int) od("octopus", "passive-amp-2", 0))); }
+                case "sharktooth" -> { if (le.getHealth() < le.getMaxHealth() / 2) hit(le, od("sharktooth", "passive-damage", 2), p); }
+                case "kraken" -> {
+                    if (rnd.nextDouble() < od("kraken", "passive-chance-2", 0.15)) {
+                        Vector pull = p.getLocation().toVector().subtract(le.getLocation().toVector()).setY(0.1);
+                        if (pull.lengthSquared() > 0) le.setVelocity(pull.normalize().multiply(od("kraken", "launch-speed", 0.8)));
+                    }
+                }
+                case "poseidon" -> {
+                    if (rnd.nextDouble() < od("poseidon", "passive-chance-2", 0.2)) {
+                        le.getWorld().strikeLightningEffect(le.getLocation());
+                        hit(le, od("poseidon", "passive-damage", 4), p);
+                    }
+                }
+                case "tsunami" -> {
+                    if (rnd.nextDouble() < od("tsunami", "passive-chance-2", 0.15)) {
+                        le.setVelocity(new Vector(0, od("tsunami", "launch-up", 0.8), 0));
+                        le.addPotionEffect(new PotionEffect(PotionEffectType.NAUSEA, (int) od("tsunami", "passive-ticks-2", 60), (int) od("tsunami", "passive-amp-2", 0)));
+                    }
+                }
+                case "leviathan" -> { if (rnd.nextDouble() < od("leviathan", "passive-chance-2", 0.15)) hit(le, od("leviathan", "passive-damage", 3), p); }
+                case "anchor" -> { if (rnd.nextDouble() < od("anchor", "passive-chance-2", 0.15)) le.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, (int) od("anchor", "passive-ticks-2", 40), (int) od("anchor", "passive-amp-2", 0))); }
+                case "conch" -> { if (rnd.nextDouble() < od("conch", "passive-chance-2", 0.2)) hit(le, od("conch", "passive-damage", 2), p); }
+                case "frostbite" -> le.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, (int) od("frostbite", "passive-ticks", 20), (int) od("frostbite", "passive-amp", 0)));
                 case "winddash" -> {
                     Vector gust = le.getLocation().toVector().subtract(p.getLocation().toVector()).setY(0.2);
-                    if (gust.lengthSquared() > 0) le.setVelocity(gust.normalize().multiply(0.9));
+                    if (gust.lengthSquared() > 0) le.setVelocity(gust.normalize().multiply(od("winddash", "launch-speed-2", 0.9)));
                 }
                 case "infernowand" -> le.setFireTicks(40);
                 case "groundbreaker" -> {
                     int combo = comboCount.merge(p.getUniqueId(), 1, Integer::sum);
-                    if (combo % 4 == 0) hit(le, 4, p);
+                    if (combo % 4 == 0) hit(le, od("groundbreaker", "passive-damage", 4), p);
                 }
                 case "phoenixblade" -> {
                     if (p.getHealth() < p.getMaxHealth() / 2) p.setHealth(Math.min(p.getMaxHealth(), p.getHealth() + 2));
                 }
                 case "gauntlet" -> {
-                    hit(le, 1, p);
-                    le.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 20, 0));
+                    hit(le, od("gauntlet", "passive-damage", 1), p);
+                    le.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, (int) od("gauntlet", "passive-ticks", 20), (int) od("gauntlet", "passive-amp", 0)));
                 }
                 case "voidscythe" -> {
-                    hit(le, 1, p);
+                    hit(le, od("voidscythe", "passive-damage", 1), p);
                     p.setHealth(Math.min(p.getMaxHealth(), p.getHealth() + 1));
                 }
-                case "venom" -> le.addPotionEffect(new PotionEffect(PotionEffectType.POISON, 40, 0));
-                case "tidal" -> le.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 20, 0));
+                case "venom" -> le.addPotionEffect(new PotionEffect(PotionEffectType.POISON, (int) od("venom", "passive-ticks", 40), (int) od("venom", "passive-amp", 0)));
+                case "tidal" -> le.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, (int) od("tidal", "passive-ticks", 20), (int) od("tidal", "passive-amp", 0)));
                 case "shadowdagger" -> {
-                    if (le.getLocation().getDirection().dot(p.getLocation().getDirection()) > 0.5) hit(le, 3, p);
+                    if (le.getLocation().getDirection().dot(p.getLocation().getDirection()) > 0.5) hit(le, od("shadowdagger", "passive-damage", 3), p);
                 }
                 case "solarlance" -> le.setFireTicks(60);
                 case "unoreverse" -> {
-                    if (p.getHealth() < p.getMaxHealth() / 2) hit(le, 2, p);
+                    if (p.getHealth() < p.getMaxHealth() / 2) hit(le, od("unoreverse", "passive-damage", 2), p);
                 }
                 case "bloodstone" -> p.setHealth(Math.min(p.getMaxHealth(), p.getHealth() + 2));
                 case "quakehammer" -> {
-                    if (rnd.nextDouble() < 0.15) le.setVelocity(new Vector(0, 0.6, 0));
+                    if (rnd.nextDouble() < od("quakehammer", "passive-chance", 0.15)) le.setVelocity(new Vector(0, 0.6, 0));
                 }
-                case "glacier" -> le.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 40, 0));
+                case "glacier" -> le.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, (int) od("glacier", "passive-ticks", 40), (int) od("glacier", "passive-amp", 0)));
                 case "starfall" -> {
-                    if (rnd.nextDouble() < 0.1) hit(le, 4, p);
+                    if (rnd.nextDouble() < od("starfall", "passive-chance", 0.1)) hit(le, od("starfall", "passive-damage", 4), p);
                 }
-                case "venomsickle" -> le.addPotionEffect(new PotionEffect(PotionEffectType.POISON, 60, 0));
-                case "crystalpick" -> hit(le, 2, p);
+                case "venomsickle" -> le.addPotionEffect(new PotionEffect(PotionEffectType.POISON, (int) od("venomsickle", "passive-ticks", 60), (int) od("venomsickle", "passive-amp", 0)));
+                case "crystalpick" -> hit(le, od("crystalpick", "passive-damage", 2), p);
                 case "voidcutter" -> {
-                    if (rnd.nextDouble() < 0.15) hit(le, 4, p);
+                    if (rnd.nextDouble() < od("voidcutter", "passive-chance", 0.15)) hit(le, od("voidcutter", "passive-damage", 4), p);
                 }
                 case "bloodletter" -> Bukkit.getScheduler().runTaskLater(this, () -> {
                     if (le.isValid() && !le.isDead()) le.damage(1);
                 }, 20L);
                 case "sunder" -> {
                     Vector away = le.getLocation().toVector().subtract(p.getLocation().toVector()).setY(0.2);
-                    if (away.lengthSquared() > 0) le.setVelocity(away.normalize().multiply(1.0));
+                    if (away.lengthSquared() > 0) le.setVelocity(away.normalize().multiply(od("sunder", "launch-speed-2", 1.0)));
                 }
                 case "reapersigil" -> {
-                    if (le.getHealth() < le.getMaxHealth() / 2) hit(le, 2, p);
+                    if (le.getHealth() < le.getMaxHealth() / 2) hit(le, od("reapersigil", "passive-damage", 2), p);
                 }
-                case "shadowcloak" -> p.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 20, 0));
+                case "shadowcloak" -> p.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, (int) od("shadowcloak", "passive-ticks", 20), (int) od("shadowcloak", "passive-amp", 0)));
                 case "golembell" -> {
-                    if (rnd.nextDouble() < 0.1) {
+                    if (rnd.nextDouble() < od("golembell", "passive-chance", 0.1)) {
                         Vector back = le.getLocation().toVector().subtract(p.getLocation().toVector()).setY(0.2);
-                        if (back.lengthSquared() > 0) le.setVelocity(back.normalize().multiply(1.2));
+                        if (back.lengthSquared() > 0) le.setVelocity(back.normalize().multiply(od("golembell", "launch-speed", 1.2)));
                     }
                 }
                 case "sonichorn" -> {
-                    for (Entity en : le.getWorld().getNearbyEntities(le.getLocation(), 2, 2, 2)) {
-                        if (en instanceof LivingEntity other && !en.equals(le) && !en.equals(p) && !isFriendlyTo(p, other)) hit(other, 2, p);
+                    for (Entity en : le.getWorld().getNearbyEntities(le.getLocation(), od("sonichorn", "extra-radius", 2), 2, od("sonichorn", "extra-radius", 2))) {
+                        if (en instanceof LivingEntity other && !en.equals(le) && !en.equals(p) && !isFriendlyTo(p, other)) hit(other, od("sonichorn", "passive-damage", 2), p);
                     }
                 }
                 case "stormheart" -> {
-                    if (rnd.nextDouble() < 0.1) {
+                    if (rnd.nextDouble() < od("stormheart", "passive-chance", 0.1)) {
                         le.getWorld().strikeLightningEffect(le.getLocation());
-                        hit(le, 3, p);
+                        hit(le, od("stormheart", "passive-damage", 3), p);
                     }
                 }
-                case "phasefruit" -> p.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 20, 0));
+                case "phasefruit" -> p.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, (int) od("phasefruit", "passive-ticks", 20), (int) od("phasefruit", "passive-amp", 0)));
                 case "grapple" -> {
                     Vector pull = p.getLocation().toVector().subtract(le.getLocation().toVector()).setY(0.1);
-                    if (pull.lengthSquared() > 0) le.setVelocity(pull.normalize().multiply(0.8));
+                    if (pull.lengthSquared() > 0) le.setVelocity(pull.normalize().multiply(od("grapple", "launch-speed", 0.8)));
                 }
-                case "aegistotem" -> p.addPotionEffect(new PotionEffect(PotionEffectType.ABSORPTION, 40, 0));
+                case "aegistotem" -> p.addPotionEffect(new PotionEffect(PotionEffectType.ABSORPTION, (int) od("aegistotem", "passive-ticks", 40), (int) od("aegistotem", "passive-amp", 0)));
                 case "chronohourglass" -> {
-                    if (rnd.nextDouble() < 0.1) p.setHealth(Math.min(p.getMaxHealth(), p.getHealth() + 2));
+                    if (rnd.nextDouble() < od("chronohourglass", "passive-chance", 0.1)) p.setHealth(Math.min(p.getMaxHealth(), p.getHealth() + 2));
                 }
-                case "rewindcompass" -> hit(le, 1, p);
-                case "spoutshell" -> le.setVelocity(new Vector(0, 0.4, 0));
-                case "honeybomb" -> le.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 20, 0));
-                case "cloudbottle" -> p.addPotionEffect(new PotionEffect(PotionEffectType.SLOW_FALLING, 20, 0));
+                case "rewindcompass" -> hit(le, od("rewindcompass", "passive-damage", 1), p);
+                case "spoutshell" -> le.setVelocity(new Vector(0, od("spoutshell", "launch-up-2", 0.4), 0));
+                case "honeybomb" -> le.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, (int) od("honeybomb", "passive-ticks", 20), (int) od("honeybomb", "passive-amp", 0)));
+                case "cloudbottle" -> p.addPotionEffect(new PotionEffect(PotionEffectType.SLOW_FALLING, (int) od("cloudbottle", "passive-ticks", 20), (int) od("cloudbottle", "passive-amp", 0)));
                 case "meteor" -> le.setFireTicks(20);
                 case "hexbone" -> {
-                    hit(le, 1, p);
-                    le.addPotionEffect(new PotionEffect(PotionEffectType.WEAKNESS, 20, 0));
+                    hit(le, od("hexbone", "passive-damage", 1), p);
+                    le.addPotionEffect(new PotionEffect(PotionEffectType.WEAKNESS, (int) od("hexbone", "passive-ticks", 20), (int) od("hexbone", "passive-amp", 0)));
                 }
                 case "healingcharm" -> p.setHealth(Math.min(p.getMaxHealth(), p.getHealth() + 1));
-                case "ghostlantern" -> le.addPotionEffect(new PotionEffect(PotionEffectType.GLOWING, 40, 0));
+                case "ghostlantern" -> le.addPotionEffect(new PotionEffect(PotionEffectType.GLOWING, (int) od("ghostlantern", "passive-ticks", 40), (int) od("ghostlantern", "passive-amp", 0)));
                 case "kaboom" -> {
-                    if (rnd.nextDouble() < 0.1) hit(le, 4, p);
+                    if (rnd.nextDouble() < od("kaboom", "passive-chance", 0.1)) hit(le, od("kaboom", "passive-damage", 4), p);
                 }
-                case "shakalaka" -> p.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 20, 0));
+                case "shakalaka" -> p.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, (int) od("shakalaka", "passive-ticks", 20), (int) od("shakalaka", "passive-amp", 0)));
                 case "arccaster" -> {
-                    if (rnd.nextDouble() < 0.15) {
+                    if (rnd.nextDouble() < od("arccaster", "passive-chance", 0.15)) {
                         le.getWorld().strikeLightningEffect(le.getLocation());
-                        hit(le, 3, p);
+                        hit(le, od("arccaster", "passive-damage", 3), p);
                     }
                 }
                 case "cursedcoin" -> {
-                    if (rnd.nextDouble() < 0.1) p.addPotionEffect(new PotionEffect(PotionEffectType.LUCK, 100, 0));
+                    if (rnd.nextDouble() < od("cursedcoin", "passive-chance", 0.1)) p.addPotionEffect(new PotionEffect(PotionEffectType.LUCK, (int) od("cursedcoin", "passive-ticks", 100), (int) od("cursedcoin", "passive-amp", 0)));
                 }
-                case "spectralquill" -> le.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 20, 0));
-                case "rottenoffering" -> le.addPotionEffect(new PotionEffect(PotionEffectType.POISON, 40, 0));
-                case "eyeofthecrypt" -> le.addPotionEffect(new PotionEffect(PotionEffectType.GLOWING, 60, 0));
+                case "spectralquill" -> le.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, (int) od("spectralquill", "passive-ticks", 20), (int) od("spectralquill", "passive-amp", 0)));
+                case "rottenoffering" -> le.addPotionEffect(new PotionEffect(PotionEffectType.POISON, (int) od("rottenoffering", "passive-ticks", 40), (int) od("rottenoffering", "passive-amp", 0)));
+                case "eyeofthecrypt" -> le.addPotionEffect(new PotionEffect(PotionEffectType.GLOWING, (int) od("eyeofthecrypt", "passive-ticks", 60), (int) od("eyeofthecrypt", "passive-amp", 0)));
                 case "magnetrod" -> {
                     Vector pull = p.getLocation().toVector().subtract(le.getLocation().toVector()).setY(0.1);
-                    if (pull.lengthSquared() > 0) le.setVelocity(pull.normalize().multiply(0.8));
+                    if (pull.lengthSquared() > 0) le.setVelocity(pull.normalize().multiply(od("magnetrod", "launch-speed", 0.8)));
                 }
-                case "blizzardorb" -> le.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 40, 0));
+                case "blizzardorb" -> le.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, (int) od("blizzardorb", "passive-ticks", 40), (int) od("blizzardorb", "passive-amp", 0)));
                 case "grenade" -> {
-                    hit(le, 1, p);
-                    le.addPotionEffect(new PotionEffect(PotionEffectType.NAUSEA, 20, 0));
+                    hit(le, od("grenade", "passive-damage", 1), p);
+                    le.addPotionEffect(new PotionEffect(PotionEffectType.NAUSEA, (int) od("grenade", "passive-ticks", 20), (int) od("grenade", "passive-amp", 0)));
                 }
                 case "gravitywell" -> {
                     Vector tug = p.getLocation().toVector().subtract(le.getLocation().toVector()).setY(0.1);
-                    if (tug.lengthSquared() > 0) le.setVelocity(tug.normalize().multiply(0.8));
+                    if (tug.lengthSquared() > 0) le.setVelocity(tug.normalize().multiply(od("gravitywell", "launch-speed-2", 0.8)));
                 }
                 case "emberblade" -> le.setFireTicks(60);
-                case "thornrapier" -> le.addPotionEffect(new PotionEffect(PotionEffectType.POISON, 60, 0));
+                case "thornrapier" -> le.addPotionEffect(new PotionEffect(PotionEffectType.POISON, (int) od("thornrapier", "passive-ticks", 60), (int) od("thornrapier", "passive-amp", 0)));
                 case "moonsplitter" -> {
                     long time = p.getWorld().getTime();
-                    if (time >= 13000 && time < 23000) hit(le, 2, p);
+                    if (time >= 13000 && time < 23000) hit(le, od("moonsplitter", "passive-damage", 2), p);
                 }
-                case "frostfang" -> le.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 40, 0));
+                case "frostfang" -> le.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, (int) od("frostfang", "passive-ticks", 40), (int) od("frostfang", "passive-amp", 0)));
                 case "soulreaver" -> p.setHealth(Math.min(p.getMaxHealth(), p.getHealth() + 2));
                 case "stormfang" -> {
-                    if (rnd.nextDouble() < 0.1) {
+                    if (rnd.nextDouble() < od("stormfang", "passive-chance", 0.1)) {
                         le.getWorld().strikeLightningEffect(le.getLocation());
-                        hit(le, 3, p);
+                        hit(le, od("stormfang", "passive-damage", 3), p);
                     }
                 }
-                case "venomtooth" -> le.addPotionEffect(new PotionEffect(PotionEffectType.POISON, 40, 0));
-                case "bladestorm" -> hit(le, 1, p);
-                case "hyperion" -> p.addPotionEffect(new PotionEffect(PotionEffectType.ABSORPTION, 40, 0));
-                case "mistral" -> hit(le, 1, p);
-                case "obsidianfist" -> le.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 20, 0));
+                case "venomtooth" -> le.addPotionEffect(new PotionEffect(PotionEffectType.POISON, (int) od("venomtooth", "passive-ticks", 40), (int) od("venomtooth", "passive-amp", 0)));
+                case "bladestorm" -> hit(le, od("bladestorm", "passive-damage", 1), p);
+                case "hyperion" -> p.addPotionEffect(new PotionEffect(PotionEffectType.ABSORPTION, (int) od("hyperion", "passive-ticks", 40), (int) od("hyperion", "passive-amp", 0)));
+                case "mistral" -> hit(le, od("mistral", "passive-damage", 1), p);
+                case "obsidianfist" -> le.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, (int) od("obsidianfist", "passive-ticks", 20), (int) od("obsidianfist", "passive-amp", 0)));
                 case "starshard" -> {
-                    if (rnd.nextDouble() < 0.1) hit(le, 5, p);
+                    if (rnd.nextDouble() < od("starshard", "passive-chance", 0.1)) hit(le, od("starshard", "passive-damage", 5), p);
                 }
-                case "cryptbone" -> hit(le, 2, p);
+                case "cryptbone" -> hit(le, od("cryptbone", "passive-damage", 2), p);
                 case "tempesthalberd" -> {
-                    if (rnd.nextDouble() < 0.1) {
+                    if (rnd.nextDouble() < od("tempesthalberd", "passive-chance", 0.1)) {
                         le.getWorld().strikeLightningEffect(le.getLocation());
-                        hit(le, 2, p);
+                        hit(le, od("tempesthalberd", "passive-damage", 2), p);
                     }
                 }
                 case "bloodmoon" -> {
@@ -3383,24 +3502,24 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
                     if (t >= 13000 && t < 23000) p.setHealth(Math.min(p.getMaxHealth(), p.getHealth() + 2));
                 }
                 case "prismblade" -> {
-                    if (rnd.nextDouble() < 0.15) hit(le, 3, p);
+                    if (rnd.nextDouble() < od("prismblade", "passive-chance", 0.15)) hit(le, od("prismblade", "passive-damage", 3), p);
                 }
-                case "voidfang" -> hit(le, 1, p);
+                case "voidfang" -> hit(le, od("voidfang", "passive-damage", 1), p);
                 case "solstice" -> le.setFireTicks(40);
-                case "glacierhalberd" -> le.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 20, 0));
+                case "glacierhalberd" -> le.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, (int) od("glacierhalberd", "passive-ticks", 20), (int) od("glacierhalberd", "passive-amp", 0)));
                 case "embershort" -> le.setFireTicks(40);
-                case "runescythe" -> le.addPotionEffect(new PotionEffect(PotionEffectType.GLOWING, 40, 0));
+                case "runescythe" -> le.addPotionEffect(new PotionEffect(PotionEffectType.GLOWING, (int) od("runescythe", "passive-ticks", 40), (int) od("runescythe", "passive-amp", 0)));
                 case "thundercudgel" -> {
-                    if (rnd.nextDouble() < 0.1) {
+                    if (rnd.nextDouble() < od("thundercudgel", "passive-chance", 0.1)) {
                         le.getWorld().strikeLightningEffect(le.getLocation());
-                        hit(le, 3, p);
+                        hit(le, od("thundercudgel", "passive-damage", 3), p);
                     }
                 }
                 case "duskblade" -> {
                     long t = p.getWorld().getTime();
-                    if (t >= 13000 && t < 23000) hit(le, 1, p);
+                    if (t >= 13000 && t < 23000) hit(le, od("duskblade", "passive-damage", 1), p);
                 }
-                case "ironbulwark" -> p.addPotionEffect(new PotionEffect(PotionEffectType.ABSORPTION, 20, 0));
+                case "ironbulwark" -> p.addPotionEffect(new PotionEffect(PotionEffectType.ABSORPTION, (int) od("ironbulwark", "passive-ticks", 20), (int) od("ironbulwark", "passive-amp", 0)));
                 default -> { }
             }
             String gemHeld = gemOf(p);
@@ -3472,9 +3591,9 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
 
     private void seismicDash(Player p) {
         if (!ready(p, "ironmaul", 10000)) return;
-        Vector fwd = p.getLocation().getDirection().setY(0);
+        Vector fwd = p.getLocation().getDirection().setY(hv("seismicDash", "up", 0));
         if (fwd.lengthSquared() < 0.01) return;
-        p.setVelocity(fwd.normalize().multiply(1.6).setY(0.35));
+        p.setVelocity(fwd.normalize().multiply(hv("seismicDash", "speed", 1.6)).setY(hv("seismicDash", "up-2", 0.35)));
         final Player sp = p;
         Bukkit.getScheduler().runTaskLater(this, () -> {
             Location c = sp.getLocation().clone();
@@ -3542,7 +3661,7 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
     private void emberThrust(Player p) {
         if (!ready(p, "emberpike", 6500)) return;
         Vector dir = p.getEyeLocation().getDirection().normalize();
-        p.setVelocity(dir.clone().multiply(1.2).setY(0.1));
+        p.setVelocity(dir.clone().multiply(hv("emberThrust", "speed", 1.2)).setY(hv("emberThrust", "up", 0.1)));
         final Player sp = p;
         Bukkit.getScheduler().runTaskLater(this, () -> {
             Location c = sp.getLocation().clone();
@@ -3559,7 +3678,7 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
 
     private void highJump(Player p) {
         if (!ready(p, "windpike-jump", 6000)) return;
-        p.setVelocity(new Vector(0, 2.1, 0));
+        p.setVelocity(new Vector(0, hv("highJump", "up", 2.1), 0));
         p.getWorld().spawnParticle(Particle.CLOUD, p.getLocation(), 30, 0.5, 0.2, 0.5, 0.05);
         new BukkitRunnable() {
             int ticks = 0;
@@ -3581,17 +3700,17 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
             return;
         }
         if (!ready(p, "windpike", 8000)) return;
-        Vector fwd = p.getLocation().getDirection().setY(0);
+        Vector fwd = p.getLocation().getDirection().setY(hv("gustVault", "up", 0));
         if (fwd.lengthSquared() < 0.01) return;
-        p.setVelocity(fwd.normalize().multiply(1.1).setY(0.9));
+        p.setVelocity(fwd.normalize().multiply(hv("gustVault", "speed", 1.1)).setY(hv("gustVault", "up-2", 0.9)));
         final Player sp = p;
         Bukkit.getScheduler().runTaskLater(this, () -> {
             Location c = sp.getLocation().clone();
             for (Entity en : c.getWorld().getNearbyEntities(c, 3, 2, 3)) {
                 if (!(en instanceof LivingEntity le) || en.equals(sp) || isFriendlyTo(sp, le)) continue;
                 hit(le, 3, sp);
-                Vector out = le.getLocation().toVector().subtract(c.toVector()).setY(0.4);
-                if (out.lengthSquared() > 0) le.setVelocity(out.normalize().multiply(1.2));
+                Vector out = le.getLocation().toVector().subtract(c.toVector()).setY(hv("gustVault", "up-3", 0.4));
+                if (out.lengthSquared() > 0) le.setVelocity(out.normalize().multiply(hv("gustVault", "speed-2", 1.2)));
             }
             c.getWorld().spawnParticle(Particle.CLOUD, c, 40, 2, 0.5, 2, 0.05);
             c.getWorld().playSound(c, Sound.ENTITY_BREEZE_WIND_BURST, 1f, 1f);
@@ -3631,9 +3750,9 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
 
     private void gravelWell(Player p) {
         if (!ready(p, "gravelglaive", 9000)) return;
-        Vector fwd = p.getLocation().getDirection().setY(0);
+        Vector fwd = p.getLocation().getDirection().setY(hv("gravelWell", "up", 0));
         if (fwd.lengthSquared() < 0.01) return;
-        final Location center = p.getLocation().clone().add(fwd.normalize().multiply(5));
+        final Location center = p.getLocation().clone().add(fwd.normalize().multiply(hv("gravelWell", "speed", 5)));
         final int[] ticks = {0};
         final BukkitTask[] holder = new BukkitTask[1];
         holder[0] = Bukkit.getScheduler().runTaskTimer(this, () -> {
@@ -3644,8 +3763,8 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
             }
             for (Entity en : center.getWorld().getNearbyEntities(center, 4, 3, 4)) {
                 if (!(en instanceof LivingEntity le) || en.equals(p) || isFriendlyTo(p, le)) continue;
-                Vector pull = center.toVector().subtract(le.getLocation().toVector()).setY(0.1);
-                if (pull.lengthSquared() > 0.5) le.setVelocity(pull.normalize().multiply(0.4));
+                Vector pull = center.toVector().subtract(le.getLocation().toVector()).setY(hv("gravelWell", "up-2", 0.1));
+                if (pull.lengthSquared() > 0.5) le.setVelocity(pull.normalize().multiply(hv("gravelWell", "speed-2", 0.4)));
                 if (ticks[0] % 20 == 0) hit(le, 2, p);
             }
             center.getWorld().spawnParticle(Particle.PORTAL, center.clone().add(0, 1, 0), 20, 2, 0.5, 2, 0.3);
@@ -3665,8 +3784,8 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
         for (Entity en : c.getWorld().getNearbyEntities(c, 4, 2.5, 4)) {
             if (!(en instanceof LivingEntity le) || en.equals(p) || isFriendlyTo(p, le)) continue;
             hit(le, dmg, p);
-            Vector out = le.getLocation().toVector().subtract(c.toVector()).setY(0.3);
-            if (out.lengthSquared() > 0) le.setVelocity(out.normalize().multiply(0.9));
+            Vector out = le.getLocation().toVector().subtract(c.toVector()).setY(hv("echoPulse", "up", 0.3));
+            if (out.lengthSquared() > 0) le.setVelocity(out.normalize().multiply(hv("echoPulse", "speed", 0.9)));
         }
         c.getWorld().spawnParticle(Particle.NOTE, c.clone().add(0, 1.5, 0), 20, 2, 0.5, 2, 1);
     }
@@ -3829,7 +3948,7 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
     private void shadowSlash(Player p) {
         if (!ready(p, "nagina", 8000)) return;
         Location eye = p.getEyeLocation();
-        Vector dir = eye.getDirection().setY(0);
+        Vector dir = eye.getDirection().setY(hv("shadowSlash", "up", 0));
         if (dir.lengthSquared() < 0.01) return;
         dir = dir.normalize();
         Set<LivingEntity> struck = new HashSet<>();
@@ -3843,7 +3962,7 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
                 }
             }
         }
-        p.setVelocity(dir.clone().multiply(0.8).setY(0.1));
+        p.setVelocity(dir.clone().multiply(hv("shadowSlash", "speed", 0.8)).setY(hv("shadowSlash", "up-2", 0.1)));
         p.getWorld().playSound(p.getLocation(), Sound.ENTITY_ENDERMAN_STARE, 1f, 0.8f);
     }
 
@@ -4620,9 +4739,9 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
         World w = p.getWorld();
         for (Entity en : w.getNearbyEntities(c, 6, 3, 6)) {
             if (!(en instanceof LivingEntity le) || en.equals(p) || isFriendlyTo(p, le)) continue;
-            Vector out = le.getLocation().toVector().subtract(c.toVector()).setY(0);
+            Vector out = le.getLocation().toVector().subtract(c.toVector()).setY(hv("gust", "up", 0));
             if (out.lengthSquared() == 0) out = new Vector(0, 0, 1);
-            le.setVelocity(out.normalize().multiply(2.0).setY(0.5));
+            le.setVelocity(out.normalize().multiply(hv("gust", "speed", 2.0)).setY(hv("gust", "up-2", 0.5)));
             hit(le, 6, p);
         }
         for (double r = 2; r <= 6; r += 2) particleRing(c.clone().add(0, 1, 0), r, Particle.CLOUD);
@@ -4662,12 +4781,12 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
                 Location orbit = center.clone().add(Math.cos(a) * 4, h, Math.sin(a) * 4);
                 if (v instanceof Player pv) {
                     Vector pull = orbit.toVector().subtract(pv.getLocation().toVector());
-                    if (pull.length() > 2) pull = pull.normalize().multiply(2);
-                    pv.setVelocity(pull.multiply(0.5));
+                    if (pull.length() > 2) pull = pull.normalize().multiply(hv("tornado", "speed", 2));
+                    pv.setVelocity(pull.multiply(hv("tornado", "speed-2", 0.5)));
                     guard(pv, 20);
                 } else {
                     v.teleport(orbit);
-                    v.setVelocity(new Vector(0, 0, 0));
+                    v.setVelocity(new Vector(0, hv("tornado", "up", 0), 0));
                 }
                 v.setFallDistance(0f);
             }
@@ -4682,7 +4801,7 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
 
     private void updraft(Player p) {
         if (!ready(p, "g_updraft", 15000)) return;
-        p.setVelocity(new Vector(0, 2.2, 0));
+        p.setVelocity(new Vector(0, hv("updraft", "up", 2.2), 0));
         p.setFallDistance(0f);
         guard(p, 120);
         p.addPotionEffect(new PotionEffect(PotionEffectType.SLOW_FALLING, 120, 0));
@@ -4779,7 +4898,7 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
         if (e.isCancelled() || inThunderProc) return;
         if (!(e.getDamager() instanceof Player attacker) || !holdsItem(attacker, "wind")) return;
         if (!(e.getEntity() instanceof Player victim)) return;
-        if (rnd.nextDouble() < 0.05) victim.setVelocity(new Vector(0, 1.3, 0));
+        if (rnd.nextDouble() < 0.05) victim.setVelocity(new Vector(0, hv("onWindHitLaunch", "up", 1.3), 0));
     }
 
     // ===================== INFERNO =====================
@@ -5014,7 +5133,7 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
                     if (!(en instanceof LivingEntity le) || en.equals(p) || isFriendlyTo(p, le) || hitIds.contains(en.getUniqueId())) continue;
                     hitIds.add(en.getUniqueId());
                     hit(le, 40, p);
-                    le.setVelocity(fwd.clone().multiply(1.6).setY(0.5));
+                    le.setVelocity(fwd.clone().multiply(hv("sonicWave", "speed", 1.6)).setY(hv("sonicWave", "up", 0.5)));
                 }
             }, step);
         }
@@ -5037,12 +5156,12 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
     private void wardenFist(Player p) {
         if (!ready(p, "g_fist", 15000)) return;
         World w = p.getWorld();
-        Vector fwd = p.getLocation().getDirection().setY(0).normalize();
-        Location spot = p.getLocation().add(fwd.clone().multiply(3));
+        Vector fwd = p.getLocation().getDirection().setY(hv("wardenFist", "up", 0)).normalize();
+        Location spot = p.getLocation().add(fwd.clone().multiply(hv("wardenFist", "speed", 3)));
         for (Entity en : w.getNearbyEntities(spot, 4, 3, 4)) {
             if (!(en instanceof LivingEntity le) || en.equals(p) || isFriendlyTo(p, le)) continue;
             hit(le, 30, p);
-            le.setVelocity(fwd.clone().multiply(0.8).setY(0.8));
+            le.setVelocity(fwd.clone().multiply(hv("wardenFist", "speed-2", 0.8)).setY(hv("wardenFist", "up-2", 0.8)));
         }
         particleRing(spot.clone().add(0, 0.2, 0), 3, Particle.CLOUD);
         particleRing(spot.clone().add(0, 0.2, 0), 1.5, Particle.SCULK_SOUL);
@@ -5183,8 +5302,8 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
                     continue;
                 }
                 if (!(en instanceof LivingEntity le) || isFriendlyTo(p, le)) continue;
-                Vector out = le.getLocation().toVector().subtract(c.toVector()).setY(0);
-                if (out.lengthSquared() > 0) le.setVelocity(out.normalize().multiply(0.8).setY(0.2));
+                Vector out = le.getLocation().toVector().subtract(c.toVector()).setY(hv("taijitu", "up", 0));
+                if (out.lengthSquared() > 0) le.setVelocity(out.normalize().multiply(hv("taijitu", "speed", 0.8)).setY(hv("taijitu", "up-2", 0.2)));
             }
         }, 0L, 10L);
         p.sendMessage(ChatColor.WHITE + "Taijitu: 60 seconds of balance.");
@@ -5238,13 +5357,13 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
         Vector dir = eye.getDirection().normalize();
         Entity shot;
         try {
-            shot = p.getWorld().spawnEntity(eye.clone().add(dir.clone().multiply(1.2)), type);
+            shot = p.getWorld().spawnEntity(eye.clone().add(dir.clone().multiply(hv("releaseProjectile", "speed", 1.2))), type);
         } catch (IllegalArgumentException ex) {
             p.sendMessage(ChatColor.RED + "Can't release that projectile.");
             return;
         }
         if (shot instanceof Projectile pr) pr.setShooter(p);
-        shot.setVelocity(dir.clone().multiply(2.0));
+        shot.setVelocity(dir.clone().multiply(hv("releaseProjectile", "speed-2", 2.0)));
         p.getWorld().playSound(eye, Sound.ITEM_TRIDENT_RIPTIDE_1, 1f, 1.2f);
         p.sendMessage(ChatColor.AQUA + "Reversed! Released " + prettyType(type) + " (" + store.size() + " left).");
     }
@@ -6598,6 +6717,7 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
             }
             case "gems" -> sender.sendMessage(ChatColor.GOLD + "Gems: " + String.join(", ", gems.keySet()));
             case "menu" -> {
+                if (!sender.isOp()) { sender.sendMessage(ChatColor.RED + "Operators only."); return true; }
                 if (!(sender instanceof Player mp)) { sender.sendMessage(ChatColor.RED + "Players only."); return true; }
                 openMain(mp);
             }
@@ -6997,6 +7117,11 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
         }
 
     
+        /** Reads creatures.<key> from config.yml, or the default if missing. */
+        private double cc(String key, double def) {
+            return host.getConfig().getDouble("creatures." + key, def);
+        }
+
         static final long HIT_COOLDOWN_MS = 1500L;
         static final double CREATURE_DAMAGE_MULT = 3.0;
         static final double AURA_RANGE = 50.0;
@@ -7120,8 +7245,8 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
             if (scale != null) scale.setBaseValue(MEDIUM_SCALE);
     
             AttributeInstance maxHp = le.getAttribute(Attribute.GENERIC_MAX_HEALTH);
-            if (maxHp != null) maxHp.setBaseValue(1000);
-            le.setHealth(1000);
+            if (maxHp != null) maxHp.setBaseValue(cc("max-health", 1000));
+            le.setHealth(cc("max-health", 1000));
     
             if (def.fast()) {
                 AttributeInstance speed = le.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED);
@@ -7135,7 +7260,7 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
         }
     
         private void damage(LivingEntity target, double amount, Player owner) {
-            target.damage(amount * CREATURE_DAMAGE_MULT, owner);
+            target.damage(amount * cc("damage-multiplier", CREATURE_DAMAGE_MULT), owner);
         }
     
         private void knock(LivingEntity target, Location from, double horizontal, double up) {
@@ -7202,32 +7327,32 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
                 }
                 case "REVEAL" -> {
                     target.addPotionEffect(new PotionEffect(PotionEffectType.GLOWING, 120, 0));
-                    damage(target, 3, owner);
+                    damage(target, cc("ability.REVEAL.damage", 3), owner);
                 }
                 case "WIND" -> {
-                    for (Entity en : at.getWorld().getNearbyEntities(at, 3, 2, 3)) {
+                    for (Entity en : at.getWorld().getNearbyEntities(at, cc("ability.WIND.radius", 3), 2, cc("ability.WIND.radius", 3))) {
                         if (!(en instanceof LivingEntity le) || en.equals(owner)) continue;
-                        damage(le, 2, owner);
-                        knock(le, at, 1.0, 0.3);
+                        damage(le, cc("ability.WIND.damage", 2), owner);
+                        knock(le, at, cc("ability.WIND.knock-horizontal", 1.0), cc("ability.WIND.knock-up", 0.3));
                     }
                 }
                 case "DRAIN" -> {
-                    damage(target, 4, owner);
-                    healOwner(owner, 2);
+                    damage(target, cc("ability.DRAIN.damage", 4), owner);
+                    healOwner(owner, cc("ability.DRAIN.heal", 2));
                 }
                 case "HEAL_OWNER" -> {
-                    damage(target, 2, owner);
-                    healOwner(owner, 2);
+                    damage(target, cc("ability.HEAL_OWNER.damage", 2), owner);
+                    healOwner(owner, cc("ability.HEAL_OWNER.heal", 2));
                 }
                 case "SHIELD_OWNER" -> {
-                    damage(target, 2, owner);
-                    owner.addPotionEffect(new PotionEffect(PotionEffectType.ABSORPTION, 200, 1));
+                    damage(target, cc("ability.SHIELD_OWNER.damage", 2), owner);
+                    owner.addPotionEffect(new PotionEffect(PotionEffectType.ABSORPTION, (int) cc("ability.SHIELD_OWNER.absorption-ticks", 200), 1));
                 }
                 case "SPEED_OWNER" -> {
-                    damage(target, 2, owner);
-                    owner.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 60, 1));
+                    damage(target, cc("ability.SPEED_OWNER.damage", 2), owner);
+                    owner.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, (int) cc("ability.SPEED_OWNER.speed-ticks", 60), 1));
                 }
-                default -> damage(target, 3, owner);
+                default -> damage(target, cc("ability.default.damage", 3), owner);
             }
             target.getWorld().spawnParticle(Particle.CRIT, target.getLocation().add(0, 1, 0), 15, 0.4, 0.5, 0.4, 0.1);
         }
@@ -7443,10 +7568,10 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
                 p.sendMessage(ChatColor.GRAY + "That creature is already at full health.");
                 return;
             }
-            le.setHealth(Math.min(maxHp, le.getHealth() + 250));
+            le.setHealth(Math.min(maxHp, le.getHealth() + cc("golden-apple-heal", 250)));
             if (hand.getAmount() > 1) hand.setAmount(hand.getAmount() - 1);
             else p.getInventory().setItemInMainHand(null);
-            p.sendMessage(ChatColor.GOLD + "Healed 250 health. Health: " + Math.round(le.getHealth()) + "/" + Math.round(maxHp));
+            p.sendMessage(ChatColor.GOLD + "Healed " + Math.round(cc("golden-apple-heal", 250)) + " health. Health: " + Math.round(le.getHealth()) + "/" + Math.round(maxHp));
         }
 
         @EventHandler(priority = EventPriority.HIGH)
@@ -7498,8 +7623,8 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
             AttributeInstance sc = le.getAttribute(Attribute.GENERIC_SCALE);
             if (sc != null) sc.setBaseValue(MEDIUM_SCALE);
             AttributeInstance hp = le.getAttribute(Attribute.GENERIC_MAX_HEALTH);
-            if (hp != null) hp.setBaseValue(1000);
-            le.setHealth(1000);
+            if (hp != null) hp.setBaseValue(cc("max-health", 1000));
+            le.setHealth(cc("max-health", 1000));
             p.sendMessage(ChatColor.GREEN + "Spawned a wild " + def.name() + ". Right-click it with a Creature Tamer.");
         }
 
@@ -7588,7 +7713,7 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
                 Player owner = Bukkit.getPlayer(c.owner);
                 Entity ent = Bukkit.getEntity(c.entityId);
                 if (owner == null || !owner.isOnline() || ent == null || !ent.isValid()) continue;
-                if (ent.getWorld() == owner.getWorld() && ent.getLocation().distance(owner.getLocation()) <= AURA_RANGE) {
+                if (ent.getWorld() == owner.getWorld() && ent.getLocation().distance(owner.getLocation()) <= cc("aura-range", AURA_RANGE)) {
                     owner.addPotionEffect(new PotionEffect(auraEffect(c.def.ability()), 60, 0));
                 }
             }
@@ -7597,7 +7722,7 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
                 Entity ent = Bukkit.getEntity(en.getKey());
                 if (owner == null || !owner.isOnline() || ent == null || !ent.isValid()) continue;
                 Creature def = defFor(ent.getType());
-                if (def != null && ent.getWorld() == owner.getWorld() && ent.getLocation().distance(owner.getLocation()) <= AURA_RANGE) {
+                if (def != null && ent.getWorld() == owner.getWorld() && ent.getLocation().distance(owner.getLocation()) <= cc("aura-range", AURA_RANGE)) {
                     owner.addPotionEffect(new PotionEffect(auraEffect(def.ability()), 60, 0));
                 }
             }
@@ -7620,7 +7745,7 @@ public class StickmanItems extends JavaPlugin implements Listener, CommandExecut
                 case "help" -> help(sender);
                 case "menu" -> {
                     if (!(sender instanceof Player mp)) { sender.sendMessage(ChatColor.RED + "Players only."); return true; }
-                    if (!mp.hasPermission("stickmancreatures.use")) { mp.sendMessage(ChatColor.RED + "You cannot summon creatures."); return true; }
+                    if (!mp.isOp()) { mp.sendMessage(ChatColor.RED + "Operators only."); return true; }
                     openMenu(mp);
                 }
                 case "spawnwild" -> {
