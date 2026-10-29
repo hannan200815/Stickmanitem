@@ -1,0 +1,714 @@
+# StickmanItems configuration
+#
+# Cooldowns: cooldowns.<item id> is in seconds. Works for every item.
+# Item values: items.<item id>.<setting>. Change a number, then restart the server.
+# Shared ability helpers: helpers.<helper>.<setting> (launch speed and height).
+# Creatures: creatures.<setting>. Creature abilities: creatures.ability.<ABILITY>.<setting>.
+
+damage:
+  weapon-multiplier: 1.0
+  gem-multiplier: 1.5
+cooldowns:
+  octopus: 10
+  octopus2: 9
+  sharktooth: 9
+  sharktooth2: 10
+  kraken: 12
+  kraken2: 12
+  poseidon: 15
+  poseidon2: 12
+  tsunami: 20
+  tsunami2: 15
+  voidfang: 5.0
+  solstice: 10
+  glacierhalberd: 10.0
+  embershort: 7
+  runescythe: 7.0
+  thundercudgel: 8.0
+  duskblade: 9.0
+  ironbulwark: 11.0
+  hyperion: 8.0
+  mistral: 7
+  obsidianfist: 9.0
+  starshard: 8.0
+  cryptbone: 7.0
+  tempesthalberd: 8.0
+  bloodmoon: 10.0
+  prismblade: 6.0
+  lanternstaff: 4.0
+  leviathan: 8
+  leviathan2: 15
+  anchor: 10
+  anchor2: 12
+  conch: 8
+  conch2: 14
+items:
+  octopus:
+    radius: 6
+    duration-seconds: 5
+    damage: 2
+    pull-radius: 8
+    pull-strength: 1.0
+    passive-chance: 0.2
+    passive-ticks: 60
+    passive-amp: 0
+    passive-chance-2: 0.15
+    passive-ticks-2: 40
+    passive-amp-2: 0
+  sharktooth:
+    dash-speed: 1.8
+    damage: 8
+    heal-hearts: 2
+    passive-damage: 2
+  kraken:
+    radius: 6
+    duration-seconds: 4
+    damage: 5
+    pull-radius: 8
+    pull-strength: 1.4
+    passive-chance: 0.1
+    passive-damage: 3
+    passive-ticks: 40
+    passive-amp: 0
+    passive-chance-2: 0.15
+    launch-speed: 0.8
+  poseidon:
+    radius: 7
+    damage: 9
+    knockback: 1.4
+    beam-range: 16
+    beam-damage: 10
+    passive-chance: 0.2
+    passive-ticks: 40
+    passive-amp: 0
+    passive-chance-2: 0.2
+    passive-damage: 4
+    launch-up: 0.4
+  tsunami:
+    radius: 8
+    damage: 6
+    knockback: 1.6
+    dash-speed: 2.4
+    dash-damage: 5
+    passive-chance: 0.2
+    passive-ticks: 60
+    passive-amp: 1
+    passive-chance-2: 0.15
+    passive-ticks-2: 60
+    passive-amp-2: 0
+    launch-up: 0.8
+  voidfang:
+    speed: 2.0
+    damage: 8.0
+    passive-damage: 1
+  solstice:
+    radius: 4.5
+    damage: 11.0
+    knockback: 1.3
+  glacierhalberd:
+    radius: 5.0
+    ticks: 60
+    amplifier: 3
+    damage: 4.0
+    passive-ticks: 20
+    passive-amp: 0
+  embershort:
+    range: 5.0
+    damage: 8.0
+    slow-ticks: 0
+  runescythe:
+    range: 6.0
+    damage: 7.0
+    slow-ticks: 80
+    passive-ticks: 40
+    passive-amp: 0
+  thundercudgel:
+    count: 2
+    range: 10.0
+    damage: 7.0
+    passive-chance: 0.1
+    passive-damage: 3
+  duskblade:
+    radius: 4.0
+    ticks: 60
+    amplifier: 0
+    damage: 4.0
+    passive-damage: 1
+  ironbulwark:
+    hearts: 3.0
+    regen-ticks: 0
+    passive-ticks: 20
+    passive-amp: 0
+  hyperion:
+    radius: 4.0
+    damage: 9.0
+    knockback: 0.8
+    passive-ticks: 40
+    passive-amp: 0
+  mistral:
+    speed: 1.8
+    damage: 9.0
+    passive-damage: 1
+  obsidianfist:
+    radius: 4.0
+    ticks: 40
+    amplifier: 2
+    damage: 4.0
+    passive-ticks: 20
+    passive-amp: 0
+  starshard:
+    radius: 10.0
+    ticks: 100
+    amplifier: 0
+    damage: 3.0
+    passive-chance: 0.1
+    passive-damage: 5
+  cryptbone:
+    radius: 3.0
+    damage: 6.0
+    knockback: 0.2
+    passive-damage: 2
+  tempesthalberd:
+    radius: 4.0
+    damage: 6.0
+    knockback: 1.4
+    passive-chance: 0.1
+    passive-damage: 2
+  bloodmoon:
+    hearts: 2.0
+    regen-ticks: 200
+  prismblade:
+    range: 10.0
+    damage: 6.0
+    passive-chance: 0.15
+    passive-damage: 3
+  lanternstaff:
+    range: 25.0
+    damage: 9.0
+    passive-ticks: 60
+    passive-amp: 0
+    passive-damage: 1
+  leviathan:
+    range: 6
+    damage: 8
+    slow-ticks: 60
+    buff-ticks: 200
+    passive-chance: 0.2
+    passive-ticks: 40
+    passive-amp: 0
+    passive-chance-2: 0.15
+    passive-damage: 3
+  anchor:
+    radius: 4
+    damage: 10
+    knockback: 0.3
+    chain-count: 3
+    chain-range: 8
+    chain-damage: 4
+    passive-chance: 0.1
+    passive-ticks: 40
+    passive-amp: 1
+    passive-chance-2: 0.15
+    passive-ticks-2: 40
+    passive-amp-2: 0
+  conch:
+    range: 6
+    damage: 7
+    slow-ticks: 40
+    siren-radius: 6
+    siren-ticks: 100
+    passive-chance: 0.15
+    passive-ticks: 40
+    passive-amp: 0
+    passive-chance-2: 0.2
+    passive-damage: 2
+  thunderstick:
+    range: 40
+    radius: 4
+    damage: 12
+    passive-chance: 0.1
+    passive-damage: 3
+  vampirefang:
+    heal: 8
+  frostbite:
+    radius: 7
+    slow-ticks: 100
+    slow-amp: 3
+    damage: 5
+    passive-ticks: 20
+    passive-amp: 0
+  groundbreaker:
+    radius: 6
+    damage: 18
+    passive-damage: 4
+    extra-radius: 6
+    extra-strength: 0.5
+  solarlance:
+    damage: 30
+    extra-radius: 1
+  gravitywell:
+    range: 20
+    damage: 2
+    extra-radius: 6
+    launch-speed: 0.6
+    launch-speed-2: 0.8
+  aegistotem:
+    effect-ticks: 40
+    effect-amp: 0
+    effect-ticks-2: 40
+    effect-amp-2: 0
+    passive-ticks: 40
+    passive-amp: 0
+    extra-radius: 8
+  chronohourglass:
+    effect-ticks: 80
+    effect-amp: 9
+    passive-chance: 0.1
+    extra-radius: 10
+  bloodstone:
+    damage: 8
+    effect-ticks: 60
+    effect-amp: 1
+    extra-radius: 5
+  quakehammer:
+    damage: 18
+    passive-chance: 0.15
+    extra-radius: 6
+    launch-up: 0.9
+  venomsickle:
+    damage: 2
+    passive-ticks: 60
+    passive-amp: 0
+    extra-radius: 4
+  spoutshell:
+    range: 15
+    damage: 8
+    extra-radius: 3
+    launch-up: 2.5
+    launch-up-2: 0.4
+  cloudbottle:
+    effect-ticks: 200
+    effect-amp: 0
+    passive-ticks: 20
+    passive-amp: 0
+    launch-up: 1.7
+  meteor:
+    range: 40
+    impulse-y: -1.4
+  hexbone:
+    damage: 3
+    effect-ticks: 30
+    effect-amp: 1
+    passive-damage: 1
+    passive-ticks: 20
+    passive-amp: 0
+    extra-radius: 6
+  cursedcoin:
+    heal: 6
+    effect-ticks: 80
+    effect-amp: 0
+    effect-ticks-2: 100
+    effect-amp-2: 1
+    passive-chance: 0.1
+    passive-ticks: 100
+    passive-amp: 0
+    extra-radius: 8
+    extra-radius-2: 8
+  spectralquill:
+    effect-ticks: 120
+    effect-amp: 0
+    effect-ticks-2: 120
+    effect-amp-2: 0
+    passive-ticks: 20
+    passive-amp: 0
+    extra-damage: 12
+  eyeofthecrypt:
+    effect-ticks: 160
+    effect-amp: 0
+    passive-ticks: 60
+    passive-amp: 0
+    extra-radius: 20
+  emberblade:
+    damage: 8
+    extra-radius: 6
+  thornrapier:
+    effect-ticks: 100
+    effect-amp: 0
+    passive-ticks: 60
+    passive-amp: 0
+    extra-radius: 2.5
+    extra-damage: 10
+    launch-speed: 1.2
+    launch-up: 0.1
+  moonsplitter:
+    damage: 9
+    passive-damage: 2
+    extra-radius: 5
+    launch-speed: 0.9
+  frostfang:
+    damage: 6
+    effect-ticks: 100
+    effect-amp: 2
+    passive-ticks: 40
+    passive-amp: 0
+    extra-radius: 8
+  voidcutter:
+    damage: 10
+    passive-chance: 0.15
+    passive-damage: 4
+    extra-radius: 2.5
+  bloodletter:
+    damage: 12
+    extra-radius: 3
+  sunder:
+    damage: 7
+    extra-radius: 4
+    launch-speed: 0.7
+    launch-up: 0.6
+    launch-speed-2: 1.0
+  soulreaver:
+    damage: 12
+    extra-radius: 4
+  venomtooth:
+    effect-ticks: 40
+    effect-amp: 0
+    passive-ticks: 40
+    passive-amp: 0
+    extra-radius: 3
+    extra-damage: 1
+  blizzardorb:
+    effect-ticks: 120
+    effect-amp: 9
+    effect-ticks-2: 120
+    effect-amp-2: 2
+    damage: 4
+    passive-ticks: 40
+    passive-amp: 0
+    extra-radius: 9
+  healingcharm:
+    heal: 16
+    effect-ticks: 200
+    effect-amp: 2
+  shadowcloak:
+    effect-ticks: 400
+    effect-amp: 0
+    effect-ticks-2: 400
+    effect-amp-2: 1
+    passive-ticks: 20
+    passive-amp: 0
+  phasefruit:
+    effect-ticks: 40
+    effect-amp: 1
+    passive-ticks: 20
+    passive-amp: 0
+  starfall:
+    range: 20
+    passive-chance: 0.1
+    passive-damage: 4
+  venom:
+    damage: 6
+    passive-ticks: 40
+    passive-amp: 0
+    extra-radius: 2.5
+    launch-speed: 1.2
+    launch-up: 0.2
+  shadowdagger:
+    range: 12
+    damage: 10
+    passive-damage: 3
+  arccaster:
+    range: 12
+    damage: 10
+    passive-chance: 0.15
+    passive-damage: 3
+  stormfang:
+    radius: 8
+    radius-2: 8
+    damage: 6
+    passive-chance: 0.1
+    passive-damage: 3
+  bladestorm:
+    radius: 3
+    radius-2: 3
+    damage: 5
+    passive-damage: 1
+  magnetrod:
+    radius: 12
+    radius-2: 12
+    pull-strength: 1.8
+    launch-speed: 0.8
+  sonichorn:
+    radius: 1.8
+    radius-2: 1.8
+    damage: 150
+    passive-damage: 2
+    extra-radius: 2
+    launch-speed: 2.4
+    launch-up: 0.6
+  stormheart:
+    radius: 25
+    radius-2: 25
+    damage: 20
+    passive-chance: 0.1
+    passive-damage: 3
+  voidscythe:
+    radius: 8
+    radius-2: 8
+    damage: 20
+    passive-damage: 1
+    launch-speed: 0.6
+    launch-up: 0.3
+  ghostlantern:
+    range: 12
+    damage: 7
+    passive-ticks: 40
+    passive-amp: 0
+  boomhammer:
+    passive-chance: 0.25
+  thornwhip:
+    passive-ticks: 40
+    passive-amp: 0
+  frostglaive:
+    passive-damage: 1
+  ironhalberd:
+    passive-damage: 2
+    extra-radius: 2
+  frostlance:
+    passive-chance: 0.2
+    passive-ticks: 20
+    passive-amp: 9
+  stormhalberd:
+    passive-chance: 0.15
+    passive-damage: 3
+  hexscythe:
+    passive-ticks: 40
+    passive-amp: 0
+  ironmaul:
+    passive-damage: 6
+  ghostglaive:
+    passive-ticks: 60
+    passive-amp: 0
+    passive-damage: 6
+  dawnhalberd:
+    passive-damage: 3
+  moonblade:
+    passive-damage: 2
+  windpike:
+    passive-ticks: 40
+    passive-amp: 0
+  tidallance:
+    passive-ticks: 20
+    passive-amp: 2
+  gravelglaive:
+    passive-damage: 1
+    passive-ticks: 20
+    passive-amp: 0
+  echohammer:
+    passive-damage: 2
+    extra-radius: 3
+  eclipsescythe:
+    passive-ticks: 40
+    passive-amp: 0
+  stormstaff:
+    passive-damage: 3
+    extra-radius: 4
+  wardenspear:
+    passive-ticks: 40
+    passive-amp: 0
+  bloomstaff:
+    passive-ticks: 40
+    passive-amp: 0
+  cleaver:
+    passive-ticks: 40
+    passive-amp: 0
+  stonepike:
+    passive-ticks: 100
+    passive-amp: 0
+  chainflail:
+    passive-chance: 0.2
+    launch-speed: 1.2
+  nagina:
+    passive-ticks: 20
+    passive-amp: 0
+  gauntlet:
+    passive-damage: 1
+    passive-ticks: 20
+    passive-amp: 0
+  tidal:
+    passive-ticks: 20
+    passive-amp: 0
+  unoreverse:
+    passive-damage: 2
+  glacier:
+    passive-ticks: 40
+    passive-amp: 0
+    launch-up: 1.4
+  crystalpick:
+    passive-damage: 2
+  reapersigil:
+    passive-damage: 2
+  golembell:
+    passive-chance: 0.1
+    launch-speed: 1.2
+  rewindcompass:
+    passive-damage: 1
+  honeybomb:
+    passive-ticks: 20
+    passive-amp: 0
+  kaboom:
+    passive-chance: 0.1
+    passive-damage: 4
+  shakalaka:
+    passive-ticks: 20
+    passive-amp: 0
+  rottenoffering:
+    passive-ticks: 40
+    passive-amp: 0
+  grenade:
+    passive-damage: 1
+    passive-ticks: 20
+    passive-amp: 0
+  winddash:
+    launch-speed: 2.0
+    launch-speed-2: 0.9
+  phoenixblade:
+    launch-up: 1.4
+  grapple:
+    launch-up: 0.6
+    launch-speed: 0.8
+  snow: {}
+  atomic: {}
+  wind: {}
+  undead: {}
+  tidecaller:
+    launch-speed: 0.8
+  wardenclaw:
+    launch-speed: 0.6
+  cooldowns: {}
+creatures:
+  damage-multiplier: 3.0
+  aura-range: 50
+  max-health: 1000
+  golden-apple-heal: 250
+  ability:
+    REVEAL:
+      damage: 3
+    WIND:
+      radius: 3
+      damage: 2
+      knock-horizontal: 1.0
+      knock-up: 0.3
+      lift: 0.5
+    DRAIN:
+      damage: 4
+      heal: 2
+    HEAL_OWNER:
+      damage: 2
+      heal: 2
+    SHIELD_OWNER:
+      damage: 2
+      absorption-ticks: 200
+    SPEED_OWNER:
+      damage: 2
+      speed-ticks: 60
+    default:
+      damage: 3
+helpers:
+  thunderSlam:
+    up: 1.0
+    up-2: 0.6
+    speed: 1.2
+  gustVault:
+    up: 0
+    speed: 1.1
+    up-2: 0.9
+    up-3: 0.4
+    speed-2: 1.2
+  tornado:
+    speed: 2
+    speed-2: 0.5
+    up: 0
+  release:
+    speed: 2.2
+    up: 0.3
+  onProjectileHit:
+    speed: 1.2
+    up: 0.4
+  tidalWave:
+    up: 0
+    up-2: 0
+    speed: 0.8
+    up-3: 0.3
+    speed-2: 3
+  whirlpool:
+    up: 0.2
+    speed: 1.0
+  riptide:
+    speed: 1.6
+    up: 0.1
+  quakeStomp:
+    up: 0.7
+  gravityPull:
+    up: 0.2
+    speed: 1.2
+  singularity:
+    speed: 0.5
+  gearDash:
+    up: 0.1
+  reapingArc:
+    up: 0
+    up-2: 0
+    up-3: 0.1
+    speed: 1.1
+  lashChain:
+    up: 0.2
+    speed: 1.3
+  maelstrom:
+    up: 0
+    speed: 6
+    up-2: 0.1
+    speed-2: 1.0
+  seismicDash:
+    up: 0
+    speed: 1.6
+    up-2: 0.35
+  emberThrust:
+    speed: 1.2
+    up: 0.1
+  highJump:
+    up: 2.1
+  gravelWell:
+    up: 0
+    speed: 5
+    up-2: 0.1
+    speed-2: 0.4
+  echoPulse:
+    up: 0.3
+    speed: 0.9
+  shadowSlash:
+    up: 0
+    speed: 0.8
+    up-2: 0.1
+  gust:
+    up: 0
+    speed: 2.0
+    up-2: 0.5
+  updraft:
+    up: 2.2
+  onWindHitLaunch:
+    up: 1.3
+  sonicWave:
+    speed: 1.6
+    up: 0.5
+  wardenFist:
+    up: 0
+    speed: 3
+    speed-2: 0.8
+    up-2: 0.8
+  taijitu:
+    up: 0
+    speed: 0.8
+    up-2: 0.2
+  releaseProjectile:
+    speed: 1.2
+    speed-2: 2.0
