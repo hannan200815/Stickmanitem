@@ -1,0 +1,1011 @@
+# ================================================================
+#  StickmanItems configuration
+# ================================================================
+#
+#  How to edit this file:
+#    - Change a number, save, then restart the server.
+#    - Cooldowns are in seconds.
+#    - 20 ticks = 1 second, where a setting asks for ticks.
+#    - Chances are between 0 and 1 (0.15 = 15%).
+#
+
+# ================================================================
+#  Weapon and gem damage
+# ================================================================
+damage:
+  # Melee damage multiplier for held weapons (1.0 = normal).
+  weapon-multiplier: 1.0
+  # Gem damage multiplier (1.5 = original).
+  gem-multiplier: 1.5
+
+# ================================================================
+#  Cooldowns (seconds)
+# ================================================================
+# One line per ability. A second ability (sneak + right-click) ends in 2.
+cooldowns:
+  anchor: 10   # Anchor Maul
+  anchor2: 12   # Anchor Maul (second ability)
+  conch: 8   # Conch Spear
+  conch2: 14   # Conch Spear (second ability)
+  kraken: 12   # Kraken
+  kraken2: 12   # Kraken (second ability)
+  leviathan: 8   # Leviathan Blade
+  leviathan2: 15   # Leviathan Blade (second ability)
+  octopus: 10   # Octopus
+  octopus2: 9   # Octopus (second ability)
+  poseidon: 15   # Poseidon
+  poseidon2: 12   # Poseidon (second ability)
+  sharktooth: 9   # Shark's Tooth
+  sharktooth2: 10   # Shark's Tooth (second ability)
+  tsunami: 20   # Tsunami Overlord
+  tsunami2: 15   # Tsunami Overlord (second ability)
+  bloodmoon: 10.0   # Bloodmoon Scythe
+  cryptbone: 7.0   # Crypt Bone
+  duskblade: 9.0   # Dusk Blade
+  embershort: 7   # Ember Shortspear
+  glacierhalberd: 10.0   # Glacier Halberd
+  hyperion: 8.0   # Hyperion Blade
+  infernowand: 1.0   # Inferno Wand
+  ironbulwark: 11.0   # Iron Bulwark
+  lanternstaff: 4.0   # Lantern Staff
+  mistral: 7   # Mistral Spear
+  obsidianfist: 9.0   # Obsidian Fist
+  prismblade: 6.0   # Prism Blade
+  runescythe: 7.0   # Rune Scythe
+  solstice: 10   # Solstice Hammer
+  starshard: 8.0   # Starshard Scepter
+  tempesthalberd: 8.0   # Tempest Halberd
+  thundercudgel: 8.0   # Thunder Cudgel
+  voidfang: 5.0   # Voidfang Dagger
+
+# ================================================================
+#  Items - ocean group (balanced)
+# ================================================================
+# Power scale: Poseidon 1st (strongest), Kraken 2nd, Shark's Tooth 3rd, Octopus 4th (weakest).
+# Tsunami Overlord, Leviathan Blade, Anchor Maul and Conch Spear are unranked.
+items:
+
+  # --- Poseidon  (Power 1st, strongest)
+  poseidon:
+    radius: 7   # area radius, in blocks
+    damage: 9   # damage dealt (2 = one heart)
+    knockback: 1.4   # push strength (1.0 = normal)
+    beam-range: 16   # beam length, in blocks
+    beam-damage: 10   # damage dealt by the beam
+    passive-chance: 0.2   # chance to trigger (0.15 = 15%)
+    passive-ticks: 40   # passive effect length (20 ticks = 1 second)
+    passive-amp: 0   # passive effect level (0 = weakest)
+    passive-chance-2: 0.2   # chance to trigger (0.15 = 15%)
+    passive-damage: 4   # passive damage dealt
+    launch-up: 0.4   # launch height
+
+  # --- Kraken  (Power 2nd)
+  kraken:
+    radius: 6   # area radius, in blocks
+    duration-seconds: 4   # effect length, in seconds
+    damage: 5   # damage dealt (2 = one heart)
+    pull-radius: 8   # pull reach, in blocks
+    pull-strength: 1.4   # pull force (1.0 = normal)
+    passive-chance: 0.1   # chance to trigger (0.15 = 15%)
+    passive-damage: 3   # passive damage dealt
+    passive-ticks: 40   # passive effect length (20 ticks = 1 second)
+    passive-amp: 0   # passive effect level (0 = weakest)
+    passive-chance-2: 0.15   # chance to trigger (0.15 = 15%)
+    launch-speed: 0.8   # launch speed (1.0 = normal)
+
+  # --- Shark's Tooth  (Power 3rd)
+  sharktooth:
+    dash-speed: 1.8   # dash speed (1.0 = normal walk)
+    damage: 8   # damage dealt (2 = one heart)
+    heal-hearts: 2   # hearts restored
+    passive-damage: 2   # passive damage dealt
+
+  # --- Octopus  (Power 4th, weakest)
+  octopus:
+    radius: 6   # area radius, in blocks
+    duration-seconds: 5   # effect length, in seconds
+    damage: 2   # damage dealt (2 = one heart)
+    pull-radius: 8   # pull reach, in blocks
+    pull-strength: 1.0   # pull force (1.0 = normal)
+    passive-chance: 0.2   # chance to trigger (0.15 = 15%)
+    passive-ticks: 60   # passive effect length (20 ticks = 1 second)
+    passive-amp: 0   # passive effect level (0 = weakest)
+    passive-chance-2: 0.15   # chance to trigger (0.15 = 15%)
+    passive-ticks-2: 40   # passive effect length (20 ticks = 1 second)
+    passive-amp-2: 0   # passive effect level (0 = weakest)
+
+  # --- Tsunami Overlord
+  tsunami:
+    radius: 8   # area radius, in blocks
+    damage: 6   # damage dealt (2 = one heart)
+    knockback: 1.6   # push strength (1.0 = normal)
+    dash-speed: 2.4   # dash speed (1.0 = normal walk)
+    dash-damage: 5   # damage dealt while dashing
+    passive-chance: 0.2   # chance to trigger (0.15 = 15%)
+    passive-ticks: 60   # passive effect length (20 ticks = 1 second)
+    passive-amp: 1   # passive effect level (0 = weakest)
+    passive-chance-2: 0.15   # chance to trigger (0.15 = 15%)
+    passive-ticks-2: 60   # passive effect length (20 ticks = 1 second)
+    passive-amp-2: 0   # passive effect level (0 = weakest)
+    launch-up: 0.8   # launch height
+
+  # --- Leviathan Blade
+  leviathan:
+    range: 6   # distance, in blocks
+    damage: 8   # damage dealt (2 = one heart)
+    slow-ticks: 60   # slowness length (20 ticks = 1 second)
+    buff-ticks: 200   # buff length (20 ticks = 1 second)
+    passive-chance: 0.2   # chance to trigger (0.15 = 15%)
+    passive-ticks: 40   # passive effect length (20 ticks = 1 second)
+    passive-amp: 0   # passive effect level (0 = weakest)
+    passive-chance-2: 0.15   # chance to trigger (0.15 = 15%)
+    passive-damage: 3   # passive damage dealt
+
+  # --- Anchor Maul
+  anchor:
+    radius: 4   # area radius, in blocks
+    damage: 10   # damage dealt (2 = one heart)
+    knockback: 0.3   # push strength (1.0 = normal)
+    chain-count: 3   # how many targets it chains to
+    chain-range: 8   # chain reach, in blocks
+    chain-damage: 4   # damage per chained target
+    passive-chance: 0.1   # chance to trigger (0.15 = 15%)
+    passive-ticks: 40   # passive effect length (20 ticks = 1 second)
+    passive-amp: 1   # passive effect level (0 = weakest)
+    passive-chance-2: 0.15   # chance to trigger (0.15 = 15%)
+    passive-ticks-2: 40   # passive effect length (20 ticks = 1 second)
+    passive-amp-2: 0   # passive effect level (0 = weakest)
+
+  # --- Conch Spear
+  conch:
+    range: 6   # distance, in blocks
+    damage: 7   # damage dealt (2 = one heart)
+    slow-ticks: 40   # slowness length (20 ticks = 1 second)
+    siren-radius: 6   # area radius, in blocks
+    siren-ticks: 100   # effect length (20 ticks = 1 second)
+    passive-chance: 0.15   # chance to trigger (0.15 = 15%)
+    passive-ticks: 40   # passive effect length (20 ticks = 1 second)
+    passive-amp: 0   # passive effect level (0 = weakest)
+    passive-chance-2: 0.2   # chance to trigger (0.15 = 15%)
+    passive-damage: 2   # passive damage dealt
+
+# ================================================================
+#  Items - all others (A to Z)
+# ================================================================
+
+  # --- Aegis Totem
+  aegistotem:
+    effect-ticks: 40   # effect length (20 ticks = 1 second)
+    effect-amp: 0   # effect level (0 = weakest)
+    effect-ticks-2: 40   # effect length (20 ticks = 1 second)
+    effect-amp-2: 0   # effect level (0 = weakest)
+    passive-ticks: 40   # passive effect length (20 ticks = 1 second)
+    passive-amp: 0   # passive effect level (0 = weakest)
+    extra-radius: 8   # area radius, in blocks
+
+  # --- Arc Caster
+  arccaster:
+    range: 12   # distance, in blocks
+    damage: 10   # damage dealt (2 = one heart)
+    passive-chance: 0.15   # chance to trigger (0.15 = 15%)
+    passive-damage: 3   # passive damage dealt
+
+  # --- atomic
+  atomic:
+    {}
+
+  # --- Bladestorm
+  bladestorm:
+    radius: 3   # area radius, in blocks
+    radius-2: 3   # area radius, in blocks
+    damage: 5   # damage dealt (2 = one heart)
+    passive-damage: 1   # passive damage dealt
+
+  # --- Blizzard Orb
+  blizzardorb:
+    effect-ticks: 120   # effect length (20 ticks = 1 second)
+    effect-amp: 9   # effect level (0 = weakest)
+    effect-ticks-2: 120   # effect length (20 ticks = 1 second)
+    effect-amp-2: 2   # effect level (0 = weakest)
+    damage: 4   # damage dealt (2 = one heart)
+    passive-ticks: 40   # passive effect length (20 ticks = 1 second)
+    passive-amp: 0   # passive effect level (0 = weakest)
+    extra-radius: 9   # area radius, in blocks
+
+  # --- Blood Sickle
+  bloodsickle:
+    {}
+
+  # --- Bloodletter
+  bloodletter:
+    damage: 12   # damage dealt (2 = one heart)
+    extra-radius: 3   # area radius, in blocks
+
+  # --- Bloodmoon Scythe
+  bloodmoon:
+    hearts: 2.0   # hearts restored
+    regen-ticks: 200   # regeneration length (20 ticks = 1 second)
+
+  # --- Bloodstone Mace
+  bloodstone:
+    damage: 8   # damage dealt (2 = one heart)
+    effect-ticks: 60   # effect length (20 ticks = 1 second)
+    effect-amp: 1   # effect level (0 = weakest)
+    extra-radius: 5   # area radius, in blocks
+
+  # --- Bloom Staff
+  bloomstaff:
+    passive-ticks: 40   # passive effect length (20 ticks = 1 second)
+    passive-amp: 0   # passive effect level (0 = weakest)
+
+  # --- Boom Hammer
+  boomhammer:
+    passive-chance: 0.25   # chance to trigger (0.15 = 15%)
+
+  # --- Chain Flail
+  chainflail:
+    passive-chance: 0.2   # chance to trigger (0.15 = 15%)
+    launch-speed: 1.2   # launch speed (1.0 = normal)
+
+  # --- Chrono Hourglass
+  chronohourglass:
+    effect-ticks: 80   # effect length (20 ticks = 1 second)
+    effect-amp: 9   # effect level (0 = weakest)
+    passive-chance: 0.1   # chance to trigger (0.15 = 15%)
+    extra-radius: 10   # area radius, in blocks
+
+  # --- Cloud Bottle
+  cloudbottle:
+    effect-ticks: 200   # effect length (20 ticks = 1 second)
+    effect-amp: 0   # effect level (0 = weakest)
+    passive-ticks: 20   # passive effect length (20 ticks = 1 second)
+    passive-amp: 0   # passive effect level (0 = weakest)
+    launch-up: 1.7   # launch height
+
+  # --- Control Orb
+  gauntlet:
+    passive-damage: 1   # passive damage dealt
+    passive-ticks: 20   # passive effect length (20 ticks = 1 second)
+    passive-amp: 0   # passive effect level (0 = weakest)
+
+  # --- cooldowns
+  cooldowns:
+    {}
+
+  # --- Crypt Bone
+  cryptbone:
+    radius: 3.0   # area radius, in blocks
+    damage: 6.0   # damage dealt (2 = one heart)
+    knockback: 0.2   # push strength (1.0 = normal)
+    passive-damage: 2   # passive damage dealt
+
+  # --- Crystal Pick
+  crystalpick:
+    passive-damage: 2   # passive damage dealt
+
+  # --- Cursed Coin
+  cursedcoin:
+    heal: 6   # health restored (2 = one heart)
+    effect-ticks: 80   # effect length (20 ticks = 1 second)
+    effect-amp: 0   # effect level (0 = weakest)
+    effect-ticks-2: 100   # effect length (20 ticks = 1 second)
+    effect-amp-2: 1   # effect level (0 = weakest)
+    passive-chance: 0.1   # chance to trigger (0.15 = 15%)
+    passive-ticks: 100   # passive effect length (20 ticks = 1 second)
+    passive-amp: 0   # passive effect level (0 = weakest)
+    extra-radius: 8   # area radius, in blocks
+    extra-radius-2: 8   # area radius, in blocks
+
+  # --- Dawn Halberd
+  dawnhalberd:
+    passive-damage: 3   # passive damage dealt
+
+  # --- Dusk Blade
+  duskblade:
+    radius: 4.0   # area radius, in blocks
+    ticks: 60   # effect length (20 ticks = 1 second)
+    amplifier: 0   # effect level (0 = weakest)
+    damage: 4.0   # damage dealt (2 = one heart)
+    passive-damage: 1   # passive damage dealt
+
+  # --- Dusk Scythe
+  duskscythe:
+    {}
+
+  # --- Echo Warhammer
+  echohammer:
+    passive-damage: 2   # passive damage dealt
+    extra-radius: 3   # area radius, in blocks
+
+  # --- Eclipse Scythe
+  eclipsescythe:
+    passive-ticks: 40   # passive effect length (20 ticks = 1 second)
+    passive-amp: 0   # passive effect level (0 = weakest)
+
+  # --- Ember Blade
+  emberblade:
+    damage: 8   # damage dealt (2 = one heart)
+    extra-radius: 6   # area radius, in blocks
+
+  # --- Ember Glaive
+  emberglaive:
+    {}
+
+  # --- Ember Pike
+  emberpike:
+    {}
+
+  # --- Ember Shortspear
+  embershort:
+    range: 5.0   # distance, in blocks
+    damage: 8.0   # damage dealt (2 = one heart)
+    slow-ticks: 0   # slowness length (20 ticks = 1 second)
+
+  # --- Eye of the Crypt
+  eyeofthecrypt:
+    effect-ticks: 160   # effect length (20 ticks = 1 second)
+    effect-amp: 0   # effect level (0 = weakest)
+    passive-ticks: 60   # passive effect length (20 ticks = 1 second)
+    passive-amp: 0   # passive effect level (0 = weakest)
+    extra-radius: 20   # area radius, in blocks
+
+  # --- Frost Glaive
+  frostglaive:
+    passive-damage: 1   # passive damage dealt
+
+  # --- Frost Lance
+  frostlance:
+    passive-chance: 0.2   # chance to trigger (0.15 = 15%)
+    passive-ticks: 20   # passive effect length (20 ticks = 1 second)
+    passive-amp: 9   # passive effect level (0 = weakest)
+
+  # --- Frostbite
+  frostbite:
+    radius: 7   # area radius, in blocks
+    slow-ticks: 100   # slowness length (20 ticks = 1 second)
+    slow-amp: 3   # slowness level (0 = weakest)
+    damage: 5   # damage dealt (2 = one heart)
+    passive-ticks: 20   # passive effect length (20 ticks = 1 second)
+    passive-amp: 0   # passive effect level (0 = weakest)
+
+  # --- Frostfang Greatsword
+  frostfang:
+    damage: 6   # damage dealt (2 = one heart)
+    effect-ticks: 100   # effect length (20 ticks = 1 second)
+    effect-amp: 2   # effect level (0 = weakest)
+    passive-ticks: 40   # passive effect length (20 ticks = 1 second)
+    passive-amp: 0   # passive effect level (0 = weakest)
+    extra-radius: 8   # area radius, in blocks
+
+  # --- Ghost Glaive
+  ghostglaive:
+    passive-ticks: 60   # passive effect length (20 ticks = 1 second)
+    passive-amp: 0   # passive effect level (0 = weakest)
+    passive-damage: 6   # passive damage dealt
+
+  # --- Ghost Lantern
+  ghostlantern:
+    range: 12   # distance, in blocks
+    damage: 7   # damage dealt (2 = one heart)
+    passive-ticks: 40   # passive effect length (20 ticks = 1 second)
+    passive-amp: 0   # passive effect level (0 = weakest)
+
+  # --- Glacier Halberd
+  glacierhalberd:
+    radius: 5.0   # area radius, in blocks
+    ticks: 60   # effect length (20 ticks = 1 second)
+    amplifier: 3   # effect level (0 = weakest)
+    damage: 4.0   # damage dealt (2 = one heart)
+    passive-ticks: 20   # passive effect length (20 ticks = 1 second)
+    passive-amp: 0   # passive effect level (0 = weakest)
+
+  # --- Golem Call
+  golembell:
+    passive-chance: 0.1   # chance to trigger (0.15 = 15%)
+    launch-speed: 1.2   # launch speed (1.0 = normal)
+
+  # --- Grapple Hook
+  grapple:
+    launch-up: 0.6   # launch height
+    launch-speed: 0.8   # launch speed (1.0 = normal)
+
+  # --- Gravel Glaive
+  gravelglaive:
+    passive-damage: 1   # passive damage dealt
+    passive-ticks: 20   # passive effect length (20 ticks = 1 second)
+    passive-amp: 0   # passive effect level (0 = weakest)
+
+  # --- Gravity Well
+  gravitywell:
+    range: 20   # distance, in blocks
+    damage: 2   # damage dealt (2 = one heart)
+    extra-radius: 6   # area radius, in blocks
+    launch-speed: 0.6   # launch speed (1.0 = normal)
+    launch-speed-2: 0.8   # launch speed (1.0 = normal)
+
+  # --- Grenade
+  grenade:
+    passive-damage: 1   # passive damage dealt
+    passive-ticks: 20   # passive effect length (20 ticks = 1 second)
+    passive-amp: 0   # passive effect level (0 = weakest)
+
+  # --- Groundbreaker
+  groundbreaker:
+    radius: 6   # area radius, in blocks
+    damage: 18   # damage dealt (2 = one heart)
+    passive-damage: 4   # passive damage dealt
+    extra-radius: 6   # area radius, in blocks
+    extra-strength: 0.5   # push strength (1.0 = normal)
+
+  # --- Healing Charm
+  healingcharm:
+    heal: 16   # health restored (2 = one heart)
+    effect-ticks: 200   # effect length (20 ticks = 1 second)
+    effect-amp: 2   # effect level (0 = weakest)
+
+  # --- Hex Bone
+  hexbone:
+    damage: 3   # damage dealt (2 = one heart)
+    effect-ticks: 30   # effect length (20 ticks = 1 second)
+    effect-amp: 1   # effect level (0 = weakest)
+    passive-damage: 1   # passive damage dealt
+    passive-ticks: 20   # passive effect length (20 ticks = 1 second)
+    passive-amp: 0   # passive effect level (0 = weakest)
+    extra-radius: 6   # area radius, in blocks
+
+  # --- Hexed Scythe
+  hexscythe:
+    passive-ticks: 40   # passive effect length (20 ticks = 1 second)
+    passive-amp: 0   # passive effect level (0 = weakest)
+
+  # --- Honey Bomb
+  honeybomb:
+    passive-ticks: 20   # passive effect length (20 ticks = 1 second)
+    passive-amp: 0   # passive effect level (0 = weakest)
+
+  # --- Hyperion Blade
+  hyperion:
+    radius: 4.0   # area radius, in blocks
+    damage: 9.0   # damage dealt (2 = one heart)
+    knockback: 0.8   # push strength (1.0 = normal)
+    passive-ticks: 40   # passive effect length (20 ticks = 1 second)
+    passive-amp: 0   # passive effect level (0 = weakest)
+
+  # --- Inferno Wand
+  infernowand:
+    {}
+
+  # --- Iron Bulwark
+  ironbulwark:
+    hearts: 3.0   # hearts restored
+    regen-ticks: 0   # regeneration length (20 ticks = 1 second)
+    passive-ticks: 20   # passive effect length (20 ticks = 1 second)
+    passive-amp: 0   # passive effect level (0 = weakest)
+
+  # --- Iron Halberd
+  ironhalberd:
+    passive-damage: 2   # passive damage dealt
+    extra-radius: 2   # area radius, in blocks
+
+  # --- Ironbound Maul
+  ironmaul:
+    passive-damage: 6   # passive damage dealt
+
+  # --- Kaboom Kachow
+  kaboom:
+    passive-chance: 0.1   # chance to trigger (0.15 = 15%)
+    passive-damage: 4   # passive damage dealt
+
+  # --- Lantern Staff
+  lanternstaff:
+    range: 25.0   # distance, in blocks
+    damage: 9.0   # damage dealt (2 = one heart)
+    passive-ticks: 60   # passive effect length (20 ticks = 1 second)
+    passive-amp: 0   # passive effect level (0 = weakest)
+    passive-damage: 1   # passive damage dealt
+
+  # --- Magnet Rod
+  magnetrod:
+    radius: 12   # area radius, in blocks
+    radius-2: 12   # area radius, in blocks
+    pull-strength: 1.8   # pull force (1.0 = normal)
+    launch-speed: 0.8   # launch speed (1.0 = normal)
+
+  # --- Meteor
+  meteor:
+    range: 40   # distance, in blocks
+    impulse-y: -1.4   # value used by this ability
+
+  # --- Mistral Spear
+  mistral:
+    speed: 1.8   # speed multiplier (1.0 = normal)
+    damage: 9.0   # damage dealt (2 = one heart)
+    passive-damage: 1   # passive damage dealt
+
+  # --- Moonlit Blade
+  moonblade:
+    passive-damage: 2   # passive damage dealt
+
+  # --- Moonsplitter
+  moonsplitter:
+    damage: 9   # damage dealt (2 = one heart)
+    passive-damage: 2   # passive damage dealt
+    extra-radius: 5   # area radius, in blocks
+    launch-speed: 0.9   # launch speed (1.0 = normal)
+
+  # --- Nautilus Spout
+  spoutshell:
+    range: 15   # distance, in blocks
+    damage: 8   # damage dealt (2 = one heart)
+    extra-radius: 3   # area radius, in blocks
+    launch-up: 2.5   # launch height
+    launch-up-2: 0.4   # launch height
+
+  # --- Obsidian Cleaver
+  cleaver:
+    passive-ticks: 40   # passive effect length (20 ticks = 1 second)
+    passive-amp: 0   # passive effect level (0 = weakest)
+
+  # --- Obsidian Fist
+  obsidianfist:
+    radius: 4.0   # area radius, in blocks
+    ticks: 40   # effect length (20 ticks = 1 second)
+    amplifier: 2   # effect level (0 = weakest)
+    damage: 4.0   # damage dealt (2 = one heart)
+    passive-ticks: 20   # passive effect length (20 ticks = 1 second)
+    passive-amp: 0   # passive effect level (0 = weakest)
+
+  # --- Phase Fruit
+  phasefruit:
+    effect-ticks: 40   # effect length (20 ticks = 1 second)
+    effect-amp: 1   # effect level (0 = weakest)
+    passive-ticks: 20   # passive effect length (20 ticks = 1 second)
+    passive-amp: 0   # passive effect level (0 = weakest)
+
+  # --- Phoenix Blade
+  phoenixblade:
+    launch-up: 1.4   # launch height
+
+  # --- Phoenix Call
+  glacier:
+    passive-ticks: 40   # passive effect length (20 ticks = 1 second)
+    passive-amp: 0   # passive effect level (0 = weakest)
+    launch-up: 1.4   # launch height
+
+  # --- Prism Blade
+  prismblade:
+    range: 10.0   # distance, in blocks
+    damage: 6.0   # damage dealt (2 = one heart)
+    passive-chance: 0.15   # chance to trigger (0.15 = 15%)
+    passive-damage: 3   # passive damage dealt
+
+  # --- Quake Hammer
+  quakehammer:
+    damage: 18   # damage dealt (2 = one heart)
+    passive-chance: 0.15   # chance to trigger (0.15 = 15%)
+    extra-radius: 6   # area radius, in blocks
+    launch-up: 0.9   # launch height
+
+  # --- Reaper's Sigil
+  reapersigil:
+    passive-damage: 2   # passive damage dealt
+
+  # --- Rewind Compass
+  rewindcompass:
+    passive-damage: 1   # passive damage dealt
+
+  # --- Rotten Offering
+  rottenoffering:
+    passive-ticks: 40   # passive effect length (20 ticks = 1 second)
+    passive-amp: 0   # passive effect level (0 = weakest)
+
+  # --- Rune Scythe
+  runescythe:
+    range: 6.0   # distance, in blocks
+    damage: 7.0   # damage dealt (2 = one heart)
+    slow-ticks: 80   # slowness length (20 ticks = 1 second)
+    passive-ticks: 40   # passive effect length (20 ticks = 1 second)
+    passive-amp: 0   # passive effect level (0 = weakest)
+
+  # --- Shadow Cloak
+  shadowcloak:
+    effect-ticks: 400   # effect length (20 ticks = 1 second)
+    effect-amp: 0   # effect level (0 = weakest)
+    effect-ticks-2: 400   # effect length (20 ticks = 1 second)
+    effect-amp-2: 1   # effect level (0 = weakest)
+    passive-ticks: 20   # passive effect length (20 ticks = 1 second)
+    passive-amp: 0   # passive effect level (0 = weakest)
+
+  # --- Shadow Dagger
+  shadowdagger:
+    range: 12   # distance, in blocks
+    damage: 10   # damage dealt (2 = one heart)
+    passive-damage: 3   # passive damage dealt
+
+  # --- Shadow Naginata
+  nagina:
+    passive-ticks: 20   # passive effect length (20 ticks = 1 second)
+    passive-amp: 0   # passive effect level (0 = weakest)
+
+  # --- Shakalaka Bow
+  shakalaka:
+    passive-ticks: 20   # passive effect length (20 ticks = 1 second)
+    passive-amp: 0   # passive effect level (0 = weakest)
+
+  # --- snow
+  snow:
+    {}
+
+  # --- Solar Lance
+  solarlance:
+    damage: 30   # damage dealt (2 = one heart)
+    extra-radius: 1   # area radius, in blocks
+
+  # --- Solstice Hammer
+  solstice:
+    radius: 4.5   # area radius, in blocks
+    damage: 11.0   # damage dealt (2 = one heart)
+    knockback: 1.3   # push strength (1.0 = normal)
+
+  # --- Sonic Horn
+  sonichorn:
+    radius: 1.8   # area radius, in blocks
+    radius-2: 1.8   # area radius, in blocks
+    damage: 150   # damage dealt (2 = one heart)
+    passive-damage: 2   # passive damage dealt
+    extra-radius: 2   # area radius, in blocks
+    launch-speed: 2.4   # launch speed (1.0 = normal)
+    launch-up: 0.6   # launch height
+
+  # --- Soul Sickle
+  soulsickle:
+    {}
+
+  # --- Soulreaver
+  soulreaver:
+    damage: 12   # damage dealt (2 = one heart)
+    extra-radius: 4   # area radius, in blocks
+
+  # --- Spear of Dawn
+  spearlance:
+    {}
+
+  # --- Spectral Quill
+  spectralquill:
+    effect-ticks: 120   # effect length (20 ticks = 1 second)
+    effect-amp: 0   # effect level (0 = weakest)
+    effect-ticks-2: 120   # effect length (20 ticks = 1 second)
+    effect-amp-2: 0   # effect level (0 = weakest)
+    passive-ticks: 20   # passive effect length (20 ticks = 1 second)
+    passive-amp: 0   # passive effect level (0 = weakest)
+    extra-damage: 12   # damage dealt
+
+  # --- Starfall Staff
+  starfall:
+    range: 20   # distance, in blocks
+    passive-chance: 0.1   # chance to trigger (0.15 = 15%)
+    passive-damage: 4   # passive damage dealt
+
+  # --- Starshard Scepter
+  starshard:
+    radius: 10.0   # area radius, in blocks
+    ticks: 100   # effect length (20 ticks = 1 second)
+    amplifier: 0   # effect level (0 = weakest)
+    damage: 3.0   # damage dealt (2 = one heart)
+    passive-chance: 0.1   # chance to trigger (0.15 = 15%)
+    passive-damage: 5   # passive damage dealt
+
+  # --- Stone Pike
+  stonepike:
+    passive-ticks: 100   # passive effect length (20 ticks = 1 second)
+    passive-amp: 0   # passive effect level (0 = weakest)
+
+  # --- Storm Halberd
+  stormhalberd:
+    passive-chance: 0.15   # chance to trigger (0.15 = 15%)
+    passive-damage: 3   # passive damage dealt
+
+  # --- Storm Heart
+  stormheart:
+    radius: 25   # area radius, in blocks
+    radius-2: 25   # area radius, in blocks
+    damage: 20   # damage dealt (2 = one heart)
+    passive-chance: 0.1   # chance to trigger (0.15 = 15%)
+    passive-damage: 3   # passive damage dealt
+
+  # --- Storm Staff
+  stormstaff:
+    passive-damage: 3   # passive damage dealt
+    extra-radius: 4   # area radius, in blocks
+
+  # --- Stormfang
+  stormfang:
+    radius: 8   # area radius, in blocks
+    radius-2: 8   # area radius, in blocks
+    damage: 6   # damage dealt (2 = one heart)
+    passive-chance: 0.1   # chance to trigger (0.15 = 15%)
+    passive-damage: 3   # passive damage dealt
+
+  # --- Sunder Blade
+  sunder:
+    damage: 7   # damage dealt (2 = one heart)
+    extra-radius: 4   # area radius, in blocks
+    launch-speed: 0.7   # launch speed (1.0 = normal)
+    launch-up: 0.6   # launch height
+    launch-speed-2: 1.0   # launch speed (1.0 = normal)
+
+  # --- Tempest Halberd
+  tempesthalberd:
+    radius: 4.0   # area radius, in blocks
+    damage: 6.0   # damage dealt (2 = one heart)
+    knockback: 1.4   # push strength (1.0 = normal)
+    passive-chance: 0.1   # chance to trigger (0.15 = 15%)
+    passive-damage: 2   # passive damage dealt
+
+  # --- Thorn Rapier
+  thornrapier:
+    effect-ticks: 100   # effect length (20 ticks = 1 second)
+    effect-amp: 0   # effect level (0 = weakest)
+    passive-ticks: 60   # passive effect length (20 ticks = 1 second)
+    passive-amp: 0   # passive effect level (0 = weakest)
+    extra-radius: 2.5   # area radius, in blocks
+    extra-damage: 10   # damage dealt
+    launch-speed: 1.2   # launch speed (1.0 = normal)
+    launch-up: 0.1   # launch height
+
+  # --- Thornwhip
+  thornwhip:
+    passive-ticks: 40   # passive effect length (20 ticks = 1 second)
+    passive-amp: 0   # passive effect level (0 = weakest)
+
+  # --- Thunder Cudgel
+  thundercudgel:
+    count: 2   # how many targets
+    range: 10.0   # distance, in blocks
+    damage: 7.0   # damage dealt (2 = one heart)
+    passive-chance: 0.1   # chance to trigger (0.15 = 15%)
+    passive-damage: 3   # passive damage dealt
+
+  # --- Thunderstick
+  thunderstick:
+    range: 40   # distance, in blocks
+    radius: 4   # area radius, in blocks
+    damage: 12   # damage dealt (2 = one heart)
+    passive-chance: 0.1   # chance to trigger (0.15 = 15%)
+    passive-damage: 3   # passive damage dealt
+
+  # --- Tidal Lance
+  tidallance:
+    passive-ticks: 20   # passive effect length (20 ticks = 1 second)
+    passive-amp: 2   # passive effect level (0 = weakest)
+
+  # --- Tidal Sword
+  tidal:
+    passive-ticks: 20   # passive effect length (20 ticks = 1 second)
+    passive-amp: 0   # passive effect level (0 = weakest)
+
+  # --- Tidecaller Spear
+  tidecaller:
+    launch-speed: 0.8   # launch speed (1.0 = normal)
+
+  # --- undead
+  undead:
+    {}
+
+  # --- Uno Reverse Blade
+  unoreverse:
+    passive-damage: 2   # passive damage dealt
+
+  # --- Vampire Fang
+  vampirefang:
+    heal: 8   # health restored (2 = one heart)
+
+  # --- Venom Dagger
+  venom:
+    damage: 6   # damage dealt (2 = one heart)
+    passive-ticks: 40   # passive effect length (20 ticks = 1 second)
+    passive-amp: 0   # passive effect level (0 = weakest)
+    extra-radius: 2.5   # area radius, in blocks
+    launch-speed: 1.2   # launch speed (1.0 = normal)
+    launch-up: 0.2   # launch height
+
+  # --- Venom Sickle
+  venomsickle:
+    damage: 2   # damage dealt (2 = one heart)
+    passive-ticks: 60   # passive effect length (20 ticks = 1 second)
+    passive-amp: 0   # passive effect level (0 = weakest)
+    extra-radius: 4   # area radius, in blocks
+
+  # --- Venomtooth
+  venomtooth:
+    effect-ticks: 40   # effect length (20 ticks = 1 second)
+    effect-amp: 0   # effect level (0 = weakest)
+    passive-ticks: 40   # passive effect length (20 ticks = 1 second)
+    passive-amp: 0   # passive effect level (0 = weakest)
+    extra-radius: 3   # area radius, in blocks
+    extra-damage: 1   # damage dealt
+
+  # --- Void Cutter
+  voidcutter:
+    damage: 10   # damage dealt (2 = one heart)
+    passive-chance: 0.15   # chance to trigger (0.15 = 15%)
+    passive-damage: 4   # passive damage dealt
+    extra-radius: 2.5   # area radius, in blocks
+
+  # --- Void Slasher
+  voidscythe:
+    radius: 8   # area radius, in blocks
+    radius-2: 8   # area radius, in blocks
+    damage: 20   # damage dealt (2 = one heart)
+    passive-damage: 1   # passive damage dealt
+    launch-speed: 0.6   # launch speed (1.0 = normal)
+    launch-up: 0.3   # launch height
+
+  # --- Voidfang Dagger
+  voidfang:
+    speed: 2.0   # speed multiplier (1.0 = normal)
+    damage: 8.0   # damage dealt (2 = one heart)
+    passive-damage: 1   # passive damage dealt
+
+  # --- Warden's Claw
+  wardenclaw:
+    launch-speed: 0.6   # launch speed (1.0 = normal)
+
+  # --- Warden's Spear
+  wardenspear:
+    passive-ticks: 40   # passive effect length (20 ticks = 1 second)
+    passive-amp: 0   # passive effect level (0 = weakest)
+
+  # --- wind
+  wind:
+    {}
+
+  # --- Wind Pike
+  windpike:
+    passive-ticks: 40   # passive effect length (20 ticks = 1 second)
+    passive-amp: 0   # passive effect level (0 = weakest)
+
+  # --- Wind Shard
+  winddash:
+    launch-speed: 2.0   # launch speed (1.0 = normal)
+    launch-speed-2: 0.9   # launch speed (1.0 = normal)
+
+# ================================================================
+#  Shared ability helpers (launch speed and height)
+# ================================================================
+# These apply to every item that uses the helper.
+helpers:
+  echoPulse:
+    up: 0.3   # launch height
+    speed: 0.9   # speed multiplier (1.0 = normal)
+  emberThrust:
+    speed: 1.2   # speed multiplier (1.0 = normal)
+    up: 0.1   # launch height
+  gearDash:
+    up: 0.1   # launch height
+  gravelWell:
+    up: 0   # launch height
+    speed: 5   # speed multiplier (1.0 = normal)
+    up-2: 0.1   # launch height
+    speed-2: 0.4   # speed multiplier (1.0 = normal)
+  gravityPull:
+    up: 0.2   # launch height
+    speed: 1.2   # speed multiplier (1.0 = normal)
+  gust:
+    up: 0   # launch height
+    speed: 2.0   # speed multiplier (1.0 = normal)
+    up-2: 0.5   # launch height
+  gustVault:
+    up: 0   # launch height
+    speed: 1.1   # speed multiplier (1.0 = normal)
+    up-2: 0.9   # launch height
+    up-3: 0.4   # launch height
+    speed-2: 1.2   # speed multiplier (1.0 = normal)
+  highJump:
+    up: 2.1   # launch height
+  lashChain:
+    up: 0.2   # launch height
+    speed: 1.3   # speed multiplier (1.0 = normal)
+  maelstrom:
+    up: 0   # launch height
+    speed: 6   # speed multiplier (1.0 = normal)
+    up-2: 0.1   # launch height
+    speed-2: 1.0   # speed multiplier (1.0 = normal)
+  onProjectileHit:
+    speed: 1.2   # speed multiplier (1.0 = normal)
+    up: 0.4   # launch height
+  onWindHitLaunch:
+    up: 1.3   # launch height
+  quakeStomp:
+    up: 0.7   # launch height
+  reapingArc:
+    up: 0   # launch height
+    up-2: 0   # launch height
+    up-3: 0.1   # launch height
+    speed: 1.1   # speed multiplier (1.0 = normal)
+  release:
+    speed: 2.2   # speed multiplier (1.0 = normal)
+    up: 0.3   # launch height
+  releaseProjectile:
+    speed: 1.2   # speed multiplier (1.0 = normal)
+    speed-2: 2.0   # speed multiplier (1.0 = normal)
+  riptide:
+    speed: 1.6   # speed multiplier (1.0 = normal)
+    up: 0.1   # launch height
+  seismicDash:
+    up: 0   # launch height
+    speed: 1.6   # speed multiplier (1.0 = normal)
+    up-2: 0.35   # launch height
+  shadowSlash:
+    up: 0   # launch height
+    speed: 0.8   # speed multiplier (1.0 = normal)
+    up-2: 0.1   # launch height
+  singularity:
+    speed: 0.5   # speed multiplier (1.0 = normal)
+  sonicWave:
+    speed: 1.6   # speed multiplier (1.0 = normal)
+    up: 0.5   # launch height
+  taijitu:
+    up: 0   # launch height
+    speed: 0.8   # speed multiplier (1.0 = normal)
+    up-2: 0.2   # launch height
+  thunderSlam:
+    up: 1.0   # launch height
+    up-2: 0.6   # launch height
+    speed: 1.2   # speed multiplier (1.0 = normal)
+  tidalWave:
+    up: 0   # launch height
+    up-2: 0   # launch height
+    speed: 0.8   # speed multiplier (1.0 = normal)
+    up-3: 0.3   # launch height
+    speed-2: 3   # speed multiplier (1.0 = normal)
+  tornado:
+    speed: 2   # speed multiplier (1.0 = normal)
+    speed-2: 0.5   # speed multiplier (1.0 = normal)
+    up: 0   # launch height
+  updraft:
+    up: 2.2   # launch height
+  wardenFist:
+    up: 0   # launch height
+    speed: 3   # speed multiplier (1.0 = normal)
+    speed-2: 0.8   # speed multiplier (1.0 = normal)
+    up-2: 0.8   # launch height
+  whirlpool:
+    up: 0.2   # launch height
+    speed: 1.0   # speed multiplier (1.0 = normal)
+
+# ================================================================
+#  Creatures
+# ================================================================
+creatures:
+  damage-multiplier: 3.0   # damage multiplier (3.0 = original)
+  aura-range: 50   # aura range, in blocks
+  max-health: 1000   # health each creature starts with
+  golden-apple-heal: 250   # health restored by a golden apple
+  ability:
+    DRAIN:
+      damage: 4   # damage dealt (2 = one heart)
+      heal: 2   # health restored (2 = one heart)
+    HEAL_OWNER:
+      damage: 2   # damage dealt (2 = one heart)
+      heal: 2   # health restored (2 = one heart)
+    REVEAL:
+      damage: 3   # damage dealt (2 = one heart)
+    SHIELD_OWNER:
+      damage: 2   # damage dealt (2 = one heart)
+      absorption-ticks: 200   # value used by this ability
+    SPEED_OWNER:
+      damage: 2   # damage dealt (2 = one heart)
+      speed-ticks: 60   # value used by this ability
+    WIND:
+      radius: 3   # area radius, in blocks
+      damage: 2   # damage dealt (2 = one heart)
+      knock-horizontal: 1.0   # value used by this ability
+      knock-up: 0.3   # value used by this ability
+      lift: 0.5   # value used by this ability
+    default:
+      damage: 3   # damage dealt (2 = one heart)
+
+# ================================================================
+#  Crazy Rolls and Gambler's Favourite have no settings here.
+# ================================================================
